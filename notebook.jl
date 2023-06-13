@@ -15,15 +15,13 @@ macro bind(def, element)
 end
 
 # ╔═╡ 45cfeb62-0958-11ee-3ae3-5bb1c78a739b
-using PlutoUI, CairoMakie, Printf
+using PlutoUI, CairoMakie, Printf, FileIO, Images
 
-# ╔═╡ eed71b26-3dda-49fc-af5c-1d85cab01ebd
-TableOfContents()
+# ╔═╡ 9cb5f155-b4e5-4abe-a8b1-74f602db0305
+using HypertextLiteral
 
-# ╔═╡ ce147685-0eaf-4f29-a875-08e4ed632da1
-md"""
-# Pitch
-"""
+# ╔═╡ ba3219e0-dfcd-4107-af0c-36cde899234d
+using CairoMakie:Axis
 
 # ╔═╡ 5f31c010-13a3-4b94-bb83-e922bde4b6ef
 md"""
@@ -35,6 +33,40 @@ md"""
 We provide a one-click solution for Julia users to publish interactive Pluto notebooks. Simply link the GitHub URL and we take care of the rest.
 """
 
+# ╔═╡ d7c3196d-6b05-4665-95c1-7d83f053d4ec
+video_path = joinpath(pwd(), "vids", "Glass Demo Fit.mp4");
+
+# ╔═╡ a2b1adc4-544b-4488-b358-d55f145ee7cf
+@htl """
+<video width="840" height="630" controls>
+	<source src="$video_path" type="video/mp4">
+</video>
+"""
+
+# ╔═╡ d11816dd-ad4f-48d9-a7b2-78c4de3cab34
+@bind b PlutoUI.Radio(["❌ Without Glass Notebook", "✅ With Glass Notebook"]; 
+default = "❌ Without Glass Notebook")
+
+# ╔═╡ 01121798-e25c-4712-8310-a86805f7d91b
+let
+	img1 = load(joinpath(pwd(), "imgs", "dt-github-nb.jpg"))
+	img2 = load(joinpath(pwd(), "imgs", "dt-glass-nb.jpg"))
+
+	if b == "❌ Without Glass Notebook"
+		img = img1
+	elseif b == "✅ With Glass Notebook"
+		img = img2
+	end
+	
+	f = Figure(resolution = (4000, 3000))
+	ax = Axis(
+		f[1, 1]
+	)
+	heatmap!(rotr90(img))
+	hidedecorations!(ax)
+	f
+end
+
 # ╔═╡ 7912c296-4d03-4b8d-b771-2437798a973e
 md"""
 #### [Without Glass Notebook](https://github.com/Glass-Notebook/pitch/blob/main/notebook.jl)
@@ -42,7 +74,12 @@ md"""
 
 # ╔═╡ f6b7901f-d28a-46d7-84e8-12f08829934f
 md"""
-#### [With Glass Notebook]()
+#### [With Glass Notebook #1]()
+"""
+
+# ╔═╡ 49e0ef0e-c515-46e4-8192-ba137d993908
+md"""
+#### [With Glass Notebook #2](https://glassnotebook.io/nb/JS9Aq8jDZ_NR3h2VkzWEN)
 """
 
 # ╔═╡ 68a4a8da-6c34-4bce-a14c-7b9941717dfd
@@ -50,25 +87,88 @@ md"""
 ## 2. Target Market 
 """
 
+# ╔═╡ d53bcc31-f7bd-4cd4-98cd-47707b671e81
+md"""
+$(@bind sel PlutoUI.Select(["Julia Downloads", "User Demographics", "Active Julia Users", "TAM+"]))
+"""
+
 # ╔═╡ c153018f-9875-4f36-8e47-294791d7d587
 md"""
 ## 3. Revenue Model
 """
 
-# ╔═╡ 43d06911-838f-4158-be4a-8998c2bd92a1
+# ╔═╡ 97d771f1-ec44-4df2-97a6-0fc2d3ff00a8
+md"""
+Needed
+- Estimated cost per static notebook @ 10, 100, 1000, & 10000 users
+- Estimated cost per interactive notebook @ 10, 100, 1000, & 10000 users
+- Estimated cost per (heavy) interactive notebook @ 10, 100, 1000, & 10000 users
+
+
+- Estimated cost per live notebook @ 10, 100, 1000, & 10000 users
+- Estimated cost per active CPU @ 10, 100, 1000, & 10000 users
+- Estimated cost per active GPU @ 10, 100, 1000, & 10000 users
+"""
+
+# ╔═╡ 5131e9c9-2a98-4ad2-b3cf-b2177bce0ab1
 md"""
 ### a. Static & Interactive Publishing
-"""
+- Estimated cost per static notebook @ 10, 100, 1000, & 10000 users
+- Estimated cost per interactive notebook @ 10, 100, 1000, & 10000 users
 
-# ╔═╡ a1851741-0f97-4476-a0fb-bdb175dd985f
-md"""
-### b. Online Coding Platform
-w/ live collaborative coding built in
-"""
 
-# ╔═╡ ebe45c70-f622-45c9-a1a8-0e7b63be236d
-md"""
-### c. Cloud Computing
+- Expected tier features and rates
+  - Free (\$0): 3 free static notebooks
+  - Pro (\$10): unlimited static notebooks, 3 interactive notebooks
+  - Pro+ (\$75): unlimited static and interactive notebooks
+  - Business (On Demand): unlimited static and interactive notebooks + storage + enterprise support
+
+
+- Expected Profict Margin
+  - Free: -5%
+  - Pro: ...
+  - Pro+: ...
+  - Business: ...
+
+### b. Live Collaborative Coding
+- Estimated cost per static notebook @ 10, 100, 1000, & 10000 users
+- Estimated cost per interactive notebook @ 10, 100, 1000, & 10000 users
+- Estimated cost per live notebook @ 10, 100, 1000, & 10000 users
+
+
+- Expected tier features and rates
+  - Free (\$0): 3 static notebooks, 1 interactive notebook, 1 live notebook
+  - Pro (\$25): unlimited static notebooks, 3 interactive notebooks, 3 live notebooks
+  - Pro+ (\$100): unlimited static, interactive, and live notebooks
+  - Business (On Demand): unlimited static, interactive, and live notebooks + storage + enterprise support
+
+
+- Expected Profict Margin
+  - Free: -5%
+  - Pro: ...
+  - Pro+: ...
+  - Business: ...
+
+### c. High Performance Computing
+- Estimated cost per static notebook @ 10, 100, 1000, & 10000 users
+- Estimated cost per interactive notebook @ 10, 100, 1000, & 10000 users
+- Estimated cost per live notebook @ 10, 100, 1000, & 10000 users
+- Estimated cost per active CPU @ 10, 100, 1000, & 10000 users
+- Estimated cost per active GPU @ 10, 100, 1000, & 10000 users
+
+
+- Expected tier features and rates
+  - Free (\$0): 3 static notebooks, 1 interactive notebook, 1 live notebook
+  - Pro (\$25): unlimited static notebooks, 3 interactive notebooks, 3 live notebooks, 3,000 CPU/50 GPU hours + on demand cluster computing
+  - Pro+ (\$100): unlimited static, interactive, and live notebooks, 9,000 CPU/100 GPU hours + on demand cluster computing
+  - Business (On Demand): unlimited static, interactive, and live notebooks + storage + enterprise support, 15,000 CPU/500 GPU hours + on demand cluster computing
+
+
+- Expected Profict Margin
+  - Free: -5%
+  - Pro: ...
+  - Pro+: ...
+  - Business: ...
 """
 
 # ╔═╡ bf2a58cc-bdb4-4d24-9059-220a4ee3c4a8
@@ -76,19 +176,94 @@ md"""
 ## 4. Competetive Advantages
 """
 
+# ╔═╡ 9d899722-ecbb-4e88-bf60-4c9caddb44c6
+md"""
+### a. First to market
+
+### b. Julia
+
+### c. Academia
+"""
+
 # ╔═╡ 0854657a-44ff-4b3f-9514-fa46962750cb
 md"""
 ## 5. Current Needs
 """
+
+# ╔═╡ b6bf4041-d74f-49db-8f19-def4be06daf4
+
+
+# ╔═╡ 82d53156-0206-45dc-8254-87dae5caaff6
+
+
+# ╔═╡ 3da8d44b-7b7a-40ef-84be-e62ecdd28744
+
+
+# ╔═╡ 291ed18a-ac7e-4e2a-bb29-6b3bc256fb33
+
+
+# ╔═╡ 1d948247-e070-4262-bab2-e212b0803569
+
+
+# ╔═╡ 6e714b8b-ed62-4cdb-8fbb-286eaccc003a
+
+
+# ╔═╡ ce1f292a-679f-46fe-b849-bc31b0ff0266
+
+
+# ╔═╡ a633f7cf-c14c-4efc-9009-9785ffaad22e
+
+
+# ╔═╡ abba3275-0eda-43dc-91b7-f4b2966d8dbe
+
+
+# ╔═╡ 308d0777-dcb7-44da-a005-4642065060a8
+
+
+# ╔═╡ 48c3b938-367e-4931-995f-93942a74f0a9
+
+
+# ╔═╡ c6d533c3-7c68-4bae-a8cb-3c22d8302f4d
+
+
+# ╔═╡ 33b4e9e9-a7e2-4daa-a0be-678892771b9f
+
+
+# ╔═╡ 2976d87c-36c1-4b8d-82f3-c7ffb6590ab1
+
+
+# ╔═╡ 8fe6b73a-c2d8-4e3d-8318-8e7308753a1e
+
+
+# ╔═╡ 55249b98-fec8-415d-9500-8203a09287db
+
+
+# ╔═╡ e1876858-2711-488c-bbc2-f23dd2b28839
+
+
+# ╔═╡ a7636305-fbda-4e2f-981e-40e5b012321a
+
+
+# ╔═╡ 232c2827-fa1c-4fd5-b486-fbfa2b51f50b
+
+
+# ╔═╡ 40e82d57-9911-4400-ba67-f7092daab366
+
 
 # ╔═╡ ecf54a1e-d606-4a99-8c2a-68375ac7b6b5
 md"""
 # Appendix
 """
 
+# ╔═╡ cecee598-7662-4fe6-858d-4a58eaab63d8
+# using Javis, LaTeXStrings, Animations
+
+# ╔═╡ eed71b26-3dda-49fc-af5c-1d85cab01ebd
+TableOfContents()
+
 # ╔═╡ 6c98ff24-a156-46dc-bc0a-aae64121cc25
 md"""
-## Cumulative Julia Downloads
+#### Cumulative Julia Downloads
 """
 
 # ╔═╡ 408e38e3-7aab-451f-b18b-c0983e556faa
@@ -99,7 +274,7 @@ years = collect(2016:2023)
 
 # ╔═╡ c0dccf90-c51f-4ec9-a95d-31dee26f2c8d
 md"""
-## Estimated Active Julia Users
+#### Estimated Active Julia Users
 Using the estimated lower and upper bound [number of active Python developers](https://blog.pythonanywhere.com/67/) along with the number of Python downloads, we calculate the lower and upper bound percentage of python users. We then assume this percentage of Julia users as it relates to total number of Julia downloads is the same as the Python equivalent. Therefore, given, (1) lower and upper bound estimates of active Python users, (2) number of python downloads, and (3) [number of Julia downloads](https://info.juliahub.com/julia-annual-growth-statistics-january-2023) - we can estimate the lower and upper bounds of active Julia users
 """
 
@@ -139,14 +314,9 @@ end
 # ╔═╡ 5715cbb1-3d4a-48a8-9216-b28c42c09fa7
 user_ticks = [0, 250_000, 500_000, 750_000, 1_000_000, 1_250_000, 1_500_000];
 
-# ╔═╡ a5cbd0a4-cba8-44b2-8ac9-7a8a1bc32d81
-md"""
-## Companies & Universities
-"""
-
 # ╔═╡ 0e78fe42-8237-42d0-b2b8-c18e596c82ba
 md"""
-## Estimated Active Pluto Users
+#### Estimated Active Pluto Users
 """
 
 # ╔═╡ 8c222113-45d1-4ce7-96c8-fb6fcdd9fb57
@@ -158,9 +328,30 @@ begin
 	users_pluto_ub = downloads_pluto * (upper_bound_active_user_percentage / 100)
 end
 
+# ╔═╡ 6badc600-a64e-41f2-bc32-64717ca84983
+md"""
+#### TAM/SAM/TOM
+"""
+
+# ╔═╡ d312dacc-d1a2-4519-8dc2-13a5a86e66a9
+begin
+	annual_value_per_customer = 10 * 12 # monthly_user_rate × months
+	
+	_TAM = active_julia_users_ub[:users][end] # total active julia users (upper bound)
+	TAM = _TAM * annual_value_per_customer
+	
+	_SAM = users_pluto_ub # total active pluto users (lower bound)
+	SAM = _SAM * annual_value_per_customer
+
+	SOM = SAM * 0.25
+end
+
+# ╔═╡ 332ea387-20d1-4118-8427-881e8f72e11c
+users_pluto_ub
+
 # ╔═╡ e52fe6f8-72a4-4124-af01-db40aff165f2
 md"""
-## Combined
+#### Combined
 """
 
 # ╔═╡ 6af0b387-df41-4f60-99c7-0b8ea906fa78
@@ -241,31 +432,60 @@ function tot(sel)
 		
 		return f
 	elseif sel == "TAM+"
+		ax = Axis(
+			f[1, 1],
+			title = "Market Size (Not To Scale)"
+			
+		)
+		scatter!(0, 0; markersize = 600)
+		scatter!(0, -0.7; markersize = 300)
+		scatter!(0, -1; markersize = 150)
+		limits!(ax, -2, 2, -2, 2)
+		
+		hidespines!(ax)
+		hidedecorations!(ax)
+	
+		colors = Makie.wong_colors()
+	
+		group_color = [PolyElement(color = color, strokecolor = :transparent)
+		for color in colors[1:3]]
+	
+		l1 = @sprintf "%.1e" TAM
+		l2 = @sprintf "%.1e" SAM
+		l3 = @sprintf "%.1e" SOM
+		
+		Legend(
+			f[1, 2],
+			group_color,
+			[
+				"TAM = \$$(l1)", 
+				"SAM = \$$(l2)", 
+				"SOM = \$$(l3)"
+			],
+		)
+		f
+		return f
 	end
 end
 
-# ╔═╡ d53bcc31-f7bd-4cd4-98cd-47707b671e81
-@bind sel PlutoUI.Select(["Julia Downloads", "User Demographics", "Active Julia Users", "TAM+"])
-
 # ╔═╡ 627c9f51-43b3-415d-936e-b6747b6d4f7c
 tot(sel)
-
-# ╔═╡ d312dacc-d1a2-4519-8dc2-13a5a86e66a9
-begin
-	TAM = 26.9e6 # total active software developers
-	SAM = active_julia_users_ub[:users][end] # total active julia users (upper bound)
-	SOM = users_pluto_ub # total active pluto users (lower bound)
-end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
+HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
+Images = "916415d5-f1e6-5110-898d-aaa5f9f070e0"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 
 [compat]
 CairoMakie = "~0.10.6"
+FileIO = "~1.16.1"
+HypertextLiteral = "~0.9.4"
+Images = "~0.25.3"
 PlutoUI = "~0.7.51"
 """
 
@@ -275,7 +495,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.1"
 manifest_format = "2.0"
-project_hash = "52630ac6bd4166efeaf4cb1efa5e4c91ab84598f"
+project_hash = "9c704ded0423357f7567ca1dd53d2dc90f8c0936"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -317,6 +537,12 @@ version = "0.4.1"
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
 version = "1.1.1"
+
+[[deps.ArnoldiMethod]]
+deps = ["LinearAlgebra", "Random", "StaticArrays"]
+git-tree-sha1 = "62e51b39331de8911e4a7ff6f5aaf38a5f4cc0ae"
+uuid = "ec485272-7323-5ecc-a04f-4719b315124d"
+version = "0.2.0"
 
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
@@ -380,11 +606,23 @@ git-tree-sha1 = "f641eb0a4f00c343bbc32346e1217b86f3ce9dad"
 uuid = "49dc2e85-a5d0-5ad3-a950-438e2897f1b9"
 version = "0.5.1"
 
+[[deps.CatIndices]]
+deps = ["CustomUnitRanges", "OffsetArrays"]
+git-tree-sha1 = "a0f80a09780eed9b1d106a1bf62041c2efc995bc"
+uuid = "aafaddc9-749c-510e-ac4f-586e18779b91"
+version = "0.2.2"
+
 [[deps.ChainRulesCore]]
 deps = ["Compat", "LinearAlgebra", "SparseArrays"]
 git-tree-sha1 = "e30f2f4e20f7f186dc36529910beaedc60cfa644"
 uuid = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
 version = "1.16.0"
+
+[[deps.Clustering]]
+deps = ["Distances", "LinearAlgebra", "NearestNeighbors", "Printf", "Random", "SparseArrays", "Statistics", "StatsBase"]
+git-tree-sha1 = "a6e6ce44a1e0a781772fc795fb7343b1925e9898"
+uuid = "aaaa29a8-35af-508c-8bc3-b662a17a0fe5"
+version = "0.15.2"
 
 [[deps.ColorBrewer]]
 deps = ["Colors", "JSON", "Test"]
@@ -431,6 +669,11 @@ deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
 version = "1.0.2+0"
 
+[[deps.ComputationalResources]]
+git-tree-sha1 = "52cb3ec90e8a8bea0e62e275ba577ad0f74821f7"
+uuid = "ed09eef8-17a6-5b46-8889-db040fac31e3"
+version = "0.3.2"
+
 [[deps.ConstructionBase]]
 deps = ["LinearAlgebra"]
 git-tree-sha1 = "738fec4d684a9a6ee9598a8bfee305b26831f28c"
@@ -446,6 +689,17 @@ weakdeps = ["IntervalSets", "StaticArrays"]
 git-tree-sha1 = "d05d9e7b7aedff4e5b51a029dced05cfb6125781"
 uuid = "d38c429a-6771-53c6-b99e-75d170b6e991"
 version = "0.6.2"
+
+[[deps.CoordinateTransformations]]
+deps = ["LinearAlgebra", "StaticArrays"]
+git-tree-sha1 = "f9d7112bfff8a19a3a4ea4e03a8e6a91fe8456bf"
+uuid = "150eb455-5306-5404-9cee-2592286d6298"
+version = "0.6.3"
+
+[[deps.CustomUnitRanges]]
+git-tree-sha1 = "1a3f97f907e6dd8983b744d2642651bb162a3f7a"
+uuid = "dc8bdbbb-1ca9-579f-8c36-e416f6a65cce"
+version = "1.0.2"
 
 [[deps.DataAPI]]
 git-tree-sha1 = "8da84edb865b0b5b0100c0666a9bc9a0b71c553c"
@@ -466,6 +720,12 @@ version = "1.0.0"
 [[deps.Dates]]
 deps = ["Printf"]
 uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
+
+[[deps.Distances]]
+deps = ["LinearAlgebra", "SparseArrays", "Statistics", "StatsAPI"]
+git-tree-sha1 = "49eba9ad9f7ead780bfb7ee319f962c811c6d3b2"
+uuid = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
+version = "0.10.8"
 
 [[deps.Distributed]]
 deps = ["Random", "Serialization", "Sockets"]
@@ -530,6 +790,12 @@ deps = ["Artifacts", "Bzip2_jll", "FreeType2_jll", "FriBidi_jll", "JLLWrappers",
 git-tree-sha1 = "74faea50c1d007c85837327f6775bea60b5492dd"
 uuid = "b22a6f82-2f65-5046-a5b2-351ab43fb4e5"
 version = "4.4.2+2"
+
+[[deps.FFTViews]]
+deps = ["CustomUnitRanges", "FFTW"]
+git-tree-sha1 = "cbdf14d1e8c7c8aacbe8b19862e0179fd08321c2"
+uuid = "4f61f5a4-77b1-5117-aa51-3ab5ef4ef0cd"
+version = "0.3.2"
 
 [[deps.FFTW]]
 deps = ["AbstractFFTs", "FFTW_jll", "LinearAlgebra", "MKL_jll", "Preferences", "Reexport"]
@@ -628,6 +894,12 @@ git-tree-sha1 = "9b02998aba7bf074d14de89f9d37ca24a1a0b046"
 uuid = "78b55507-aeef-58d4-861c-77aaff3498b1"
 version = "0.21.0+0"
 
+[[deps.Ghostscript_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
+git-tree-sha1 = "43ba3d3c82c18d88471cfd2924931658838c9d8f"
+uuid = "61579ee1-b43e-5ca0-a5da-69d92c66a64b"
+version = "9.55.0+4"
+
 [[deps.Glib_jll]]
 deps = ["Artifacts", "Gettext_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Libiconv_jll", "Libmount_jll", "PCRE2_jll", "Pkg", "Zlib_jll"]
 git-tree-sha1 = "d3b3624125c1474292d0d8ed0f65554ac37ddb23"
@@ -645,6 +917,12 @@ deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "344bf40dcab1073aca04aa0df4fb092f920e4011"
 uuid = "3b182d85-2403-5c21-9c21-1e1f0cc25472"
 version = "1.3.14+0"
+
+[[deps.Graphs]]
+deps = ["ArnoldiMethod", "Compat", "DataStructures", "Distributed", "Inflate", "LinearAlgebra", "Random", "SharedArrays", "SimpleTraits", "SparseArrays", "Statistics"]
+git-tree-sha1 = "1cf1d7dcb4bc32d7b4a5add4232db3750c27ecb4"
+uuid = "86223c79-3864-5bf0-83f7-82e725a168b6"
+version = "1.8.0"
 
 [[deps.GridLayoutBase]]
 deps = ["GeometryBasics", "InteractiveUtils", "Observables"]
@@ -699,11 +977,29 @@ git-tree-sha1 = "b51bb8cae22c66d0f6357e3bcb6363145ef20835"
 uuid = "c817782e-172a-44cc-b673-b171935fbb9e"
 version = "0.1.5"
 
+[[deps.ImageContrastAdjustment]]
+deps = ["ImageCore", "ImageTransformations", "Parameters"]
+git-tree-sha1 = "0d75cafa80cf22026cea21a8e6cf965295003edc"
+uuid = "f332f351-ec65-5f6a-b3d1-319c6670881a"
+version = "0.3.10"
+
 [[deps.ImageCore]]
 deps = ["AbstractFFTs", "ColorVectorSpace", "Colors", "FixedPointNumbers", "Graphics", "MappedArrays", "MosaicViews", "OffsetArrays", "PaddedViews", "Reexport"]
 git-tree-sha1 = "acf614720ef026d38400b3817614c45882d75500"
 uuid = "a09fc81d-aa75-5fe9-8630-4744c3626534"
 version = "0.9.4"
+
+[[deps.ImageDistances]]
+deps = ["Distances", "ImageCore", "ImageMorphology", "LinearAlgebra", "Statistics"]
+git-tree-sha1 = "b1798a4a6b9aafb530f8f0c4a7b2eb5501e2f2a3"
+uuid = "51556ac3-7006-55f5-8cb3-34580c88182d"
+version = "0.2.16"
+
+[[deps.ImageFiltering]]
+deps = ["CatIndices", "ComputationalResources", "DataStructures", "FFTViews", "FFTW", "ImageBase", "ImageCore", "LinearAlgebra", "OffsetArrays", "Reexport", "SnoopPrecompile", "SparseArrays", "StaticArrays", "Statistics", "TiledIteration"]
+git-tree-sha1 = "d90867cbe037730a73c9a9499b3591eedbe387a0"
+uuid = "6a3955dd-da59-5b1f-98d4-e7296123deb5"
+version = "0.7.5"
 
 [[deps.ImageIO]]
 deps = ["FileIO", "IndirectArrays", "JpegTurbo", "LazyModules", "Netpbm", "OpenEXR", "PNGFiles", "QOI", "Sixel", "TiffImages", "UUIDs"]
@@ -711,11 +1007,59 @@ git-tree-sha1 = "342f789fd041a55166764c351da1710db97ce0e0"
 uuid = "82e4d734-157c-48bb-816b-45c225c6df19"
 version = "0.6.6"
 
+[[deps.ImageMagick]]
+deps = ["FileIO", "ImageCore", "ImageMagick_jll", "InteractiveUtils", "Libdl", "Pkg", "Random"]
+git-tree-sha1 = "5bc1cb62e0c5f1005868358db0692c994c3a13c6"
+uuid = "6218d12a-5da1-5696-b52f-db25d2ecc6d1"
+version = "1.2.1"
+
+[[deps.ImageMagick_jll]]
+deps = ["Artifacts", "Ghostscript_jll", "JLLWrappers", "JpegTurbo_jll", "Libdl", "Libtiff_jll", "Pkg", "Zlib_jll", "libpng_jll"]
+git-tree-sha1 = "124626988534986113cfd876e3093e4a03890f58"
+uuid = "c73af94c-d91f-53ed-93a7-00f77d67a9d7"
+version = "6.9.12+3"
+
 [[deps.ImageMetadata]]
 deps = ["AxisArrays", "ImageAxes", "ImageBase", "ImageCore"]
 git-tree-sha1 = "36cbaebed194b292590cba2593da27b34763804a"
 uuid = "bc367c6b-8a6b-528e-b4bd-a4b897500b49"
 version = "0.9.8"
+
+[[deps.ImageMorphology]]
+deps = ["ImageCore", "LinearAlgebra", "Requires", "TiledIteration"]
+git-tree-sha1 = "e7c68ab3df4a75511ba33fc5d8d9098007b579a8"
+uuid = "787d08f9-d448-5407-9aad-5290dd7ab264"
+version = "0.3.2"
+
+[[deps.ImageQualityIndexes]]
+deps = ["ImageContrastAdjustment", "ImageCore", "ImageDistances", "ImageFiltering", "LazyModules", "OffsetArrays", "PrecompileTools", "Statistics"]
+git-tree-sha1 = "bcc2f0db769e5d42a67f501ec6781401a4389e8f"
+uuid = "2996bd0c-7a13-11e9-2da2-2f5ce47296a9"
+version = "0.3.5"
+
+[[deps.ImageSegmentation]]
+deps = ["Clustering", "DataStructures", "Distances", "Graphs", "ImageCore", "ImageFiltering", "ImageMorphology", "LinearAlgebra", "MetaGraphs", "RegionTrees", "SimpleWeightedGraphs", "StaticArrays", "Statistics"]
+git-tree-sha1 = "44664eea5408828c03e5addb84fa4f916132fc26"
+uuid = "80713f31-8817-5129-9cf8-209ff8fb23e1"
+version = "1.8.1"
+
+[[deps.ImageShow]]
+deps = ["Base64", "ColorSchemes", "FileIO", "ImageBase", "ImageCore", "OffsetArrays", "StackViews"]
+git-tree-sha1 = "ce28c68c900eed3cdbfa418be66ed053e54d4f56"
+uuid = "4e3cecfd-b093-5904-9786-8bbb286a6a31"
+version = "0.3.7"
+
+[[deps.ImageTransformations]]
+deps = ["AxisAlgorithms", "ColorVectorSpace", "CoordinateTransformations", "ImageBase", "ImageCore", "Interpolations", "OffsetArrays", "Rotations", "StaticArrays"]
+git-tree-sha1 = "8717482f4a2108c9358e5c3ca903d3a6113badc9"
+uuid = "02fcd773-0e25-5acc-982a-7f6622650795"
+version = "0.9.5"
+
+[[deps.Images]]
+deps = ["Base64", "FileIO", "Graphics", "ImageAxes", "ImageBase", "ImageContrastAdjustment", "ImageCore", "ImageDistances", "ImageFiltering", "ImageIO", "ImageMagick", "ImageMetadata", "ImageMorphology", "ImageQualityIndexes", "ImageSegmentation", "ImageShow", "ImageTransformations", "IndirectArrays", "IntegralArrays", "Random", "Reexport", "SparseArrays", "StaticArrays", "Statistics", "StatsBase", "TiledIteration"]
+git-tree-sha1 = "5fa9f92e1e2918d9d1243b1131abe623cdf98be7"
+uuid = "916415d5-f1e6-5110-898d-aaa5f9f070e0"
+version = "0.25.3"
 
 [[deps.Imath_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -732,6 +1076,12 @@ version = "1.0.0"
 git-tree-sha1 = "5cd07aab533df5170988219191dfad0519391428"
 uuid = "d25df0c9-e2be-5dd7-82c8-3ad0b3e990b9"
 version = "0.1.3"
+
+[[deps.IntegralArrays]]
+deps = ["ColorTypes", "FixedPointNumbers", "IntervalSets"]
+git-tree-sha1 = "be8e690c3973443bec584db3346ddc904d4884eb"
+uuid = "1d092043-8f09-5a30-832f-7509e371ab51"
+version = "0.1.5"
 
 [[deps.IntelOpenMP_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -776,6 +1126,12 @@ git-tree-sha1 = "a3f24677c21f5bbe9d2a714f95dcd58337fb2856"
 uuid = "82899510-4779-5014-852e-03e436cf321d"
 version = "1.0.0"
 
+[[deps.JLD2]]
+deps = ["FileIO", "MacroTools", "Mmap", "OrderedCollections", "Pkg", "Printf", "Reexport", "Requires", "TranscodingStreams", "UUIDs"]
+git-tree-sha1 = "42c17b18ced77ff0be65957a591d34f4ed57c631"
+uuid = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
+version = "0.4.31"
+
 [[deps.JLLWrappers]]
 deps = ["Preferences"]
 git-tree-sha1 = "abc9885a7ca2052a736a600f7fa66209f96506e1"
@@ -811,6 +1167,12 @@ deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "f6250b16881adf048549549fba48b1161acdac8c"
 uuid = "c1c5ebd0-6772-5130-a774-d5fcae4a789d"
 version = "3.100.1+0"
+
+[[deps.LERC_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
+git-tree-sha1 = "bf36f528eec6634efc60d7ec062008f171071434"
+uuid = "88015f11-f218-50d7-93a8-a6af411a945d"
+version = "3.0.0+1"
 
 [[deps.LZO_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -883,6 +1245,12 @@ deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "9c30530bf0effd46e15e0fdcf2b8636e78cbbd73"
 uuid = "4b2f31a3-9ecc-558c-b454-b3730dcb73e9"
 version = "2.35.0+0"
+
+[[deps.Libtiff_jll]]
+deps = ["Artifacts", "JLLWrappers", "JpegTurbo_jll", "LERC_jll", "Libdl", "Pkg", "Zlib_jll", "Zstd_jll"]
+git-tree-sha1 = "3eb79b0ca5764d4799c06699573fd8f533259713"
+uuid = "89763e89-9b03-5906-acba-b20f662cd828"
+version = "4.4.0+0"
 
 [[deps.Libuuid_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -967,6 +1335,12 @@ deps = ["Artifacts", "Libdl"]
 uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
 version = "2.28.2+0"
 
+[[deps.MetaGraphs]]
+deps = ["Graphs", "JLD2", "Random"]
+git-tree-sha1 = "1130dbe1d5276cb656f6e1094ce97466ed700e5a"
+uuid = "626554b9-1ddb-594c-aa3c-2596fe9399a5"
+version = "0.7.2"
+
 [[deps.MiniQhull]]
 deps = ["QhullMiniWrapper_jll"]
 git-tree-sha1 = "9dc837d180ee49eeb7c8b77bb1c860452634b0d1"
@@ -997,6 +1371,12 @@ deps = ["OpenLibm_jll"]
 git-tree-sha1 = "0877504529a3e5c3343c6f8b4c0381e57e4387e4"
 uuid = "77ba4419-2d1f-58cd-9bb1-8ffee604a2e3"
 version = "1.0.2"
+
+[[deps.NearestNeighbors]]
+deps = ["Distances", "StaticArrays"]
+git-tree-sha1 = "2c3726ceb3388917602169bed973dbc97f1b51a8"
+uuid = "b8a86587-4115-5ab1-83bc-aa920d37bbce"
+version = "0.4.13"
 
 [[deps.Netpbm]]
 deps = ["FileIO", "ImageCore", "ImageMetadata"]
@@ -1105,6 +1485,12 @@ git-tree-sha1 = "84a314e3926ba9ec66ac097e3635e270986b0f10"
 uuid = "36c8627f-9965-5494-a995-c6b170f724f3"
 version = "1.50.9+0"
 
+[[deps.Parameters]]
+deps = ["OrderedCollections", "UnPack"]
+git-tree-sha1 = "34c0e9ad262e5f7fc75b10a9952ca7692cfc5fbe"
+uuid = "d96e819e-fc66-5662-9728-84c9c7592b0a"
+version = "0.12.3"
+
 [[deps.Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
 git-tree-sha1 = "a5aef8d4a6e8d81f171b2bd4be5265b01384c74c"
@@ -1191,6 +1577,12 @@ git-tree-sha1 = "6ec7ac8412e83d57e313393220879ede1740f9ee"
 uuid = "1fd47b50-473d-5c70-9696-f719f8f3bcdc"
 version = "2.8.2"
 
+[[deps.Quaternions]]
+deps = ["LinearAlgebra", "Random", "RealDot"]
+git-tree-sha1 = "da095158bdc8eaccb7890f9884048555ab771019"
+uuid = "94ee1d12-ae83-5a48-8b1c-48b8ff168ae0"
+version = "0.7.4"
+
 [[deps.REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
 uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
@@ -1214,10 +1606,22 @@ weakdeps = ["FixedPointNumbers"]
     [deps.Ratios.extensions]
     RatiosFixedPointNumbersExt = "FixedPointNumbers"
 
+[[deps.RealDot]]
+deps = ["LinearAlgebra"]
+git-tree-sha1 = "9f0a1b71baaf7650f4fa8a1d168c7fb6ee41f0c9"
+uuid = "c1ae055f-0cd5-4b69-90a6-9a35b1a98df9"
+version = "0.1.0"
+
 [[deps.Reexport]]
 git-tree-sha1 = "45e428421666073eab6f2da5c9d310d99bb12f9b"
 uuid = "189a3867-3050-52da-a836-e630ba90ab69"
 version = "1.2.2"
+
+[[deps.RegionTrees]]
+deps = ["IterTools", "LinearAlgebra", "StaticArrays"]
+git-tree-sha1 = "4618ed0da7a251c7f92e869ae1a19c74a7d2a7f9"
+uuid = "dee08c22-ab7f-5625-9660-a9af2021b33f"
+version = "0.3.2"
 
 [[deps.RelocatableFolders]]
 deps = ["SHA", "Scratch"]
@@ -1242,6 +1646,12 @@ deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "6ed52fdd3382cf21947b15e8870ac0ddbff736da"
 uuid = "f50d1b31-88e8-58de-be2c-1cc44531875f"
 version = "0.4.0+0"
+
+[[deps.Rotations]]
+deps = ["LinearAlgebra", "Quaternions", "Random", "StaticArrays"]
+git-tree-sha1 = "54ccb4dbab4b1f69beb255a2c0ca5f65a9c82f08"
+uuid = "6038ab10-8711-5258-84ad-4b1120ba62dc"
+version = "1.5.1"
 
 [[deps.SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
@@ -1296,11 +1706,23 @@ git-tree-sha1 = "5d7e3f4e11935503d3ecaf7186eac40602e7d231"
 uuid = "699a6c99-e7fa-54fc-8d76-47d257e15c1d"
 version = "0.9.4"
 
+[[deps.SimpleWeightedGraphs]]
+deps = ["Graphs", "LinearAlgebra", "Markdown", "SparseArrays"]
+git-tree-sha1 = "4b33e0e081a825dbfaf314decf58fa47e53d6acb"
+uuid = "47aef6b3-ad0c-573a-a1e2-d07658019622"
+version = "1.4.0"
+
 [[deps.Sixel]]
 deps = ["Dates", "FileIO", "ImageCore", "IndirectArrays", "OffsetArrays", "REPL", "libsixel_jll"]
 git-tree-sha1 = "8fb59825be681d451c246a795117f317ecbcaa28"
 uuid = "45858cf5-a6b0-47a3-bbea-62219f50df47"
 version = "0.1.2"
+
+[[deps.SnoopPrecompile]]
+deps = ["Preferences"]
+git-tree-sha1 = "e760a70afdcd461cf01a575947738d359234665c"
+uuid = "66db9d55-30c0-4569-8b51-7e840670fc0c"
+version = "1.0.3"
 
 [[deps.Sockets]]
 uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
@@ -1432,6 +1854,12 @@ git-tree-sha1 = "8621f5c499a8aa4aa970b1ae381aae0ef1576966"
 uuid = "731e570b-9d59-4bfa-96dc-6df516fadf69"
 version = "0.6.4"
 
+[[deps.TiledIteration]]
+deps = ["OffsetArrays"]
+git-tree-sha1 = "5683455224ba92ef59db72d10690690f4a8dc297"
+uuid = "06e1c1a7-607b-532d-9fad-de7d9aa2abac"
+version = "0.3.1"
+
 [[deps.TranscodingStreams]]
 deps = ["Random", "Test"]
 git-tree-sha1 = "9a6ae7ed916312b41236fcef7e0af564ef934769"
@@ -1461,6 +1889,11 @@ version = "1.4.2"
 [[deps.UUIDs]]
 deps = ["Random", "SHA"]
 uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
+
+[[deps.UnPack]]
+git-tree-sha1 = "387c1f73762231e86e0c9c5443ce3b4a0a9a0c2b"
+uuid = "3a884ed6-31ef-47d7-9d2a-63182c4928ed"
+version = "1.0.2"
 
 [[deps.Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
@@ -1542,6 +1975,12 @@ deps = ["Libdl"]
 uuid = "83775a58-1f1d-513f-b197-d71354ab007a"
 version = "1.2.13+0"
 
+[[deps.Zstd_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "49ce682769cd5de6c72dcf1b94ed7790cd08974c"
+uuid = "3161d3a3-bdf6-5164-811a-617609db77b4"
+version = "1.5.5+0"
+
 [[deps.isoband_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "51b5eeb3f98367157a7a12a1fb0aa5328946c03c"
@@ -1613,21 +2052,49 @@ version = "3.5.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╠═45cfeb62-0958-11ee-3ae3-5bb1c78a739b
-# ╠═eed71b26-3dda-49fc-af5c-1d85cab01ebd
-# ╟─ce147685-0eaf-4f29-a875-08e4ed632da1
 # ╟─5f31c010-13a3-4b94-bb83-e922bde4b6ef
 # ╟─d53a94cd-6627-4bcd-a13f-82b057b8c327
+# ╠═d7c3196d-6b05-4665-95c1-7d83f053d4ec
+# ╠═a2b1adc4-544b-4488-b358-d55f145ee7cf
+# ╟─d11816dd-ad4f-48d9-a7b2-78c4de3cab34
+# ╟─01121798-e25c-4712-8310-a86805f7d91b
 # ╟─7912c296-4d03-4b8d-b771-2437798a973e
 # ╟─f6b7901f-d28a-46d7-84e8-12f08829934f
+# ╟─49e0ef0e-c515-46e4-8192-ba137d993908
 # ╟─68a4a8da-6c34-4bce-a14c-7b9941717dfd
+# ╟─d53bcc31-f7bd-4cd4-98cd-47707b671e81
+# ╟─627c9f51-43b3-415d-936e-b6747b6d4f7c
 # ╟─c153018f-9875-4f36-8e47-294791d7d587
-# ╟─43d06911-838f-4158-be4a-8998c2bd92a1
-# ╟─a1851741-0f97-4476-a0fb-bdb175dd985f
-# ╟─ebe45c70-f622-45c9-a1a8-0e7b63be236d
+# ╟─97d771f1-ec44-4df2-97a6-0fc2d3ff00a8
+# ╠═5131e9c9-2a98-4ad2-b3cf-b2177bce0ab1
 # ╟─bf2a58cc-bdb4-4d24-9059-220a4ee3c4a8
+# ╟─9d899722-ecbb-4e88-bf60-4c9caddb44c6
 # ╟─0854657a-44ff-4b3f-9514-fa46962750cb
+# ╠═b6bf4041-d74f-49db-8f19-def4be06daf4
+# ╟─82d53156-0206-45dc-8254-87dae5caaff6
+# ╟─3da8d44b-7b7a-40ef-84be-e62ecdd28744
+# ╟─291ed18a-ac7e-4e2a-bb29-6b3bc256fb33
+# ╟─1d948247-e070-4262-bab2-e212b0803569
+# ╟─6e714b8b-ed62-4cdb-8fbb-286eaccc003a
+# ╟─ce1f292a-679f-46fe-b849-bc31b0ff0266
+# ╟─a633f7cf-c14c-4efc-9009-9785ffaad22e
+# ╟─abba3275-0eda-43dc-91b7-f4b2966d8dbe
+# ╟─308d0777-dcb7-44da-a005-4642065060a8
+# ╟─48c3b938-367e-4931-995f-93942a74f0a9
+# ╟─c6d533c3-7c68-4bae-a8cb-3c22d8302f4d
+# ╟─33b4e9e9-a7e2-4daa-a0be-678892771b9f
+# ╟─2976d87c-36c1-4b8d-82f3-c7ffb6590ab1
+# ╟─8fe6b73a-c2d8-4e3d-8318-8e7308753a1e
+# ╟─55249b98-fec8-415d-9500-8203a09287db
+# ╟─e1876858-2711-488c-bbc2-f23dd2b28839
+# ╟─a7636305-fbda-4e2f-981e-40e5b012321a
+# ╟─232c2827-fa1c-4fd5-b486-fbfa2b51f50b
+# ╟─40e82d57-9911-4400-ba67-f7092daab366
 # ╟─ecf54a1e-d606-4a99-8c2a-68375ac7b6b5
+# ╠═45cfeb62-0958-11ee-3ae3-5bb1c78a739b
+# ╠═9cb5f155-b4e5-4abe-a8b1-74f602db0305
+# ╠═cecee598-7662-4fe6-858d-4a58eaab63d8
+# ╠═eed71b26-3dda-49fc-af5c-1d85cab01ebd
 # ╟─6c98ff24-a156-46dc-bc0a-aae64121cc25
 # ╠═408e38e3-7aab-451f-b18b-c0983e556faa
 # ╠═fa2b279c-f0a2-42ef-a88b-d5f0bb910938
@@ -1636,14 +2103,14 @@ version = "3.5.0+0"
 # ╠═53c88017-9878-406a-bda7-fccd0aabb983
 # ╠═468953dc-e0c3-48a2-bd58-7109fc962007
 # ╠═5715cbb1-3d4a-48a8-9216-b28c42c09fa7
-# ╟─a5cbd0a4-cba8-44b2-8ac9-7a8a1bc32d81
 # ╟─0e78fe42-8237-42d0-b2b8-c18e596c82ba
 # ╠═8c222113-45d1-4ce7-96c8-fb6fcdd9fb57
 # ╠═d6ce71c6-31ed-42f0-8fc4-d76238e07523
-# ╟─e52fe6f8-72a4-4124-af01-db40aff165f2
-# ╟─6af0b387-df41-4f60-99c7-0b8ea906fa78
-# ╟─d53bcc31-f7bd-4cd4-98cd-47707b671e81
-# ╟─627c9f51-43b3-415d-936e-b6747b6d4f7c
+# ╟─6badc600-a64e-41f2-bc32-64717ca84983
 # ╠═d312dacc-d1a2-4519-8dc2-13a5a86e66a9
+# ╠═332ea387-20d1-4118-8427-881e8f72e11c
+# ╟─e52fe6f8-72a4-4124-af01-db40aff165f2
+# ╠═ba3219e0-dfcd-4107-af0c-36cde899234d
+# ╠═6af0b387-df41-4f60-99c7-0b8ea906fa78
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
