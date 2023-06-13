@@ -4,8 +4,18 @@
 using Markdown
 using InteractiveUtils
 
+# This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
+macro bind(def, element)
+    quote
+        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
+        local el = $(esc(element))
+        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
+        el
+    end
+end
+
 # ╔═╡ 45cfeb62-0958-11ee-3ae3-5bb1c78a739b
-using PlutoUI, CairoMakie
+using PlutoUI, CairoMakie, Printf
 
 # ╔═╡ eed71b26-3dda-49fc-af5c-1d85cab01ebd
 TableOfContents()
@@ -26,38 +36,55 @@ We provide a one-click solution for Julia users to publish interactive Pluto not
 """
 
 # ╔═╡ 7912c296-4d03-4b8d-b771-2437798a973e
+md"""
+#### [Without Glass Notebook](https://github.com/Glass-Notebook/pitch/blob/main/notebook.jl)
+"""
 
+# ╔═╡ f6b7901f-d28a-46d7-84e8-12f08829934f
+md"""
+#### [With Glass Notebook]()
+"""
+
+# ╔═╡ 68a4a8da-6c34-4bce-a14c-7b9941717dfd
+md"""
+## 2. Target Market 
+"""
 
 # ╔═╡ c153018f-9875-4f36-8e47-294791d7d587
 md"""
-## 2. Revenue Model
+## 3. Revenue Model
+"""
+
+# ╔═╡ 43d06911-838f-4158-be4a-8998c2bd92a1
+md"""
+### a. Static & Interactive Publishing
+"""
+
+# ╔═╡ a1851741-0f97-4476-a0fb-bdb175dd985f
+md"""
+### b. Online Coding Platform
+w/ live collaborative coding built in
+"""
+
+# ╔═╡ ebe45c70-f622-45c9-a1a8-0e7b63be236d
+md"""
+### c. Cloud Computing
 """
 
 # ╔═╡ bf2a58cc-bdb4-4d24-9059-220a4ee3c4a8
 md"""
-## 3. Competetive Advantages
+## 4. Competetive Advantages
 """
 
 # ╔═╡ 0854657a-44ff-4b3f-9514-fa46962750cb
 md"""
-## 4. Current Needs
+## 5. Current Needs
 """
-
-# ╔═╡ f6883f15-708e-4151-a3ae-03a9a0825af6
-
 
 # ╔═╡ ecf54a1e-d606-4a99-8c2a-68375ac7b6b5
 md"""
 # Appendix
 """
-
-# ╔═╡ 5e54a10b-f459-4749-9e55-c87540b5907e
-md"""
-## Download Statistics
-"""
-
-# ╔═╡ 48465fd5-872b-41ff-8acd-e699ec6dd3c0
-
 
 # ╔═╡ 6c98ff24-a156-46dc-bc0a-aae64121cc25
 md"""
@@ -65,32 +92,10 @@ md"""
 """
 
 # ╔═╡ 408e38e3-7aab-451f-b18b-c0983e556faa
-downloads = [3.46e5, 9.04e5, 1.815e6, 7.235e6, 12.85e6, 24.1e6, 34.7e6, 45.13e6] * 1e-6
+downloads = [3.46e5, 9.04e5, 1.815e6, 7.235e6, 12.85e6, 24.1e6, 34.7e6, 45.13e6]
 
 # ╔═╡ fa2b279c-f0a2-42ef-a88b-d5f0bb910938
 years = collect(2016:2023)
-
-# ╔═╡ be36c946-335a-492f-98b5-9b8851b87c22
-function cum_downloads()
-	f = Figure()
-	ax = Axis(
-		f[1, 1],
-		title = "Julia Downloads - Cumulative",
-		xlabel = "Years",
-		ylabel = "Total Downloads (millions)",
-		xticks = years,
-		# ytickformat = "{:,.0f}"
-	)
-	scatterlines!(
-		years, downloads;
-		label = "lower bound"
-	)
-	
-	return f
-end
-
-# ╔═╡ 04f24863-a367-4078-9ef1-12690a59c8ac
-cum_downloads()
 
 # ╔═╡ c0dccf90-c51f-4ec9-a95d-31dee26f2c8d
 md"""
@@ -132,89 +137,132 @@ begin
 end
 
 # ╔═╡ 5715cbb1-3d4a-48a8-9216-b28c42c09fa7
-user_ticks = [0, 250_000, 500_000, 750_000, 1_000_000, 1_250_000, 1_500_000]*1e-6;
-
-# ╔═╡ 6c067a00-6998-43f4-ad67-d0b6a64d1f29
-function total_users()
-	f = Figure()
-	ax = Axis(
-		f[1, 1],
-		title = "Estimated Active Julia Users",
-		xlabel = "Years",
-		ylabel = "Active Users (millions)",
-		xticks = years,
-		yticks = user_ticks,
-		# ytickformat = "{:,.0f}"
-	)
-	scatterlines!(
-		active_julia_users_lb[:years], active_julia_users_lb[:users];
-		label = "lower bound"
-	)
-	scatterlines!(
-		active_julia_users_ub[:years], active_julia_users_ub[:users];
-		label = "upper bound"
-	)
-	axislegend(ax; position = :lt)
-	
-	return f
-end
-
-# ╔═╡ 2e4ef645-c3c4-48c3-b2e0-1e277f503106
-total_users()
+user_ticks = [0, 250_000, 500_000, 750_000, 1_000_000, 1_250_000, 1_500_000];
 
 # ╔═╡ a5cbd0a4-cba8-44b2-8ac9-7a8a1bc32d81
 md"""
 ## Companies & Universities
 """
 
-# ╔═╡ f1b6a050-8715-417c-bf20-f737e1deebdb
-function user_demo()
-    f = Figure()
-    colors = Makie.wong_colors()
-
-    ax = Axis(
-		f[1, 1]; 
-		xticks = (1:2, ["Companies", "Universities"]),
-		title = "User Demographic",
-		ylabel = "Number of Unique Institutions",
-		yticks = [0, 2_500, 5_000, 7_500, 10_000, 12_500],
-		ytickformat = "{:,0f}"
-	)
-
-    table = [1, 2]
-	h1 = 10_000
-	h2 = 1_500
-	heights1 = [h1, h2]
-    barplot!(table, heights1; color=colors[1:2])
-
-    ylims!(ax; low=0, high=12_500)
-
-    return f
-end
-
-# ╔═╡ e360b5e9-f37a-4d45-bbc4-25a4ae70c1d4
-user_demo()
-
 # ╔═╡ 0e78fe42-8237-42d0-b2b8-c18e596c82ba
 md"""
-# Estimated Active Pluto Users
-"""
-
-# ╔═╡ 273b980d-b9a9-4ab8-9b14-f9d11365c656
-md"""
-Using GenieFrameworks handie package, we can find the total number of Pluto downloads for 2022
-
-[![Genie Downloads](https://shields.io/endpoint?url=https://pkgs.genieframework.com/api/v1/badge/Pluto)](https://pkgs.genieframework.com?packages=Pluto)
+## Estimated Active Pluto Users
 """
 
 # ╔═╡ 8c222113-45d1-4ce7-96c8-fb6fcdd9fb57
-downloads_pluto_2022 = 156293
+downloads_pluto =  81869 # from June 2022 to June 2023
+
+# ╔═╡ d6ce71c6-31ed-42f0-8fc4-d76238e07523
+begin
+	users_pluto_lb = downloads_pluto * (lower_bound_active_user_percentage / 100)
+	users_pluto_ub = downloads_pluto * (upper_bound_active_user_percentage / 100)
+end
+
+# ╔═╡ e52fe6f8-72a4-4124-af01-db40aff165f2
+md"""
+## Combined
+"""
+
+# ╔═╡ 6af0b387-df41-4f60-99c7-0b8ea906fa78
+function tot(sel)
+	f = Figure()
+	colors = Makie.wong_colors()
+
+	if sel == "Julia Downloads"
+	
+		ax = Axis(
+			f[1, 1],
+			title = "Julia Downloads - Cumulative",
+			ylabel = "Total Downloads (millions)",
+			xticks = years,
+			xticklabelrotation = 45
+		)
+		scatterlines!(
+			years, downloads;
+			label = "lower bound"
+		)
+		return f
+	elseif sel == "User Demographics"
+		ax = Axis(
+			f[1, 1]; 
+			xticks = (1:2, ["Companies", "Universities"]),
+			title = "User Demographics",
+			ylabel = "Number of Unique Institutions",
+			yticks = [-10]
+		)
+	
+	    table = [1, 2]
+		h1 = 10_000
+		h2 = 1_500
+		heights1 = [h1, h2]
+	    barplot!(table, heights1; color = [colors[1], colors[4]], bar_labels = ["10,000+", "1,500+"])
+		hidedecorations!(ax, label = false, ticklabels = false)
+	
+	    ylims!(ax; low=0, high=12_500)
+		return f
+	elseif sel == "Active Julia Users"
+
+		ax = Axis(
+			f[1, 1]; 
+			xticks = (1:2, ["Estimate (Lower Bound)", "Estimate (Upper Bound)"]),
+			title = "Estimated Active Julia Users (2022)",
+			ylabel = "Active Users",
+			yticks = [-10]
+		)
+	
+	    table = [1, 2]
+		h1 = active_julia_users_lb[:users][end]
+		h2 = active_julia_users_ub[:users][end]
+		heights1 = [h1, h2]
+		l1 = @sprintf "%.1e" h1
+		l2 = @sprintf "%.1e" h2
+	    barplot!(table, heights1; color = [colors[1], colors[4]], bar_labels = [l1, l2])
+		hidedecorations!(ax, label = false, ticklabels = false)
+	
+	    ylims!(ax; low=0, high=1.5e6)
+		
+		ax = Axis(
+			f[2, 1],
+			title = "Estimated Active Julia Users",
+			ylabel = "Active Users",
+			xticks = years,
+			yticks = user_ticks,
+			xticklabelrotation = 45
+		)
+		scatterlines!(
+			active_julia_users_lb[:years], active_julia_users_lb[:users];
+			label = "lower bound"
+		)
+		scatterlines!(
+			active_julia_users_ub[:years], active_julia_users_ub[:users];
+			label = "upper bound"
+		)
+		axislegend(ax; position = :lt)
+		
+		return f
+	elseif sel == "TAM+"
+	end
+end
+
+# ╔═╡ d53bcc31-f7bd-4cd4-98cd-47707b671e81
+@bind sel PlutoUI.Select(["Julia Downloads", "User Demographics", "Active Julia Users", "TAM+"])
+
+# ╔═╡ 627c9f51-43b3-415d-936e-b6747b6d4f7c
+tot(sel)
+
+# ╔═╡ d312dacc-d1a2-4519-8dc2-13a5a86e66a9
+begin
+	TAM = 26.9e6 # total active software developers
+	SAM = active_julia_users_ub[:users][end] # total active julia users (upper bound)
+	SOM = users_pluto_ub # total active pluto users (lower bound)
+end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 
 [compat]
 CairoMakie = "~0.10.6"
@@ -227,7 +275,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.1"
 manifest_format = "2.0"
-project_hash = "0a7283a8b2c553ad5244aeb428b5d01fe575d580"
+project_hash = "52630ac6bd4166efeaf4cb1efa5e4c91ab84598f"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -1570,31 +1618,32 @@ version = "3.5.0+0"
 # ╟─ce147685-0eaf-4f29-a875-08e4ed632da1
 # ╟─5f31c010-13a3-4b94-bb83-e922bde4b6ef
 # ╟─d53a94cd-6627-4bcd-a13f-82b057b8c327
-# ╠═7912c296-4d03-4b8d-b771-2437798a973e
+# ╟─7912c296-4d03-4b8d-b771-2437798a973e
+# ╟─f6b7901f-d28a-46d7-84e8-12f08829934f
+# ╟─68a4a8da-6c34-4bce-a14c-7b9941717dfd
 # ╟─c153018f-9875-4f36-8e47-294791d7d587
+# ╟─43d06911-838f-4158-be4a-8998c2bd92a1
+# ╟─a1851741-0f97-4476-a0fb-bdb175dd985f
+# ╟─ebe45c70-f622-45c9-a1a8-0e7b63be236d
 # ╟─bf2a58cc-bdb4-4d24-9059-220a4ee3c4a8
 # ╟─0854657a-44ff-4b3f-9514-fa46962750cb
-# ╠═f6883f15-708e-4151-a3ae-03a9a0825af6
 # ╟─ecf54a1e-d606-4a99-8c2a-68375ac7b6b5
-# ╟─5e54a10b-f459-4749-9e55-c87540b5907e
-# ╠═48465fd5-872b-41ff-8acd-e699ec6dd3c0
 # ╟─6c98ff24-a156-46dc-bc0a-aae64121cc25
 # ╠═408e38e3-7aab-451f-b18b-c0983e556faa
 # ╠═fa2b279c-f0a2-42ef-a88b-d5f0bb910938
-# ╠═be36c946-335a-492f-98b5-9b8851b87c22
-# ╟─04f24863-a367-4078-9ef1-12690a59c8ac
 # ╟─c0dccf90-c51f-4ec9-a95d-31dee26f2c8d
 # ╠═3059fcfb-0fce-499e-9c8a-c2d3c2f3ca14
 # ╠═53c88017-9878-406a-bda7-fccd0aabb983
 # ╠═468953dc-e0c3-48a2-bd58-7109fc962007
 # ╠═5715cbb1-3d4a-48a8-9216-b28c42c09fa7
-# ╟─6c067a00-6998-43f4-ad67-d0b6a64d1f29
-# ╠═2e4ef645-c3c4-48c3-b2e0-1e277f503106
 # ╟─a5cbd0a4-cba8-44b2-8ac9-7a8a1bc32d81
-# ╟─f1b6a050-8715-417c-bf20-f737e1deebdb
-# ╟─e360b5e9-f37a-4d45-bbc4-25a4ae70c1d4
 # ╟─0e78fe42-8237-42d0-b2b8-c18e596c82ba
-# ╟─273b980d-b9a9-4ab8-9b14-f9d11365c656
 # ╠═8c222113-45d1-4ce7-96c8-fb6fcdd9fb57
+# ╠═d6ce71c6-31ed-42f0-8fc4-d76238e07523
+# ╟─e52fe6f8-72a4-4124-af01-db40aff165f2
+# ╟─6af0b387-df41-4f60-99c7-0b8ea906fa78
+# ╟─d53bcc31-f7bd-4cd4-98cd-47707b671e81
+# ╟─627c9f51-43b3-415d-936e-b6747b6d4f7c
+# ╠═d312dacc-d1a2-4519-8dc2-13a5a86e66a9
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
