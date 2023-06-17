@@ -33,14 +33,9 @@ md"""
 We provide a one-click solution for Julia users to publish interactive Pluto notebooks. Simply link the GitHub URL and we take care of the rest.
 """
 
-# ╔═╡ d7c3196d-6b05-4665-95c1-7d83f053d4ec
-video_path = joinpath(pwd(), "vids", "Glass Demo Fit.mp4");
-
 # ╔═╡ a2b1adc4-544b-4488-b358-d55f145ee7cf
-@htl """
-<video width="840" height="630" controls>
-	<source src="$video_path" type="video/mp4">
-</video>
+html"""
+<iframe width="700" height="345" src="https://www.youtube.com/embed/oAqCvRjK0-c" title="Glass Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 """
 
 # ╔═╡ d11816dd-ad4f-48d9-a7b2-78c4de3cab34
@@ -346,14 +341,6 @@ begin
 	SOM = SAM * 0.25
 end
 
-# ╔═╡ 332ea387-20d1-4118-8427-881e8f72e11c
-users_pluto_ub
-
-# ╔═╡ e52fe6f8-72a4-4124-af01-db40aff165f2
-md"""
-#### Combined
-"""
-
 # ╔═╡ 6af0b387-df41-4f60-99c7-0b8ea906fa78
 function tot(sel)
 	f = Figure()
@@ -411,39 +398,62 @@ function tot(sel)
 		hidedecorations!(ax, label = false, ticklabels = false)
 	
 	    ylims!(ax; low=0, high=1.5e6)
-		
+
 		ax = Axis(
-			f[2, 1],
-			title = "Estimated Active Julia Users",
+			f[2, 1]; 
+			xticks = (1:2, ["Estimate (Lower Bound)", "Estimate (Upper Bound)"]),
+			title = "Estimated Active Pluto Users (2022)",
 			ylabel = "Active Users",
-			xticks = years,
-			yticks = user_ticks,
-			xticklabelrotation = 45
+			yticks = [-10]
 		)
-		scatterlines!(
-			active_julia_users_lb[:years], active_julia_users_lb[:users];
-			label = "lower bound"
-		)
-		scatterlines!(
-			active_julia_users_ub[:years], active_julia_users_ub[:users];
-			label = "upper bound"
-		)
-		axislegend(ax; position = :lt)
+	
+	    table = [1, 2]
+		h1 = users_pluto_lb
+		h2 = users_pluto_ub
+		heights1 = [h1, h2]
+		l1 = @sprintf "%.1e" h1
+		l2 = @sprintf "%.1e" h2
+	    barplot!(table, heights1; color = [colors[1], colors[4]], bar_labels = [l1, l2])
+		hidedecorations!(ax, label = false, ticklabels = false)
+	
+	    ylims!(ax; low=0, high=1.5e4)
+		
+		# ax = Axis(
+		# 	f[2, 1],
+		# 	title = "Estimated Active Julia Users",
+		# 	ylabel = "Active Users",
+		# 	xticks = years,
+		# 	yticks = user_ticks,
+		# 	xticklabelrotation = 45
+		# )
+		# scatterlines!(
+		# 	active_julia_users_lb[:years], active_julia_users_lb[:users];
+		# 	label = "lower bound"
+		# )
+		# scatterlines!(
+		# 	active_julia_users_ub[:years], active_julia_users_ub[:users];
+		# 	label = "upper bound"
+		# )
+		# axislegend(ax; position = :lt)
 		
 		return f
 	elseif sel == "TAM+"
 		ax = Axis(
-			f[1, 1],
+			f[1:2, 1:2],
 			title = "Market Size (Not To Scale)"
 			
 		)
-		scatter!(0, 0; markersize = 600)
-		scatter!(0, -0.7; markersize = 300)
-		scatter!(0, -1; markersize = 150)
+		l1 = @sprintf "%.1e" TAM
+		l2 = @sprintf "%.1e" SAM
+		l3 = @sprintf "%.1e" SOM
+		scatter!(0, 0; markersize = 600, label = "TAM = $(l1) = Julia users × \$10 × 12")
+		scatter!(0, -0.7; markersize = 300, label = "SAM = $(l2) = Pluto users × \$10 × 12")
+		scatter!(0, -1; markersize = 150, label = "SOM = $(l3) = Pluto users × \$10 × 12 × 0.10")
 		limits!(ax, -2, 2, -2, 2)
 		
 		hidespines!(ax)
 		hidedecorations!(ax)
+		# axislegend(ax)
 	
 		colors = Makie.wong_colors()
 	
@@ -455,13 +465,16 @@ function tot(sel)
 		l3 = @sprintf "%.1e" SOM
 		
 		Legend(
-			f[1, 2],
+			f[2, 2],
 			group_color,
 			[
-				"TAM = \$$(l1)", 
-				"SAM = \$$(l2)", 
-				"SOM = \$$(l3)"
+				"TAM = $(l1) = Julia users × \$10 × 12", 
+				"SAM = $(l2) = Pluto users × \$10 × 12", 
+				"SOM = $(l3) = Pluto users × \$10 × 12 × 0.10"
 			],
+			valign = :bottom,
+			halign = :right,
+			orientation = :vertical,
 		)
 		f
 		return f
@@ -470,6 +483,14 @@ end
 
 # ╔═╡ 627c9f51-43b3-415d-936e-b6747b6d4f7c
 tot(sel)
+
+# ╔═╡ 332ea387-20d1-4118-8427-881e8f72e11c
+users_pluto_ub
+
+# ╔═╡ e52fe6f8-72a4-4124-af01-db40aff165f2
+md"""
+#### Combined
+"""
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -2054,8 +2075,7 @@ version = "3.5.0+0"
 # ╔═╡ Cell order:
 # ╟─5f31c010-13a3-4b94-bb83-e922bde4b6ef
 # ╟─d53a94cd-6627-4bcd-a13f-82b057b8c327
-# ╠═d7c3196d-6b05-4665-95c1-7d83f053d4ec
-# ╠═a2b1adc4-544b-4488-b358-d55f145ee7cf
+# ╟─a2b1adc4-544b-4488-b358-d55f145ee7cf
 # ╟─d11816dd-ad4f-48d9-a7b2-78c4de3cab34
 # ╟─01121798-e25c-4712-8310-a86805f7d91b
 # ╟─7912c296-4d03-4b8d-b771-2437798a973e
@@ -2064,6 +2084,7 @@ version = "3.5.0+0"
 # ╟─68a4a8da-6c34-4bce-a14c-7b9941717dfd
 # ╟─d53bcc31-f7bd-4cd4-98cd-47707b671e81
 # ╟─627c9f51-43b3-415d-936e-b6747b6d4f7c
+# ╟─6af0b387-df41-4f60-99c7-0b8ea906fa78
 # ╟─c153018f-9875-4f36-8e47-294791d7d587
 # ╟─97d771f1-ec44-4df2-97a6-0fc2d3ff00a8
 # ╠═5131e9c9-2a98-4ad2-b3cf-b2177bce0ab1
@@ -2111,6 +2132,5 @@ version = "3.5.0+0"
 # ╠═332ea387-20d1-4118-8427-881e8f72e11c
 # ╟─e52fe6f8-72a4-4124-af01-db40aff165f2
 # ╠═ba3219e0-dfcd-4107-af0c-36cde899234d
-# ╠═6af0b387-df41-4f60-99c7-0b8ea906fa78
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
