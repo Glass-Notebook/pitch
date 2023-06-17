@@ -92,6 +92,80 @@ md"""
 ## 3. Revenue Model
 """
 
+# ╔═╡ d4ad976c-bf3e-4b11-a357-932ad6cbd975
+begin
+	# Costs
+	glass_users = [10, 100, 1000]
+	costs_static = [1.20, 0.50, 0.10] # $
+	costs_interactive = [15.00, 7.50, 1.00] # $
+	costs_precomputed_interactive = costs_static .+ 0.02 # $
+end
+
+# ╔═╡ 1eed1496-22f4-4d45-aa4f-e80953b8cce1
+begin
+	# Pricing
+	free_static = [5, 10, 15]
+	free_interactive = [1, 2, 3]
+
+	pro_static = [25:25:200, 50:50:500, 100:100:1000]
+	pro_interactive = [10:10:100, 20:40:200, 30:60:300]
+end
+
+# ╔═╡ ccb1b716-3a31-4e86-b605-5cc58aa6fe45
+md"""
+User Category: $(@bind user_category PlutoUI.Slider(1:3, default = 1, show_value = true))
+	
+Average Static Notebooks Per User (free) $(@bind avg_num_static_notebooks_per_free_user PlutoUI.Slider(1:10, default = 5, show_value = true))
+
+Average Static Notebooks Per User (paid) $(@bind avg_num_static_notebooks_per_paid_user PlutoUI.Slider(1:20, default = 10, show_value = true))
+
+Average Interactive Notebooks Per User (free) $(@bind avg_num_interactive_notebooks_per_free_user PlutoUI.Slider(1:3, default = 2, show_value = true))
+
+Average Interactive Notebooks Per User (paid) $(@bind avg_num_interactive_notebooks_per_paid_user PlutoUI.Slider(1:10, default = 5, show_value = true))
+
+Percentage of Free Users: $(@bind _percentage PlutoUI.Slider(1:100, default = 80, show_value = true))
+"""
+
+# ╔═╡ c9e5d577-ccc4-4d6f-986e-7ee89768662c
+begin
+	percentage = _percentage * 0.01
+
+	num_users_free = glass_users[user_category] * percentage
+	num_users_paid = glass_users[user_category] - num_users_free
+	
+	total_cost_static_free = avg_num_static_notebooks_per_free_user * num_users_free * costs_static[user_category]
+	total_cost_static_paid = avg_num_static_notebooks_per_free_user * num_users_paid * costs_static[user_category]
+
+	pricing_per_month = 10
+	months = 12
+	total_revenue_static_free = 0
+	total_revenue_static_paid = pricing_per_month * num_users_paid * months
+
+	profit_static = (total_revenue_static_paid + total_revenue_static_free) - (total_cost_static_free + total_cost_static_paid)
+	
+end
+
+# ╔═╡ f5d1b719-42ff-4566-81e9-043c5752b224
+let
+	f = Figure()
+	colors = cgrad(:tab10)
+	labels = ["Total cost static", "Total revenue static", "Profit static"]
+	ax = Axis(
+		f[1, 1],
+		xticks = (1:3, labels)
+	)
+	ys = [
+		total_cost_static_free + total_cost_static_paid,
+		total_revenue_static_free + total_revenue_static_paid,
+		profit_static
+	]
+	barplot!(
+		1:3, ys;
+		color = [colors[4], colors[3], colors[1]],
+	)
+	f
+end
+
 # ╔═╡ 97d771f1-ec44-4df2-97a6-0fc2d3ff00a8
 md"""
 Needed
@@ -2086,6 +2160,11 @@ version = "3.5.0+0"
 # ╟─627c9f51-43b3-415d-936e-b6747b6d4f7c
 # ╟─6af0b387-df41-4f60-99c7-0b8ea906fa78
 # ╟─c153018f-9875-4f36-8e47-294791d7d587
+# ╠═d4ad976c-bf3e-4b11-a357-932ad6cbd975
+# ╠═1eed1496-22f4-4d45-aa4f-e80953b8cce1
+# ╠═c9e5d577-ccc4-4d6f-986e-7ee89768662c
+# ╟─ccb1b716-3a31-4e86-b605-5cc58aa6fe45
+# ╠═f5d1b719-42ff-4566-81e9-043c5752b224
 # ╟─97d771f1-ec44-4df2-97a6-0fc2d3ff00a8
 # ╠═5131e9c9-2a98-4ad2-b3cf-b2177bce0ab1
 # ╟─bf2a58cc-bdb4-4d24-9059-220a4ee3c4a8
