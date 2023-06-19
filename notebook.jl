@@ -160,9 +160,6 @@ md"""
 $(@bind sel PlutoUI.Select(["Julia Downloads", "User Demographics", "Active Julia Users", "TAM+"]))
 """
 
-# ╔═╡ 47e4f5c6-dc19-43c8-9956-af658c6cea6b
-som_users = users_pluto_ub * 0.1
-
 # ╔═╡ 6af0b387-df41-4f60-99c7-0b8ea906fa78
 function tot(sel)
 	f = Figure()
@@ -300,19 +297,19 @@ end;
 
 # ╔═╡ 0037582a-22c3-446e-97cf-fcd0ecf0d151
 md"""
-### Without Pre-Computed Servers
+#### Without Pre-Computed Servers
 """
 
 # ╔═╡ 9445acc6-8070-4baf-8efb-50c0882fdb8b
 md"""
-#### Free Tier
+##### Free Tier
 Number of Free Users: $(@bind num_users_free PlutoUI.Slider(free_user_range, show_value = true))
 
 Allotted Static Exports Per Month: $(@bind num_static_notebooks_per_month_free PlutoUI.Slider(102:5000, default = 1_000, show_value = true))
 
 Alloted Active Interactive Notebooks: $(@bind num_interactive_notebooks_per_month_free PlutoUI.Slider(0:3, show_value = true))
 
-#### Paid Tier
+##### Paid Tier
 Price Per Month: $(@bind paid_price_per_month PlutoUI.Slider([5, 10, 25, 50, 100, 200], show_value = true))
 
 Number of Paid Users: $(@bind num_users_paid PlutoUI.Slider(paid_user_range, show_value = true))
@@ -393,15 +390,15 @@ end
 
 # ╔═╡ 8043ae5c-179a-4673-a00f-d91ef486c4a3
 md"""
-### With Pre-Computed Slider Servers
+#### With Pre-Computed Slider Servers
 """
 
 # ╔═╡ 1582c67a-3519-4ae7-995e-3b0c382b5e00
 md"""
-#### Free Tier
+##### Free Tier
 Alloted Precomputed Exports Per Month: $(@bind num_precomputed_notebooks_per_month_free PlutoUI.Slider(1:10, default = 5, show_value = true))
 
-#### Paid Tier
+##### Paid Tier
 Alloted Precomputed Exports Per Month: $(@bind num_precomputed_notebooks_per_month_paid PlutoUI.Slider(1:1000, default = 500, show_value = true))
 """
 
@@ -2191,19 +2188,18 @@ version = "3.5.0+0"
 # ╠═d312dacc-d1a2-4519-8dc2-13a5a86e66a9
 # ╟─d53bcc31-f7bd-4cd4-98cd-47707b671e81
 # ╟─627c9f51-43b3-415d-936e-b6747b6d4f7c
-# ╠═47e4f5c6-dc19-43c8-9956-af658c6cea6b
 # ╟─6af0b387-df41-4f60-99c7-0b8ea906fa78
 # ╟─c153018f-9875-4f36-8e47-294791d7d587
 # ╠═da0638f5-eb18-4402-8205-dd112bfd310f
 # ╠═8da9141f-58df-4b84-96c0-5fe5ab6862b0
-# ╠═0037582a-22c3-446e-97cf-fcd0ecf0d151
+# ╟─0037582a-22c3-446e-97cf-fcd0ecf0d151
 # ╟─9445acc6-8070-4baf-8efb-50c0882fdb8b
 # ╟─abff01f4-c9bb-4443-ae43-8aaa0a3e6d76
-# ╠═8043ae5c-179a-4673-a00f-d91ef486c4a3
+# ╟─8043ae5c-179a-4673-a00f-d91ef486c4a3
 # ╠═88c50056-3370-442d-b3bf-88564cca3d85
 # ╟─1582c67a-3519-4ae7-995e-3b0c382b5e00
 # ╟─c527aea9-f11f-4fdc-bea3-dcee8e4e8bb2
-# ╠═06480585-3efe-4b9a-a816-6f44c97bb828
+# ╟─06480585-3efe-4b9a-a816-6f44c97bb828
 # ╠═c318b24a-0b15-4912-8891-2690c63deb50
 # ╠═204f24ba-29a1-4814-be20-e708f0784e95
 # ╟─7d5eaa9e-dfb5-4451-a64b-21438a955b22
