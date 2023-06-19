@@ -15,12 +15,9 @@ macro bind(def, element)
 end
 
 # ╔═╡ 45cfeb62-0958-11ee-3ae3-5bb1c78a739b
-using PlutoUI, CairoMakie, Printf, FileIO, Images
+using PlutoUI, CairoMakie, Printf, FileIO, Images, Unitful
 
-# ╔═╡ 9cb5f155-b4e5-4abe-a8b1-74f602db0305
-using HypertextLiteral
-
-# ╔═╡ ba3219e0-dfcd-4107-af0c-36cde899234d
+# ╔═╡ 3d9b340c-8249-4f8b-baef-447bbafc233e
 using CairoMakie:Axis
 
 # ╔═╡ 5f31c010-13a3-4b94-bb83-e922bde4b6ef
@@ -92,152 +89,270 @@ md"""
 ## 3. Revenue Model
 """
 
-# ╔═╡ d4ad976c-bf3e-4b11-a357-932ad6cbd975
+# ╔═╡ da0638f5-eb18-4402-8205-dd112bfd310f
 begin
-	# Costs
-	glass_users = [10, 100, 1000]
-	costs_static = [1.20, 0.50, 0.10] # $
-	costs_interactive = [15.00, 7.50, 1.00] # $
-	costs_precomputed_interactive = costs_static .+ 0.02 # $
-end
+	free_user_range = [10, 100, 1000, 10_000]
+	paid_user_range = free_user_range .* 0.1
+end;
 
-# ╔═╡ 1eed1496-22f4-4d45-aa4f-e80953b8cce1
-begin
-	# Pricing
-	free_static = [5, 10, 15]
-	free_interactive = [1, 2, 3]
-
-	pro_static = [25:25:200, 50:50:500, 100:100:1000]
-	pro_interactive = [10:10:100, 20:40:200, 30:60:300]
-end
-
-# ╔═╡ ccb1b716-3a31-4e86-b605-5cc58aa6fe45
+# ╔═╡ 0037582a-22c3-446e-97cf-fcd0ecf0d151
 md"""
-User Category: $(@bind user_category PlutoUI.Slider(1:3, default = 1, show_value = true))
-	
-Average Static Notebooks Per User (free) $(@bind avg_num_static_notebooks_per_free_user PlutoUI.Slider(1:10, default = 5, show_value = true))
-
-Average Static Notebooks Per User (paid) $(@bind avg_num_static_notebooks_per_paid_user PlutoUI.Slider(1:20, default = 10, show_value = true))
-
-Average Interactive Notebooks Per User (free) $(@bind avg_num_interactive_notebooks_per_free_user PlutoUI.Slider(1:3, default = 2, show_value = true))
-
-Average Interactive Notebooks Per User (paid) $(@bind avg_num_interactive_notebooks_per_paid_user PlutoUI.Slider(1:10, default = 5, show_value = true))
-
-Percentage of Free Users: $(@bind _percentage PlutoUI.Slider(1:100, default = 80, show_value = true))
+### a. Static & Interactive Publishing
+Without Pre-Computed Servers
 """
 
-# ╔═╡ c9e5d577-ccc4-4d6f-986e-7ee89768662c
+# ╔═╡ 9445acc6-8070-4baf-8efb-50c0882fdb8b
+md"""
+#### Free Tier
+Number of Free Users: $(@bind num_users_free PlutoUI.Slider(free_user_range, show_value = true))
+
+Allotted Static Exports Per Month: $(@bind num_static_notebooks_per_month_free PlutoUI.Slider(102:5000, default = 1_000, show_value = true))
+
+Alloted Active Interactive Notebooks: $(@bind num_interactive_notebooks_per_month_free PlutoUI.Slider(0:3, show_value = true))
+
+#### Paid Tier
+Price Per Month: $(@bind paid_price_per_month PlutoUI.Slider([5, 10, 25, 50, 100, 200], show_value = true))
+
+Number of Paid Users: $(@bind num_users_paid PlutoUI.Slider(paid_user_range, show_value = true))
+
+Allotted Static Exports Per Month: $(@bind num_static_notebooks_per_month_paid PlutoUI.Slider(1:10_000, default = 5_000, show_value = true))
+
+Alloted Active Interactive Notebooks: $(@bind num_interactive_notebooks_per_month_paid PlutoUI.Slider(1:1_000, default = 1, show_value = true))
+"""
+
+# ╔═╡ 8da9141f-58df-4b84-96c0-5fe5ab6862b0
 begin
-	percentage = _percentage * 0.01
+	avg_static_export_per_notebook = 0.10u"hr"
+	avg_interactive_export_per_notebook = (30 * 24)u"hr" # 30 days * 24 hrs
+	export_cost_per_hour = 0.002u"hr^-1" # $/hr
+	static_export_cost_per_month_free = export_cost_per_hour * avg_static_export_per_notebook * num_static_notebooks_per_month_free * num_users_free # $
+	interactive_export_cost_per_month_free = export_cost_per_hour * avg_interactive_export_per_notebook * num_interactive_notebooks_per_month_free * num_users_free # $
+	static_export_cost_per_month_paid = export_cost_per_hour * avg_static_export_per_notebook * num_static_notebooks_per_month_paid * num_users_paid # $
+	interactive_export_cost_per_month_paid = export_cost_per_hour * avg_interactive_export_per_notebook * num_interactive_notebooks_per_month_paid * num_users_paid # $
+	profit_free = 0 - (static_export_cost_per_month_free + interactive_export_cost_per_month_free)
+	profit_paid = (paid_price_per_month * num_users_paid) - (static_export_cost_per_month_paid + interactive_export_cost_per_month_paid)
+	static_export_cost_per_month_comb = static_export_cost_per_month_paid + static_export_cost_per_month_free
+	interactive_export_cost_per_month_comb = interactive_export_cost_per_month_paid + interactive_export_cost_per_month_free
+	profit_comb = profit_paid + profit_free
+end;
 
-	num_users_free = glass_users[user_category] * percentage
-	num_users_paid = glass_users[user_category] - num_users_free
-	
-	total_cost_static_free = avg_num_static_notebooks_per_free_user * num_users_free * costs_static[user_category]
-	total_cost_static_paid = avg_num_static_notebooks_per_free_user * num_users_paid * costs_static[user_category]
-
-	pricing_per_month = 10
-	months = 12
-	total_revenue_static_free = 0
-	total_revenue_static_paid = pricing_per_month * num_users_paid * months
-
-	profit_static = (total_revenue_static_paid + total_revenue_static_free) - (total_cost_static_free + total_cost_static_paid)
-	
-end
-
-# ╔═╡ f5d1b719-42ff-4566-81e9-043c5752b224
+# ╔═╡ abff01f4-c9bb-4443-ae43-8aaa0a3e6d76
 let
 	f = Figure()
 	colors = cgrad(:tab10)
-	labels = ["Total cost static", "Total revenue static", "Profit static"]
+	labels = ["Cost \n Static", "Costs \n Interactive", "Profit"]
 	ax = Axis(
 		f[1, 1],
-		xticks = (1:3, labels)
+		ylabel = "Per Month (\$)",
+		xticks = (1:3, labels),
+		title = "Free Tier Price Model = \$0.00",
 	)
-	ys = [
-		total_cost_static_free + total_cost_static_paid,
-		total_revenue_static_free + total_revenue_static_paid,
-		profit_static
-	]
+	
+	ys = [static_export_cost_per_month_free, interactive_export_cost_per_month_free, profit_free]
 	barplot!(
 		1:3, ys;
-		color = [colors[4], colors[3], colors[1]],
+		color = [colors[5], colors[9], colors[4]],
+		bar_labels = round.(ys, digits = 2),
+		label_size = 10,
+		label_offset = -15
+	)
+
+	ax = Axis(
+		f[2, 1],
+		ylabel = "Per Month (\$)",
+		xticks = (1:3, labels),
+		title = "Paid Tier Price Model = \$$(paid_price_per_month).00",
+	)
+	ys = [static_export_cost_per_month_paid, interactive_export_cost_per_month_paid, profit_paid]
+	barplot!(
+		1:3, ys;
+		color = [colors[5], colors[9], colors[3]],
+		bar_labels = round.(ys, digits = 2),
+		label_size = 10,
+		label_offset = -15
+	)
+
+	ax = Axis(
+		f[1:2, 2],
+		ylabel = "Per Month (\$)",
+		xticks = (1:3, labels),
+		title = "Combined"
+	)
+	ys = [static_export_cost_per_month_comb, interactive_export_cost_per_month_comb, profit_comb]
+	barplot!(
+		1:3, ys;
+		color = [colors[5], colors[9], colors[3]],
+		bar_labels = round.(ys, digits = 2),
+		label_size = 10,
+		label_offset = -15
 	)
 	f
 end
 
-# ╔═╡ 97d771f1-ec44-4df2-97a6-0fc2d3ff00a8
+# ╔═╡ 8043ae5c-179a-4673-a00f-d91ef486c4a3
 md"""
-Needed
-- Estimated cost per static notebook @ 10, 100, 1000, & 10000 users
-- Estimated cost per interactive notebook @ 10, 100, 1000, & 10000 users
-- Estimated cost per (heavy) interactive notebook @ 10, 100, 1000, & 10000 users
-
-
-- Estimated cost per live notebook @ 10, 100, 1000, & 10000 users
-- Estimated cost per active CPU @ 10, 100, 1000, & 10000 users
-- Estimated cost per active GPU @ 10, 100, 1000, & 10000 users
+#### With Pre-Computed Slider Servers
 """
 
-# ╔═╡ 5131e9c9-2a98-4ad2-b3cf-b2177bce0ab1
+# ╔═╡ 1582c67a-3519-4ae7-995e-3b0c382b5e00
 md"""
-### a. Static & Interactive Publishing
-- Estimated cost per static notebook @ 10, 100, 1000, & 10000 users
-- Estimated cost per interactive notebook @ 10, 100, 1000, & 10000 users
+#### Free Tier
+Alloted Precomputed Exports Per Month: $(@bind num_precomputed_notebooks_per_month_free PlutoUI.Slider(1:10, default = 5, show_value = true))
 
+#### Paid Tier
+Alloted Precomputed Exports Per Month: $(@bind num_precomputed_notebooks_per_month_paid PlutoUI.Slider(1:1000, default = 500, show_value = true))
+"""
 
-- Expected tier features and rates
-  - Free (\$0): 3 free static notebooks
-  - Pro (\$10): unlimited static notebooks, 3 interactive notebooks
-  - Pro+ (\$75): unlimited static and interactive notebooks
-  - Business (On Demand): unlimited static and interactive notebooks + storage + enterprise support
+# ╔═╡ 88c50056-3370-442d-b3bf-88564cca3d85
+begin
+	avg_precomputed_export_per_notebook = 100 * avg_static_export_per_notebook
+	precomputed_export_cost_per_month_free = export_cost_per_hour * avg_precomputed_export_per_notebook * num_precomputed_notebooks_per_month_free * num_users_free # $
+	precomputed_export_cost_per_month_paid = export_cost_per_hour * avg_precomputed_export_per_notebook * num_precomputed_notebooks_per_month_paid * num_users_paid # $
+	precomputed_export_cost_per_month_comb = precomputed_export_cost_per_month_paid + precomputed_export_cost_per_month_free
+	profit_free2 = 0 - (static_export_cost_per_month_free + interactive_export_cost_per_month_free + precomputed_export_cost_per_month_free)
+	profit_paid2 = (paid_price_per_month * num_users_paid) - (static_export_cost_per_month_paid + interactive_export_cost_per_month_paid + precomputed_export_cost_per_month_paid)
+end;
 
+# ╔═╡ c527aea9-f11f-4fdc-bea3-dcee8e4e8bb2
+let
+	f = Figure()
+	colors = cgrad(:tab10)
+	labels = ["Cost \n Static", "Cost \n Precomputed", "Cost \n Interactive", "Profit"]
+	tick_range = 1:4
+	clrs = [colors[5], colors[9], colors[10], colors[3]]
+	ax = Axis(
+		f[1, 1],
+		ylabel = "Per Month (\$)",
+		xticks = (tick_range, labels),
+		title = "Free Tier Price Model = \$0.00",
+		xticklabelrotation = π/8
+	)
+	
+	ys = [static_export_cost_per_month_free, precomputed_export_cost_per_month_free, interactive_export_cost_per_month_free, profit_free]
+	barplot!(
+		tick_range, ys;
+		color = [clrs[1:3]..., colors[4]],
+		bar_labels = round.(ys, digits = 2),
+		label_size = 10,
+		label_offset = -15
+	)
 
-- Expected Profict Margin
-  - Free: -5%
-  - Pro: ...
-  - Pro+: ...
-  - Business: ...
+	ax = Axis(
+		f[2, 1],
+		ylabel = "Per Month (\$)",
+		xticks = (tick_range, labels),
+		title = "Paid Tier Price Model = \$$(paid_price_per_month).00",
+		xticklabelrotation = π/8
+	)
+	ys = [static_export_cost_per_month_paid, precomputed_export_cost_per_month_paid, interactive_export_cost_per_month_paid, profit_paid]
+	barplot!(
+		tick_range, ys;
+		color = clrs,
+		bar_labels = round.(ys, digits = 2),
+		label_size = 10,
+		label_offset = -15
+	)
 
+	ax = Axis(
+		f[1:2, 2],
+		ylabel = "Per Month (\$)",
+		xticks = (tick_range, labels),
+		title = "Combined",
+		xticklabelrotation = π/8
+	)
+	ys = [static_export_cost_per_month_comb, precomputed_export_cost_per_month_comb, interactive_export_cost_per_month_comb, profit_comb]
+	barplot!(
+		tick_range, ys;
+		color = clrs,
+		bar_labels = round.(ys, digits = 2),
+		label_size = 10,
+		label_offset = -15
+	)
+	f
+end
+
+# ╔═╡ 06480585-3efe-4b9a-a816-6f44c97bb828
+md"""
+#### Target Pricing Model
+"""
+
+# ╔═╡ c318b24a-0b15-4912-8891-2690c63deb50
+begin
+	target_static_exports_free = 1000 # notebooks per month
+	target_interactive_notebooks_free = 0 # notebooks per month
+	target_pricings = [5, 10, 25, 50, 100, 200] # $ per month
+	target_static_exports_paid = [2_500, 5_000, 10_000, 20_000, 50_000, 100_000]
+	target_interactive_notebooks_paid = [1, 3, 9, 20, 40, 80]
+end;
+
+# ╔═╡ e77df139-dd90-4bc9-8c31-ac71e8b179f4
+md"""
+Paid Price Tier: $(@bind a PlutoUI.Slider(1:length(target_pricings)))
+
+Number of Users: $(@bind n PlutoUI.Slider(1:length(free_user_range)))
+"""
+
+# ╔═╡ 204f24ba-29a1-4814-be20-e708f0784e95
+begin
+	max_static_export_cost_per_month_free = export_cost_per_hour * avg_static_export_per_notebook * target_static_exports_free * free_user_range[n] # $
+	max_static_export_cost_per_month_paid = export_cost_per_hour * avg_static_export_per_notebook * target_static_exports_paid[a] * paid_user_range[n] # $
+	max_interactive_export_cost_per_month_paid = export_cost_per_hour * avg_interactive_export_per_notebook * target_interactive_notebooks_paid[a] * paid_user_range[n] # $
+	min_profit = (target_pricings[a] * paid_user_range[n]) - (max_static_export_cost_per_month_free + max_static_export_cost_per_month_paid + max_interactive_export_cost_per_month_paid)
+end;
+
+# ╔═╡ 7d5eaa9e-dfb5-4451-a64b-21438a955b22
+md"""
+#### Free (\$0 / month)
+- Up to $(target_static_exports_free) static notebook exports per month
+
+#### Paid (\$$(target_pricings[a]) / month) 
+- Up to $(target_static_exports_paid[a]) static notebook exports per month
+- Up to $(target_interactive_notebooks_paid[a]) active interactive notebooks
+
+#### Enterprise (Custom)
+- Unlimited static notebook exports per month
+- Unlimited active interactive notebooks
+"""
+
+# ╔═╡ a41c59fd-639d-47a0-a5ad-64667c394de7
+let
+	f = Figure()
+	colors = cgrad(:tab10)
+	labels = ["Cost \n Static", "Cost \n Interactive", "Profit"]
+	tick_range = 1:3
+	clrs = [colors[5], colors[9], colors[3]]
+
+	ax = Axis(
+		f[0:1, 0:1],
+		ylabel = "Per Month (\$)",
+		xticks = (tick_range, labels),
+		title = "Combined",
+		xticklabelrotation = π/8
+	)
+	ys = [max_static_export_cost_per_month_paid, max_interactive_export_cost_per_month_paid, min_profit]
+	barplot!(
+		tick_range, ys;
+		color = clrs,
+		bar_labels = round.(ys, digits = 2),
+		label_size = 20,
+		label_offset = -40
+	)
+
+	Label(
+		f[0, 0], 
+		" \n  Free Users: $(free_user_range[n]) \n  Paid Users: $(paid_user_range[n])"
+	)
+	f
+end
+
+# ╔═╡ ac4b8a34-5dda-4cbf-ad62-e610646a1bcd
+md"""
 ### b. Live Collaborative Coding
-- Estimated cost per static notebook @ 10, 100, 1000, & 10000 users
-- Estimated cost per interactive notebook @ 10, 100, 1000, & 10000 users
-- Estimated cost per live notebook @ 10, 100, 1000, & 10000 users
+"""
 
-
-- Expected tier features and rates
-  - Free (\$0): 3 static notebooks, 1 interactive notebook, 1 live notebook
-  - Pro (\$25): unlimited static notebooks, 3 interactive notebooks, 3 live notebooks
-  - Pro+ (\$100): unlimited static, interactive, and live notebooks
-  - Business (On Demand): unlimited static, interactive, and live notebooks + storage + enterprise support
-
-
-- Expected Profict Margin
-  - Free: -5%
-  - Pro: ...
-  - Pro+: ...
-  - Business: ...
-
+# ╔═╡ 6fc153e1-36c1-467c-ab82-0679af57d803
+md"""
 ### c. High Performance Computing
-- Estimated cost per static notebook @ 10, 100, 1000, & 10000 users
-- Estimated cost per interactive notebook @ 10, 100, 1000, & 10000 users
-- Estimated cost per live notebook @ 10, 100, 1000, & 10000 users
-- Estimated cost per active CPU @ 10, 100, 1000, & 10000 users
-- Estimated cost per active GPU @ 10, 100, 1000, & 10000 users
-
-
-- Expected tier features and rates
-  - Free (\$0): 3 static notebooks, 1 interactive notebook, 1 live notebook
-  - Pro (\$25): unlimited static notebooks, 3 interactive notebooks, 3 live notebooks, 3,000 CPU/50 GPU hours + on demand cluster computing
-  - Pro+ (\$100): unlimited static, interactive, and live notebooks, 9,000 CPU/100 GPU hours + on demand cluster computing
-  - Business (On Demand): unlimited static, interactive, and live notebooks + storage + enterprise support, 15,000 CPU/500 GPU hours + on demand cluster computing
-
-
-- Expected Profict Margin
-  - Free: -5%
-  - Pro: ...
-  - Pro+: ...
-  - Business: ...
 """
 
 # ╔═╡ bf2a58cc-bdb4-4d24-9059-220a4ee3c4a8
@@ -259,73 +374,40 @@ md"""
 ## 5. Current Needs
 """
 
-# ╔═╡ b6bf4041-d74f-49db-8f19-def4be06daf4
+# ╔═╡ f158c614-23da-4df0-b77c-933c43913576
 
 
-# ╔═╡ 82d53156-0206-45dc-8254-87dae5caaff6
+# ╔═╡ 48650875-b423-4376-a117-2f0a75cde747
 
 
-# ╔═╡ 3da8d44b-7b7a-40ef-84be-e62ecdd28744
+# ╔═╡ 9f8da884-894a-4480-9d3e-1526a9b28246
 
 
-# ╔═╡ 291ed18a-ac7e-4e2a-bb29-6b3bc256fb33
+# ╔═╡ 1811e575-b8c7-4822-ae2e-21da9cd94ac4
 
 
-# ╔═╡ 1d948247-e070-4262-bab2-e212b0803569
+# ╔═╡ 37f4f0b0-ace6-44a0-86cb-94286db099e4
 
 
-# ╔═╡ 6e714b8b-ed62-4cdb-8fbb-286eaccc003a
+# ╔═╡ b56112d2-21ba-4897-ae3a-ad8159853628
 
 
-# ╔═╡ ce1f292a-679f-46fe-b849-bc31b0ff0266
+# ╔═╡ 66ac9565-4d14-4e5f-add6-c08406c34adb
 
 
-# ╔═╡ a633f7cf-c14c-4efc-9009-9785ffaad22e
+# ╔═╡ f282f39f-d653-4b5a-9e19-41fbedd28dd7
 
 
-# ╔═╡ abba3275-0eda-43dc-91b7-f4b2966d8dbe
+# ╔═╡ a2e0c280-366b-4ce9-8a03-33be31cff393
 
 
-# ╔═╡ 308d0777-dcb7-44da-a005-4642065060a8
-
-
-# ╔═╡ 48c3b938-367e-4931-995f-93942a74f0a9
-
-
-# ╔═╡ c6d533c3-7c68-4bae-a8cb-3c22d8302f4d
-
-
-# ╔═╡ 33b4e9e9-a7e2-4daa-a0be-678892771b9f
-
-
-# ╔═╡ 2976d87c-36c1-4b8d-82f3-c7ffb6590ab1
-
-
-# ╔═╡ 8fe6b73a-c2d8-4e3d-8318-8e7308753a1e
-
-
-# ╔═╡ 55249b98-fec8-415d-9500-8203a09287db
-
-
-# ╔═╡ e1876858-2711-488c-bbc2-f23dd2b28839
-
-
-# ╔═╡ a7636305-fbda-4e2f-981e-40e5b012321a
-
-
-# ╔═╡ 232c2827-fa1c-4fd5-b486-fbfa2b51f50b
-
-
-# ╔═╡ 40e82d57-9911-4400-ba67-f7092daab366
+# ╔═╡ a6791def-b8e8-452c-93ed-57f9b94fc590
 
 
 # ╔═╡ ecf54a1e-d606-4a99-8c2a-68375ac7b6b5
 md"""
 # Appendix
 """
-
-# ╔═╡ cecee598-7662-4fe6-858d-4a58eaab63d8
-# using Javis, LaTeXStrings, Animations
 
 # ╔═╡ eed71b26-3dda-49fc-af5c-1d85cab01ebd
 TableOfContents()
@@ -335,11 +417,11 @@ md"""
 #### Cumulative Julia Downloads
 """
 
-# ╔═╡ 408e38e3-7aab-451f-b18b-c0983e556faa
-downloads = [3.46e5, 9.04e5, 1.815e6, 7.235e6, 12.85e6, 24.1e6, 34.7e6, 45.13e6]
-
-# ╔═╡ fa2b279c-f0a2-42ef-a88b-d5f0bb910938
-years = collect(2016:2023)
+# ╔═╡ c13b8a6d-0691-4ab6-8313-6c781f416044
+begin
+	downloads = [3.46e5, 9.04e5, 1.815e6, 7.235e6, 12.85e6, 24.1e6, 34.7e6, 45.13e6]
+	years = collect(2016:2023)
+end;
 
 # ╔═╡ c0dccf90-c51f-4ec9-a95d-31dee26f2c8d
 md"""
@@ -355,10 +437,7 @@ begin
 
 	lower_bound_active_user_percentage = (lower_bound_active_python_users / python_downloads) * 100
 	upper_bound_active_user_percentage = (upper_bound_active_python_users / python_downloads) * 100
-end
 
-# ╔═╡ 53c88017-9878-406a-bda7-fccd0aabb983
-begin
 	downloads_yearly = zeros(size(downloads))
 	for i in 1:length(downloads)
 		if i == 1
@@ -368,20 +447,13 @@ begin
 	end
 	
 	julia_downloads = Dict(:years => years, :downloads_yearly => downloads_yearly)
-end
-
-# ╔═╡ 468953dc-e0c3-48a2-bd58-7109fc962007
-begin
 	active_julia_users_lb = Dict(
 		:years => years[2:end], 
 		:users => julia_downloads[:downloads_yearly][2:end] * (lower_bound_active_user_percentage / 100))
 	active_julia_users_ub = Dict(
 		:years => years[2:end], 
 		:users => julia_downloads[:downloads_yearly][2:end] * (upper_bound_active_user_percentage / 100))
-end
-
-# ╔═╡ 5715cbb1-3d4a-48a8-9216-b28c42c09fa7
-user_ticks = [0, 250_000, 500_000, 750_000, 1_000_000, 1_250_000, 1_500_000];
+end;
 
 # ╔═╡ 0e78fe42-8237-42d0-b2b8-c18e596c82ba
 md"""
@@ -389,13 +461,11 @@ md"""
 """
 
 # ╔═╡ 8c222113-45d1-4ce7-96c8-fb6fcdd9fb57
-downloads_pluto =  81869 # from June 2022 to June 2023
-
-# ╔═╡ d6ce71c6-31ed-42f0-8fc4-d76238e07523
 begin
+	downloads_pluto =  81869 # from June 2022 to June 2023
 	users_pluto_lb = downloads_pluto * (lower_bound_active_user_percentage / 100)
 	users_pluto_ub = downloads_pluto * (upper_bound_active_user_percentage / 100)
-end
+end;
 
 # ╔═╡ 6badc600-a64e-41f2-bc32-64717ca84983
 md"""
@@ -413,7 +483,7 @@ begin
 	SAM = _SAM * annual_value_per_customer
 
 	SOM = SAM * 0.25
-end
+end;
 
 # ╔═╡ 6af0b387-df41-4f60-99c7-0b8ea906fa78
 function tot(sel)
@@ -558,30 +628,22 @@ end
 # ╔═╡ 627c9f51-43b3-415d-936e-b6747b6d4f7c
 tot(sel)
 
-# ╔═╡ 332ea387-20d1-4118-8427-881e8f72e11c
-users_pluto_ub
-
-# ╔═╡ e52fe6f8-72a4-4124-af01-db40aff165f2
-md"""
-#### Combined
-"""
-
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
-HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
 Images = "916415d5-f1e6-5110-898d-aaa5f9f070e0"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
 CairoMakie = "~0.10.6"
 FileIO = "~1.16.1"
-HypertextLiteral = "~0.9.4"
 Images = "~0.25.3"
 PlutoUI = "~0.7.51"
+Unitful = "~1.14.0"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -590,7 +652,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.1"
 manifest_format = "2.0"
-project_hash = "9c704ded0423357f7567ca1dd53d2dc90f8c0936"
+project_hash = "078c1301faa8fad4b8cdbd963c33771c7b5cdb6c"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -1999,6 +2061,18 @@ git-tree-sha1 = "53915e50200959667e78a92a418594b428dffddf"
 uuid = "1cfade01-22cf-5700-b092-accc4b62d6e1"
 version = "0.4.1"
 
+[[deps.Unitful]]
+deps = ["ConstructionBase", "Dates", "LinearAlgebra", "Random"]
+git-tree-sha1 = "ba4aa36b2d5c98d6ed1f149da916b3ba46527b2b"
+uuid = "1986cc42-f94f-5a68-af5c-568840ba703d"
+version = "1.14.0"
+
+    [deps.Unitful.extensions]
+    InverseFunctionsUnitfulExt = "InverseFunctions"
+
+    [deps.Unitful.weakdeps]
+    InverseFunctions = "3587e190-3f89-42d0-90ee-14403ec27112"
+
 [[deps.WoodburyMatrices]]
 deps = ["LinearAlgebra", "SparseArrays"]
 git-tree-sha1 = "de67fa59e33ad156a590055375a30b23c40299d3"
@@ -2160,56 +2234,47 @@ version = "3.5.0+0"
 # ╟─627c9f51-43b3-415d-936e-b6747b6d4f7c
 # ╟─6af0b387-df41-4f60-99c7-0b8ea906fa78
 # ╟─c153018f-9875-4f36-8e47-294791d7d587
-# ╠═d4ad976c-bf3e-4b11-a357-932ad6cbd975
-# ╠═1eed1496-22f4-4d45-aa4f-e80953b8cce1
-# ╠═c9e5d577-ccc4-4d6f-986e-7ee89768662c
-# ╟─ccb1b716-3a31-4e86-b605-5cc58aa6fe45
-# ╠═f5d1b719-42ff-4566-81e9-043c5752b224
-# ╟─97d771f1-ec44-4df2-97a6-0fc2d3ff00a8
-# ╠═5131e9c9-2a98-4ad2-b3cf-b2177bce0ab1
+# ╠═da0638f5-eb18-4402-8205-dd112bfd310f
+# ╠═8da9141f-58df-4b84-96c0-5fe5ab6862b0
+# ╟─0037582a-22c3-446e-97cf-fcd0ecf0d151
+# ╟─9445acc6-8070-4baf-8efb-50c0882fdb8b
+# ╟─abff01f4-c9bb-4443-ae43-8aaa0a3e6d76
+# ╟─8043ae5c-179a-4673-a00f-d91ef486c4a3
+# ╠═88c50056-3370-442d-b3bf-88564cca3d85
+# ╟─1582c67a-3519-4ae7-995e-3b0c382b5e00
+# ╟─c527aea9-f11f-4fdc-bea3-dcee8e4e8bb2
+# ╟─06480585-3efe-4b9a-a816-6f44c97bb828
+# ╠═c318b24a-0b15-4912-8891-2690c63deb50
+# ╠═204f24ba-29a1-4814-be20-e708f0784e95
+# ╟─7d5eaa9e-dfb5-4451-a64b-21438a955b22
+# ╟─e77df139-dd90-4bc9-8c31-ac71e8b179f4
+# ╟─a41c59fd-639d-47a0-a5ad-64667c394de7
+# ╟─ac4b8a34-5dda-4cbf-ad62-e610646a1bcd
+# ╟─6fc153e1-36c1-467c-ab82-0679af57d803
 # ╟─bf2a58cc-bdb4-4d24-9059-220a4ee3c4a8
 # ╟─9d899722-ecbb-4e88-bf60-4c9caddb44c6
 # ╟─0854657a-44ff-4b3f-9514-fa46962750cb
-# ╠═b6bf4041-d74f-49db-8f19-def4be06daf4
-# ╟─82d53156-0206-45dc-8254-87dae5caaff6
-# ╟─3da8d44b-7b7a-40ef-84be-e62ecdd28744
-# ╟─291ed18a-ac7e-4e2a-bb29-6b3bc256fb33
-# ╟─1d948247-e070-4262-bab2-e212b0803569
-# ╟─6e714b8b-ed62-4cdb-8fbb-286eaccc003a
-# ╟─ce1f292a-679f-46fe-b849-bc31b0ff0266
-# ╟─a633f7cf-c14c-4efc-9009-9785ffaad22e
-# ╟─abba3275-0eda-43dc-91b7-f4b2966d8dbe
-# ╟─308d0777-dcb7-44da-a005-4642065060a8
-# ╟─48c3b938-367e-4931-995f-93942a74f0a9
-# ╟─c6d533c3-7c68-4bae-a8cb-3c22d8302f4d
-# ╟─33b4e9e9-a7e2-4daa-a0be-678892771b9f
-# ╟─2976d87c-36c1-4b8d-82f3-c7ffb6590ab1
-# ╟─8fe6b73a-c2d8-4e3d-8318-8e7308753a1e
-# ╟─55249b98-fec8-415d-9500-8203a09287db
-# ╟─e1876858-2711-488c-bbc2-f23dd2b28839
-# ╟─a7636305-fbda-4e2f-981e-40e5b012321a
-# ╟─232c2827-fa1c-4fd5-b486-fbfa2b51f50b
-# ╟─40e82d57-9911-4400-ba67-f7092daab366
+# ╠═f158c614-23da-4df0-b77c-933c43913576
+# ╠═48650875-b423-4376-a117-2f0a75cde747
+# ╠═9f8da884-894a-4480-9d3e-1526a9b28246
+# ╠═1811e575-b8c7-4822-ae2e-21da9cd94ac4
+# ╠═37f4f0b0-ace6-44a0-86cb-94286db099e4
+# ╠═b56112d2-21ba-4897-ae3a-ad8159853628
+# ╠═66ac9565-4d14-4e5f-add6-c08406c34adb
+# ╠═f282f39f-d653-4b5a-9e19-41fbedd28dd7
+# ╠═a2e0c280-366b-4ce9-8a03-33be31cff393
+# ╠═a6791def-b8e8-452c-93ed-57f9b94fc590
 # ╟─ecf54a1e-d606-4a99-8c2a-68375ac7b6b5
 # ╠═45cfeb62-0958-11ee-3ae3-5bb1c78a739b
-# ╠═9cb5f155-b4e5-4abe-a8b1-74f602db0305
-# ╠═cecee598-7662-4fe6-858d-4a58eaab63d8
+# ╠═3d9b340c-8249-4f8b-baef-447bbafc233e
 # ╠═eed71b26-3dda-49fc-af5c-1d85cab01ebd
 # ╟─6c98ff24-a156-46dc-bc0a-aae64121cc25
-# ╠═408e38e3-7aab-451f-b18b-c0983e556faa
-# ╠═fa2b279c-f0a2-42ef-a88b-d5f0bb910938
+# ╠═c13b8a6d-0691-4ab6-8313-6c781f416044
 # ╟─c0dccf90-c51f-4ec9-a95d-31dee26f2c8d
 # ╠═3059fcfb-0fce-499e-9c8a-c2d3c2f3ca14
-# ╠═53c88017-9878-406a-bda7-fccd0aabb983
-# ╠═468953dc-e0c3-48a2-bd58-7109fc962007
-# ╠═5715cbb1-3d4a-48a8-9216-b28c42c09fa7
 # ╟─0e78fe42-8237-42d0-b2b8-c18e596c82ba
 # ╠═8c222113-45d1-4ce7-96c8-fb6fcdd9fb57
-# ╠═d6ce71c6-31ed-42f0-8fc4-d76238e07523
 # ╟─6badc600-a64e-41f2-bc32-64717ca84983
 # ╠═d312dacc-d1a2-4519-8dc2-13a5a86e66a9
-# ╠═332ea387-20d1-4118-8427-881e8f72e11c
-# ╟─e52fe6f8-72a4-4124-af01-db40aff165f2
-# ╠═ba3219e0-dfcd-4107-af0c-36cde899234d
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
