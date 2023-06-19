@@ -20,6 +20,9 @@ using PlutoUI, CairoMakie, Printf, FileIO, Images, Unitful
 # ╔═╡ 3d9b340c-8249-4f8b-baef-447bbafc233e
 using CairoMakie:Axis
 
+# ╔═╡ eed71b26-3dda-49fc-af5c-1d85cab01ebd
+TableOfContents()
+
 # ╔═╡ 5f31c010-13a3-4b94-bb83-e922bde4b6ef
 md"""
 ## 1. What is Glass Notebook?
@@ -79,10 +82,210 @@ md"""
 ## 2. Target Market 
 """
 
+# ╔═╡ 6c98ff24-a156-46dc-bc0a-aae64121cc25
+md"""
+#### Cumulative Julia Downloads
+"""
+
+# ╔═╡ c13b8a6d-0691-4ab6-8313-6c781f416044
+begin
+	downloads = [3.46e5, 9.04e5, 1.815e6, 7.235e6, 12.85e6, 24.1e6, 34.7e6, 45.13e6]
+	years = collect(2016:2023)
+end;
+
+# ╔═╡ c0dccf90-c51f-4ec9-a95d-31dee26f2c8d
+md"""
+#### Estimated Active Julia Users
+Using the estimated lower and upper bound [number of active Python developers](https://blog.pythonanywhere.com/67/) along with the number of Python downloads, we calculate the lower and upper bound percentage of python users. We then assume this percentage of Julia users as it relates to total number of Julia downloads is the same as the Python equivalent. Therefore, given, (1) lower and upper bound estimates of active Python users, (2) number of python downloads, and (3) [number of Julia downloads](https://info.juliahub.com/julia-annual-growth-statistics-january-2023) - we can estimate the lower and upper bounds of active Julia users
+"""
+
+# ╔═╡ 3059fcfb-0fce-499e-9c8a-c2d3c2f3ca14
+begin
+	lower_bound_active_python_users = 1.8e6
+	upper_bound_active_python_users = 4.3e6
+	python_downloads = 34.5e6
+
+	lower_bound_active_user_percentage = (lower_bound_active_python_users / python_downloads) * 100
+	upper_bound_active_user_percentage = (upper_bound_active_python_users / python_downloads) * 100
+
+	downloads_yearly = zeros(size(downloads))
+	for i in 1:length(downloads)
+		if i == 1
+			continue
+		end
+		downloads_yearly[i] = downloads[i] - downloads[i-1]
+	end
+	
+	julia_downloads = Dict(:years => years, :downloads_yearly => downloads_yearly)
+	active_julia_users_lb = Dict(
+		:years => years[2:end], 
+		:users => julia_downloads[:downloads_yearly][2:end] * (lower_bound_active_user_percentage / 100))
+	active_julia_users_ub = Dict(
+		:years => years[2:end], 
+		:users => julia_downloads[:downloads_yearly][2:end] * (upper_bound_active_user_percentage / 100))
+end;
+
+# ╔═╡ 0e78fe42-8237-42d0-b2b8-c18e596c82ba
+md"""
+#### Estimated Active Pluto Users
+"""
+
+# ╔═╡ 8c222113-45d1-4ce7-96c8-fb6fcdd9fb57
+begin
+	downloads_pluto =  81869 # from June 2022 to June 2023
+	users_pluto_lb = downloads_pluto * (lower_bound_active_user_percentage / 100)
+	users_pluto_ub = downloads_pluto * (upper_bound_active_user_percentage / 100)
+end;
+
+# ╔═╡ 6badc600-a64e-41f2-bc32-64717ca84983
+md"""
+#### TAM/SAM/TOM
+"""
+
+# ╔═╡ d312dacc-d1a2-4519-8dc2-13a5a86e66a9
+begin
+	annual_value_per_customer = 10 * 12 # monthly_user_rate × months
+	
+	_TAM = active_julia_users_ub[:users][end] # total active julia users (upper bound)
+	TAM = _TAM * annual_value_per_customer
+	
+	_SAM = users_pluto_ub # total active pluto users (lower bound)
+	SAM = _SAM * annual_value_per_customer
+
+	SOM = SAM * 0.25
+end;
+
 # ╔═╡ d53bcc31-f7bd-4cd4-98cd-47707b671e81
 md"""
 $(@bind sel PlutoUI.Select(["Julia Downloads", "User Demographics", "Active Julia Users", "TAM+"]))
 """
+
+# ╔═╡ 47e4f5c6-dc19-43c8-9956-af658c6cea6b
+som_users = users_pluto_ub * 0.1
+
+# ╔═╡ 6af0b387-df41-4f60-99c7-0b8ea906fa78
+function tot(sel)
+	f = Figure()
+	colors = Makie.wong_colors()
+
+	if sel == "Julia Downloads"
+	
+		ax = Axis(
+			f[1, 1],
+			title = "Julia Downloads - Cumulative",
+			ylabel = "Total Downloads (millions)",
+			xticks = years,
+			xticklabelrotation = 45
+		)
+		scatterlines!(
+			years, downloads;
+			label = "lower bound"
+		)
+		return f
+	elseif sel == "User Demographics"
+		ax = Axis(
+			f[1, 1]; 
+			xticks = (1:2, ["Companies", "Universities"]),
+			title = "User Demographics",
+			ylabel = "Number of Unique Institutions",
+			yticks = [-10]
+		)
+	
+	    table = [1, 2]
+		h1 = 10_000
+		h2 = 1_500
+		heights1 = [h1, h2]
+	    barplot!(table, heights1; color = [colors[1], colors[4]], bar_labels = ["10,000+", "1,500+"])
+		hidedecorations!(ax, label = false, ticklabels = false)
+	
+	    ylims!(ax; low=0, high=12_500)
+		return f
+	elseif sel == "Active Julia Users"
+
+		ax = Axis(
+			f[1, 1]; 
+			xticks = (1:2, ["Estimate (Lower Bound)", "Estimate (Upper Bound)"]),
+			title = "Estimated Active Julia Users (2022)",
+			ylabel = "Active Users",
+			yticks = [-10]
+		)
+	
+	    table = [1, 2]
+		h1 = active_julia_users_lb[:users][end]
+		h2 = active_julia_users_ub[:users][end]
+		heights1 = [h1, h2]
+		l1 = @sprintf "%.1e" h1
+		l2 = @sprintf "%.1e" h2
+	    barplot!(table, heights1; color = [colors[1], colors[4]], bar_labels = [l1, l2])
+		hidedecorations!(ax, label = false, ticklabels = false)
+	
+	    ylims!(ax; low=0, high=1.5e6)
+
+		ax = Axis(
+			f[2, 1]; 
+			xticks = (1:2, ["Estimate (Lower Bound)", "Estimate (Upper Bound)"]),
+			title = "Estimated Active Pluto Users (2022)",
+			ylabel = "Active Users",
+			yticks = [-10]
+		)
+	
+	    table = [1, 2]
+		h1 = users_pluto_lb
+		h2 = users_pluto_ub
+		heights1 = [h1, h2]
+		l1 = @sprintf "%.1e" h1
+		l2 = @sprintf "%.1e" h2
+	    barplot!(table, heights1; color = [colors[1], colors[4]], bar_labels = [l1, l2])
+		hidedecorations!(ax, label = false, ticklabels = false)
+	
+	    ylims!(ax; low=0, high=1.5e4)
+		
+		return f
+	elseif sel == "TAM+"
+		ax = Axis(
+			f[1:2, 1:2],
+			title = "Market Size (Not To Scale)"
+			
+		)
+		l1 = @sprintf "%.1e" TAM
+		l2 = @sprintf "%.1e" SAM
+		l3 = @sprintf "%.1e" SOM
+		scatter!(0, 0; markersize = 600, label = "TAM = $(l1) = Julia users × \$10 × 12")
+		scatter!(0, -0.7; markersize = 300, label = "SAM = $(l2) = Pluto users × \$10 × 12")
+		scatter!(0, -1; markersize = 150, label = "SOM = $(l3) = Pluto users × \$10 × 12 × 0.10")
+		limits!(ax, -2, 2, -2, 2)
+		
+		hidespines!(ax)
+		hidedecorations!(ax)
+	
+		colors = Makie.wong_colors()
+	
+		group_color = [PolyElement(color = color, strokecolor = :transparent)
+		for color in colors[1:3]]
+	
+		l1 = @sprintf "%.1e" TAM
+		l2 = @sprintf "%.1e" SAM
+		l3 = @sprintf "%.1e" SOM
+		
+		Legend(
+			f[2, 2],
+			group_color,
+			[
+				"TAM = $(l1) = Julia users × \$10 × 12", 
+				"SAM = $(l2) = Pluto users × \$10 × 12", 
+				"SOM = $(l3) = Pluto users × \$10 × 12 × 0.10"
+			],
+			valign = :bottom,
+			halign = :right,
+			orientation = :vertical,
+		)
+		f
+		return f
+	end
+end
+
+# ╔═╡ 627c9f51-43b3-415d-936e-b6747b6d4f7c
+tot(sel)
 
 # ╔═╡ c153018f-9875-4f36-8e47-294791d7d587
 md"""
@@ -92,13 +295,12 @@ md"""
 # ╔═╡ da0638f5-eb18-4402-8205-dd112bfd310f
 begin
 	free_user_range = [10, 100, 1000, 10_000]
-	paid_user_range = free_user_range .* 0.1
+	paid_user_range = free_user_range .* 0.25
 end;
 
 # ╔═╡ 0037582a-22c3-446e-97cf-fcd0ecf0d151
 md"""
-### a. Static & Interactive Publishing
-Without Pre-Computed Servers
+### Without Pre-Computed Servers
 """
 
 # ╔═╡ 9445acc6-8070-4baf-8efb-50c0882fdb8b
@@ -191,7 +393,7 @@ end
 
 # ╔═╡ 8043ae5c-179a-4673-a00f-d91ef486c4a3
 md"""
-#### With Pre-Computed Slider Servers
+### With Pre-Computed Slider Servers
 """
 
 # ╔═╡ 1582c67a-3519-4ae7-995e-3b0c382b5e00
@@ -273,7 +475,7 @@ end
 
 # ╔═╡ 06480585-3efe-4b9a-a816-6f44c97bb828
 md"""
-#### Target Pricing Model
+### Target Pricing Model
 """
 
 # ╔═╡ c318b24a-0b15-4912-8891-2690c63deb50
@@ -347,12 +549,9 @@ end
 
 # ╔═╡ ac4b8a34-5dda-4cbf-ad62-e610646a1bcd
 md"""
-### b. Live Collaborative Coding
-"""
-
-# ╔═╡ 6fc153e1-36c1-467c-ab82-0679af57d803
-md"""
-### c. High Performance Computing
+#### Roadmap
+- Live Collaborative Coding
+- High Performance Computing
 """
 
 # ╔═╡ bf2a58cc-bdb4-4d24-9059-220a4ee3c4a8
@@ -376,257 +575,6 @@ md"""
 
 # ╔═╡ f158c614-23da-4df0-b77c-933c43913576
 
-
-# ╔═╡ 48650875-b423-4376-a117-2f0a75cde747
-
-
-# ╔═╡ 9f8da884-894a-4480-9d3e-1526a9b28246
-
-
-# ╔═╡ 1811e575-b8c7-4822-ae2e-21da9cd94ac4
-
-
-# ╔═╡ 37f4f0b0-ace6-44a0-86cb-94286db099e4
-
-
-# ╔═╡ b56112d2-21ba-4897-ae3a-ad8159853628
-
-
-# ╔═╡ 66ac9565-4d14-4e5f-add6-c08406c34adb
-
-
-# ╔═╡ f282f39f-d653-4b5a-9e19-41fbedd28dd7
-
-
-# ╔═╡ a2e0c280-366b-4ce9-8a03-33be31cff393
-
-
-# ╔═╡ a6791def-b8e8-452c-93ed-57f9b94fc590
-
-
-# ╔═╡ ecf54a1e-d606-4a99-8c2a-68375ac7b6b5
-md"""
-# Appendix
-"""
-
-# ╔═╡ eed71b26-3dda-49fc-af5c-1d85cab01ebd
-TableOfContents()
-
-# ╔═╡ 6c98ff24-a156-46dc-bc0a-aae64121cc25
-md"""
-#### Cumulative Julia Downloads
-"""
-
-# ╔═╡ c13b8a6d-0691-4ab6-8313-6c781f416044
-begin
-	downloads = [3.46e5, 9.04e5, 1.815e6, 7.235e6, 12.85e6, 24.1e6, 34.7e6, 45.13e6]
-	years = collect(2016:2023)
-end;
-
-# ╔═╡ c0dccf90-c51f-4ec9-a95d-31dee26f2c8d
-md"""
-#### Estimated Active Julia Users
-Using the estimated lower and upper bound [number of active Python developers](https://blog.pythonanywhere.com/67/) along with the number of Python downloads, we calculate the lower and upper bound percentage of python users. We then assume this percentage of Julia users as it relates to total number of Julia downloads is the same as the Python equivalent. Therefore, given, (1) lower and upper bound estimates of active Python users, (2) number of python downloads, and (3) [number of Julia downloads](https://info.juliahub.com/julia-annual-growth-statistics-january-2023) - we can estimate the lower and upper bounds of active Julia users
-"""
-
-# ╔═╡ 3059fcfb-0fce-499e-9c8a-c2d3c2f3ca14
-begin
-	lower_bound_active_python_users = 1.8e6
-	upper_bound_active_python_users = 4.3e6
-	python_downloads = 34.5e6
-
-	lower_bound_active_user_percentage = (lower_bound_active_python_users / python_downloads) * 100
-	upper_bound_active_user_percentage = (upper_bound_active_python_users / python_downloads) * 100
-
-	downloads_yearly = zeros(size(downloads))
-	for i in 1:length(downloads)
-		if i == 1
-			continue
-		end
-		downloads_yearly[i] = downloads[i] - downloads[i-1]
-	end
-	
-	julia_downloads = Dict(:years => years, :downloads_yearly => downloads_yearly)
-	active_julia_users_lb = Dict(
-		:years => years[2:end], 
-		:users => julia_downloads[:downloads_yearly][2:end] * (lower_bound_active_user_percentage / 100))
-	active_julia_users_ub = Dict(
-		:years => years[2:end], 
-		:users => julia_downloads[:downloads_yearly][2:end] * (upper_bound_active_user_percentage / 100))
-end;
-
-# ╔═╡ 0e78fe42-8237-42d0-b2b8-c18e596c82ba
-md"""
-#### Estimated Active Pluto Users
-"""
-
-# ╔═╡ 8c222113-45d1-4ce7-96c8-fb6fcdd9fb57
-begin
-	downloads_pluto =  81869 # from June 2022 to June 2023
-	users_pluto_lb = downloads_pluto * (lower_bound_active_user_percentage / 100)
-	users_pluto_ub = downloads_pluto * (upper_bound_active_user_percentage / 100)
-end;
-
-# ╔═╡ 6badc600-a64e-41f2-bc32-64717ca84983
-md"""
-#### TAM/SAM/TOM
-"""
-
-# ╔═╡ d312dacc-d1a2-4519-8dc2-13a5a86e66a9
-begin
-	annual_value_per_customer = 10 * 12 # monthly_user_rate × months
-	
-	_TAM = active_julia_users_ub[:users][end] # total active julia users (upper bound)
-	TAM = _TAM * annual_value_per_customer
-	
-	_SAM = users_pluto_ub # total active pluto users (lower bound)
-	SAM = _SAM * annual_value_per_customer
-
-	SOM = SAM * 0.25
-end;
-
-# ╔═╡ 6af0b387-df41-4f60-99c7-0b8ea906fa78
-function tot(sel)
-	f = Figure()
-	colors = Makie.wong_colors()
-
-	if sel == "Julia Downloads"
-	
-		ax = Axis(
-			f[1, 1],
-			title = "Julia Downloads - Cumulative",
-			ylabel = "Total Downloads (millions)",
-			xticks = years,
-			xticklabelrotation = 45
-		)
-		scatterlines!(
-			years, downloads;
-			label = "lower bound"
-		)
-		return f
-	elseif sel == "User Demographics"
-		ax = Axis(
-			f[1, 1]; 
-			xticks = (1:2, ["Companies", "Universities"]),
-			title = "User Demographics",
-			ylabel = "Number of Unique Institutions",
-			yticks = [-10]
-		)
-	
-	    table = [1, 2]
-		h1 = 10_000
-		h2 = 1_500
-		heights1 = [h1, h2]
-	    barplot!(table, heights1; color = [colors[1], colors[4]], bar_labels = ["10,000+", "1,500+"])
-		hidedecorations!(ax, label = false, ticklabels = false)
-	
-	    ylims!(ax; low=0, high=12_500)
-		return f
-	elseif sel == "Active Julia Users"
-
-		ax = Axis(
-			f[1, 1]; 
-			xticks = (1:2, ["Estimate (Lower Bound)", "Estimate (Upper Bound)"]),
-			title = "Estimated Active Julia Users (2022)",
-			ylabel = "Active Users",
-			yticks = [-10]
-		)
-	
-	    table = [1, 2]
-		h1 = active_julia_users_lb[:users][end]
-		h2 = active_julia_users_ub[:users][end]
-		heights1 = [h1, h2]
-		l1 = @sprintf "%.1e" h1
-		l2 = @sprintf "%.1e" h2
-	    barplot!(table, heights1; color = [colors[1], colors[4]], bar_labels = [l1, l2])
-		hidedecorations!(ax, label = false, ticklabels = false)
-	
-	    ylims!(ax; low=0, high=1.5e6)
-
-		ax = Axis(
-			f[2, 1]; 
-			xticks = (1:2, ["Estimate (Lower Bound)", "Estimate (Upper Bound)"]),
-			title = "Estimated Active Pluto Users (2022)",
-			ylabel = "Active Users",
-			yticks = [-10]
-		)
-	
-	    table = [1, 2]
-		h1 = users_pluto_lb
-		h2 = users_pluto_ub
-		heights1 = [h1, h2]
-		l1 = @sprintf "%.1e" h1
-		l2 = @sprintf "%.1e" h2
-	    barplot!(table, heights1; color = [colors[1], colors[4]], bar_labels = [l1, l2])
-		hidedecorations!(ax, label = false, ticklabels = false)
-	
-	    ylims!(ax; low=0, high=1.5e4)
-		
-		# ax = Axis(
-		# 	f[2, 1],
-		# 	title = "Estimated Active Julia Users",
-		# 	ylabel = "Active Users",
-		# 	xticks = years,
-		# 	yticks = user_ticks,
-		# 	xticklabelrotation = 45
-		# )
-		# scatterlines!(
-		# 	active_julia_users_lb[:years], active_julia_users_lb[:users];
-		# 	label = "lower bound"
-		# )
-		# scatterlines!(
-		# 	active_julia_users_ub[:years], active_julia_users_ub[:users];
-		# 	label = "upper bound"
-		# )
-		# axislegend(ax; position = :lt)
-		
-		return f
-	elseif sel == "TAM+"
-		ax = Axis(
-			f[1:2, 1:2],
-			title = "Market Size (Not To Scale)"
-			
-		)
-		l1 = @sprintf "%.1e" TAM
-		l2 = @sprintf "%.1e" SAM
-		l3 = @sprintf "%.1e" SOM
-		scatter!(0, 0; markersize = 600, label = "TAM = $(l1) = Julia users × \$10 × 12")
-		scatter!(0, -0.7; markersize = 300, label = "SAM = $(l2) = Pluto users × \$10 × 12")
-		scatter!(0, -1; markersize = 150, label = "SOM = $(l3) = Pluto users × \$10 × 12 × 0.10")
-		limits!(ax, -2, 2, -2, 2)
-		
-		hidespines!(ax)
-		hidedecorations!(ax)
-		# axislegend(ax)
-	
-		colors = Makie.wong_colors()
-	
-		group_color = [PolyElement(color = color, strokecolor = :transparent)
-		for color in colors[1:3]]
-	
-		l1 = @sprintf "%.1e" TAM
-		l2 = @sprintf "%.1e" SAM
-		l3 = @sprintf "%.1e" SOM
-		
-		Legend(
-			f[2, 2],
-			group_color,
-			[
-				"TAM = $(l1) = Julia users × \$10 × 12", 
-				"SAM = $(l2) = Pluto users × \$10 × 12", 
-				"SOM = $(l3) = Pluto users × \$10 × 12 × 0.10"
-			],
-			valign = :bottom,
-			halign = :right,
-			orientation = :vertical,
-		)
-		f
-		return f
-	end
-end
-
-# ╔═╡ 627c9f51-43b3-415d-936e-b6747b6d4f7c
-tot(sel)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -2221,6 +2169,9 @@ version = "3.5.0+0"
 """
 
 # ╔═╡ Cell order:
+# ╠═45cfeb62-0958-11ee-3ae3-5bb1c78a739b
+# ╠═3d9b340c-8249-4f8b-baef-447bbafc233e
+# ╠═eed71b26-3dda-49fc-af5c-1d85cab01ebd
 # ╟─5f31c010-13a3-4b94-bb83-e922bde4b6ef
 # ╟─d53a94cd-6627-4bcd-a13f-82b057b8c327
 # ╟─a2b1adc4-544b-4488-b358-d55f145ee7cf
@@ -2230,44 +2181,6 @@ version = "3.5.0+0"
 # ╟─f6b7901f-d28a-46d7-84e8-12f08829934f
 # ╟─49e0ef0e-c515-46e4-8192-ba137d993908
 # ╟─68a4a8da-6c34-4bce-a14c-7b9941717dfd
-# ╟─d53bcc31-f7bd-4cd4-98cd-47707b671e81
-# ╟─627c9f51-43b3-415d-936e-b6747b6d4f7c
-# ╟─6af0b387-df41-4f60-99c7-0b8ea906fa78
-# ╟─c153018f-9875-4f36-8e47-294791d7d587
-# ╠═da0638f5-eb18-4402-8205-dd112bfd310f
-# ╠═8da9141f-58df-4b84-96c0-5fe5ab6862b0
-# ╟─0037582a-22c3-446e-97cf-fcd0ecf0d151
-# ╟─9445acc6-8070-4baf-8efb-50c0882fdb8b
-# ╟─abff01f4-c9bb-4443-ae43-8aaa0a3e6d76
-# ╟─8043ae5c-179a-4673-a00f-d91ef486c4a3
-# ╠═88c50056-3370-442d-b3bf-88564cca3d85
-# ╟─1582c67a-3519-4ae7-995e-3b0c382b5e00
-# ╟─c527aea9-f11f-4fdc-bea3-dcee8e4e8bb2
-# ╟─06480585-3efe-4b9a-a816-6f44c97bb828
-# ╠═c318b24a-0b15-4912-8891-2690c63deb50
-# ╠═204f24ba-29a1-4814-be20-e708f0784e95
-# ╟─7d5eaa9e-dfb5-4451-a64b-21438a955b22
-# ╟─e77df139-dd90-4bc9-8c31-ac71e8b179f4
-# ╟─a41c59fd-639d-47a0-a5ad-64667c394de7
-# ╟─ac4b8a34-5dda-4cbf-ad62-e610646a1bcd
-# ╟─6fc153e1-36c1-467c-ab82-0679af57d803
-# ╟─bf2a58cc-bdb4-4d24-9059-220a4ee3c4a8
-# ╟─9d899722-ecbb-4e88-bf60-4c9caddb44c6
-# ╟─0854657a-44ff-4b3f-9514-fa46962750cb
-# ╠═f158c614-23da-4df0-b77c-933c43913576
-# ╠═48650875-b423-4376-a117-2f0a75cde747
-# ╠═9f8da884-894a-4480-9d3e-1526a9b28246
-# ╠═1811e575-b8c7-4822-ae2e-21da9cd94ac4
-# ╠═37f4f0b0-ace6-44a0-86cb-94286db099e4
-# ╠═b56112d2-21ba-4897-ae3a-ad8159853628
-# ╠═66ac9565-4d14-4e5f-add6-c08406c34adb
-# ╠═f282f39f-d653-4b5a-9e19-41fbedd28dd7
-# ╠═a2e0c280-366b-4ce9-8a03-33be31cff393
-# ╠═a6791def-b8e8-452c-93ed-57f9b94fc590
-# ╟─ecf54a1e-d606-4a99-8c2a-68375ac7b6b5
-# ╠═45cfeb62-0958-11ee-3ae3-5bb1c78a739b
-# ╠═3d9b340c-8249-4f8b-baef-447bbafc233e
-# ╠═eed71b26-3dda-49fc-af5c-1d85cab01ebd
 # ╟─6c98ff24-a156-46dc-bc0a-aae64121cc25
 # ╠═c13b8a6d-0691-4ab6-8313-6c781f416044
 # ╟─c0dccf90-c51f-4ec9-a95d-31dee26f2c8d
@@ -2276,5 +2189,30 @@ version = "3.5.0+0"
 # ╠═8c222113-45d1-4ce7-96c8-fb6fcdd9fb57
 # ╟─6badc600-a64e-41f2-bc32-64717ca84983
 # ╠═d312dacc-d1a2-4519-8dc2-13a5a86e66a9
+# ╟─d53bcc31-f7bd-4cd4-98cd-47707b671e81
+# ╟─627c9f51-43b3-415d-936e-b6747b6d4f7c
+# ╠═47e4f5c6-dc19-43c8-9956-af658c6cea6b
+# ╟─6af0b387-df41-4f60-99c7-0b8ea906fa78
+# ╟─c153018f-9875-4f36-8e47-294791d7d587
+# ╠═da0638f5-eb18-4402-8205-dd112bfd310f
+# ╠═8da9141f-58df-4b84-96c0-5fe5ab6862b0
+# ╠═0037582a-22c3-446e-97cf-fcd0ecf0d151
+# ╟─9445acc6-8070-4baf-8efb-50c0882fdb8b
+# ╟─abff01f4-c9bb-4443-ae43-8aaa0a3e6d76
+# ╠═8043ae5c-179a-4673-a00f-d91ef486c4a3
+# ╠═88c50056-3370-442d-b3bf-88564cca3d85
+# ╟─1582c67a-3519-4ae7-995e-3b0c382b5e00
+# ╟─c527aea9-f11f-4fdc-bea3-dcee8e4e8bb2
+# ╠═06480585-3efe-4b9a-a816-6f44c97bb828
+# ╠═c318b24a-0b15-4912-8891-2690c63deb50
+# ╠═204f24ba-29a1-4814-be20-e708f0784e95
+# ╟─7d5eaa9e-dfb5-4451-a64b-21438a955b22
+# ╟─e77df139-dd90-4bc9-8c31-ac71e8b179f4
+# ╟─a41c59fd-639d-47a0-a5ad-64667c394de7
+# ╟─ac4b8a34-5dda-4cbf-ad62-e610646a1bcd
+# ╟─bf2a58cc-bdb4-4d24-9059-220a4ee3c4a8
+# ╟─9d899722-ecbb-4e88-bf60-4c9caddb44c6
+# ╟─0854657a-44ff-4b3f-9514-fa46962750cb
+# ╠═f158c614-23da-4df0-b77c-933c43913576
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
