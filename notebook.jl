@@ -297,11 +297,12 @@ end;
 
 # ╔═╡ 0037582a-22c3-446e-97cf-fcd0ecf0d151
 md"""
-#### Without Pre-Computed Servers
+### Pricing Model Playground
 """
 
 # ╔═╡ 9445acc6-8070-4baf-8efb-50c0882fdb8b
 md"""
+Proportion of Precomputable Notebooks: $(@bind precompute_proportion PlutoUI.Slider(0:0.1:1, default=0.5, show_value=true))
 ##### Free Tier
 Number of Free Users: $(@bind num_users_free PlutoUI.Slider(free_user_range, show_value = true))
 
@@ -316,22 +317,35 @@ Number of Paid Users: $(@bind num_users_paid PlutoUI.Slider(paid_user_range, sho
 
 Allotted Static Exports Per Month: $(@bind num_static_notebooks_per_month_paid PlutoUI.Slider(1:10_000, default = 5_000, show_value = true))
 
-Alloted Active Interactive Notebooks: $(@bind num_interactive_notebooks_per_month_paid PlutoUI.Slider(1:1_000, default = 1, show_value = true))
+Alloted Active Interactive Notebooks: $(@bind num_interactive_notebooks_per_month_paid PlutoUI.Slider(1:100, default = 1, show_value = true))
 """
 
 # ╔═╡ 8da9141f-58df-4b84-96c0-5fe5ab6862b0
 begin
 	avg_static_export_per_notebook = 0.10u"hr"
 	avg_interactive_export_per_notebook = (30 * 24)u"hr" # 30 days * 24 hrs
-	export_cost_per_hour = 0.002u"hr^-1" # $/hr
+	export_cost_per_hour_all = Dict(
+		10    => 0.006u"hr^-1", # $/hr
+		100   => 0.003u"hr^-1",
+		1000  => 0.001u"hr^-1",
+		10000 => 0.0006u"hr^-1"
+	)
+	export_cost_per_hour = export_cost_per_hour_all[num_users_free]
+	precomputed_storage_cost = 0.02
+	
 	static_export_cost_per_month_free = export_cost_per_hour * avg_static_export_per_notebook * num_static_notebooks_per_month_free * num_users_free # $
-	interactive_export_cost_per_month_free = export_cost_per_hour * avg_interactive_export_per_notebook * num_interactive_notebooks_per_month_free * num_users_free # $
+	precomputed_export_cost_per_month_free = (export_cost_per_hour * avg_static_export_per_notebook + precomputed_storage_cost) * num_interactive_notebooks_per_month_free * precompute_proportion * num_users_free
+	interactive_export_cost_per_month_free = export_cost_per_hour * avg_interactive_export_per_notebook * num_interactive_notebooks_per_month_free * num_users_free * (1-precompute_proportion) # $
+	
 	static_export_cost_per_month_paid = export_cost_per_hour * avg_static_export_per_notebook * num_static_notebooks_per_month_paid * num_users_paid # $
-	interactive_export_cost_per_month_paid = export_cost_per_hour * avg_interactive_export_per_notebook * num_interactive_notebooks_per_month_paid * num_users_paid # $
-	profit_free = 0 - (static_export_cost_per_month_free + interactive_export_cost_per_month_free)
-	profit_paid = (paid_price_per_month * num_users_paid) - (static_export_cost_per_month_paid + interactive_export_cost_per_month_paid)
+	precomputed_export_cost_per_month_paid = (export_cost_per_hour * avg_static_export_per_notebook + precomputed_storage_cost) * num_interactive_notebooks_per_month_paid * precompute_proportion * num_users_paid
+	interactive_export_cost_per_month_paid = export_cost_per_hour * avg_interactive_export_per_notebook * num_interactive_notebooks_per_month_paid * num_users_paid * (1-precompute_proportion)# $
+	
+	profit_free = 0 - (static_export_cost_per_month_free + precomputed_export_cost_per_month_free + interactive_export_cost_per_month_free)
+	profit_paid = (paid_price_per_month * num_users_paid) - (static_export_cost_per_month_paid + precomputed_export_cost_per_month_paid + interactive_export_cost_per_month_paid)
 	static_export_cost_per_month_comb = static_export_cost_per_month_paid + static_export_cost_per_month_free
 	interactive_export_cost_per_month_comb = interactive_export_cost_per_month_paid + interactive_export_cost_per_month_free
+	precomputed_export_cost_per_month_comb = precomputed_export_cost_per_month_paid + precomputed_export_cost_per_month_free
 	profit_comb = profit_paid + profit_free
 end;
 
@@ -339,98 +353,18 @@ end;
 let
 	f = Figure()
 	colors = cgrad(:tab10)
-	labels = ["Cost \n Static", "Costs \n Interactive", "Profit"]
+	labels = ["Cost \n Static", "Cost \n Precomputed", "Costs \n Interactive", "Profit"]
 	ax = Axis(
 		f[1, 1],
 		ylabel = "Per Month (\$)",
-		xticks = (1:3, labels),
+		xticks = (1:4, labels),
 		title = "Free Tier Price Model = \$0.00",
-	)
-	
-	ys = [static_export_cost_per_month_free, interactive_export_cost_per_month_free, profit_free]
-	barplot!(
-		1:3, ys;
-		color = [colors[5], colors[9], colors[4]],
-		bar_labels = round.(ys, digits = 2),
-		label_size = 10,
-		label_offset = -15
-	)
-
-	ax = Axis(
-		f[2, 1],
-		ylabel = "Per Month (\$)",
-		xticks = (1:3, labels),
-		title = "Paid Tier Price Model = \$$(paid_price_per_month).00",
-	)
-	ys = [static_export_cost_per_month_paid, interactive_export_cost_per_month_paid, profit_paid]
-	barplot!(
-		1:3, ys;
-		color = [colors[5], colors[9], colors[3]],
-		bar_labels = round.(ys, digits = 2),
-		label_size = 10,
-		label_offset = -15
-	)
-
-	ax = Axis(
-		f[1:2, 2],
-		ylabel = "Per Month (\$)",
-		xticks = (1:3, labels),
-		title = "Combined"
-	)
-	ys = [static_export_cost_per_month_comb, interactive_export_cost_per_month_comb, profit_comb]
-	barplot!(
-		1:3, ys;
-		color = [colors[5], colors[9], colors[3]],
-		bar_labels = round.(ys, digits = 2),
-		label_size = 10,
-		label_offset = -15
-	)
-	f
-end
-
-# ╔═╡ 8043ae5c-179a-4673-a00f-d91ef486c4a3
-md"""
-#### With Pre-Computed Slider Servers
-"""
-
-# ╔═╡ 1582c67a-3519-4ae7-995e-3b0c382b5e00
-md"""
-##### Free Tier
-Alloted Precomputed Exports Per Month: $(@bind num_precomputed_notebooks_per_month_free PlutoUI.Slider(1:10, default = 5, show_value = true))
-
-##### Paid Tier
-Alloted Precomputed Exports Per Month: $(@bind num_precomputed_notebooks_per_month_paid PlutoUI.Slider(1:1000, default = 500, show_value = true))
-"""
-
-# ╔═╡ 88c50056-3370-442d-b3bf-88564cca3d85
-begin
-	avg_precomputed_export_per_notebook = 100 * avg_static_export_per_notebook
-	precomputed_export_cost_per_month_free = export_cost_per_hour * avg_precomputed_export_per_notebook * num_precomputed_notebooks_per_month_free * num_users_free # $
-	precomputed_export_cost_per_month_paid = export_cost_per_hour * avg_precomputed_export_per_notebook * num_precomputed_notebooks_per_month_paid * num_users_paid # $
-	precomputed_export_cost_per_month_comb = precomputed_export_cost_per_month_paid + precomputed_export_cost_per_month_free
-	profit_free2 = 0 - (static_export_cost_per_month_free + interactive_export_cost_per_month_free + precomputed_export_cost_per_month_free)
-	profit_paid2 = (paid_price_per_month * num_users_paid) - (static_export_cost_per_month_paid + interactive_export_cost_per_month_paid + precomputed_export_cost_per_month_paid)
-end;
-
-# ╔═╡ c527aea9-f11f-4fdc-bea3-dcee8e4e8bb2
-let
-	f = Figure()
-	colors = cgrad(:tab10)
-	labels = ["Cost \n Static", "Cost \n Precomputed", "Cost \n Interactive", "Profit"]
-	tick_range = 1:4
-	clrs = [colors[5], colors[9], colors[10], colors[3]]
-	ax = Axis(
-		f[1, 1],
-		ylabel = "Per Month (\$)",
-		xticks = (tick_range, labels),
-		title = "Free Tier Price Model = \$0.00",
-		xticklabelrotation = π/8
 	)
 	
 	ys = [static_export_cost_per_month_free, precomputed_export_cost_per_month_free, interactive_export_cost_per_month_free, profit_free]
 	barplot!(
-		tick_range, ys;
-		color = [clrs[1:3]..., colors[4]],
+		1:4, ys;
+		color = [colors[5], colors[9], colors[10], colors[4]],
 		bar_labels = round.(ys, digits = 2),
 		label_size = 10,
 		label_offset = -15
@@ -439,14 +373,13 @@ let
 	ax = Axis(
 		f[2, 1],
 		ylabel = "Per Month (\$)",
-		xticks = (tick_range, labels),
+		xticks = (1:4, labels),
 		title = "Paid Tier Price Model = \$$(paid_price_per_month).00",
-		xticklabelrotation = π/8
 	)
 	ys = [static_export_cost_per_month_paid, precomputed_export_cost_per_month_paid, interactive_export_cost_per_month_paid, profit_paid]
 	barplot!(
-		tick_range, ys;
-		color = clrs,
+		1:4, ys;
+		color = [colors[5], colors[9], colors[10], colors[3]],
 		bar_labels = round.(ys, digits = 2),
 		label_size = 10,
 		label_offset = -15
@@ -455,14 +388,13 @@ let
 	ax = Axis(
 		f[1:2, 2],
 		ylabel = "Per Month (\$)",
-		xticks = (tick_range, labels),
-		title = "Combined",
-		xticklabelrotation = π/8
+		xticks = (1:4, labels),
+		title = "Combined"
 	)
 	ys = [static_export_cost_per_month_comb, precomputed_export_cost_per_month_comb, interactive_export_cost_per_month_comb, profit_comb]
 	barplot!(
-		tick_range, ys;
-		color = clrs,
+		1:4, ys;
+		color = [colors[5], colors[9], colors[10], colors[3]],
 		bar_labels = round.(ys, digits = 2),
 		label_size = 10,
 		label_offset = -15
@@ -595,7 +527,7 @@ Unitful = "~1.14.0"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.1"
+julia_version = "1.9.0"
 manifest_format = "2.0"
 project_hash = "078c1301faa8fad4b8cdbd963c33771c7b5cdb6c"
 
@@ -2116,7 +2048,7 @@ version = "0.15.1+0"
 [[deps.libblastrampoline_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
-version = "5.8.0+0"
+version = "5.7.0+0"
 
 [[deps.libfdk_aac_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -2194,11 +2126,7 @@ version = "3.5.0+0"
 # ╠═8da9141f-58df-4b84-96c0-5fe5ab6862b0
 # ╟─0037582a-22c3-446e-97cf-fcd0ecf0d151
 # ╟─9445acc6-8070-4baf-8efb-50c0882fdb8b
-# ╟─abff01f4-c9bb-4443-ae43-8aaa0a3e6d76
-# ╟─8043ae5c-179a-4673-a00f-d91ef486c4a3
-# ╠═88c50056-3370-442d-b3bf-88564cca3d85
-# ╟─1582c67a-3519-4ae7-995e-3b0c382b5e00
-# ╟─c527aea9-f11f-4fdc-bea3-dcee8e4e8bb2
+# ╠═abff01f4-c9bb-4443-ae43-8aaa0a3e6d76
 # ╟─06480585-3efe-4b9a-a816-6f44c97bb828
 # ╠═c318b24a-0b15-4912-8891-2690c63deb50
 # ╠═204f24ba-29a1-4814-be20-e708f0784e95
