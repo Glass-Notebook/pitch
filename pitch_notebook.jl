@@ -39,7 +39,7 @@ html"""
 # ╔═╡ 750bd464-03c8-463e-bbdf-a6894eae81f3
 md"""
 !!! warning "Without Glass Notebook"
-	- [Without Glass Notebook](https://github.com/Glass-Notebook/pitch/blob/main/notebook.jl)
+	- [Without Glass Notebook](https://github.com/Glass-Notebook/pitch/blob/main/pitch_notebook.jl)
 	
 
 !!! success "Using Glass Notebook"
