@@ -68,6 +68,112 @@ md"""
 ## 2. Target Market 
 """
 
+# ╔═╡ 69b04d0b-1b7d-43e9-8d34-c37b7f312e53
+md"""
+$(@bind sel PlutoUI.Select(["Julia Downloads", "User Demographics", "Active Julia Users", "TAM+"]))
+"""
+
+# ╔═╡ 0d8f1706-0a98-4c2b-b781-024f2ed32a65
+md"""
+## 3. Revenue Model
+"""
+
+# ╔═╡ 89af0b89-ad5e-4c74-8369-32985b3fc5b7
+md"""
+!!! info "Roadmap"
+	1. Interactive (& Static) Notebook Publishing
+	2. Live Collaborative Coding
+	3. High Performance Computing
+"""
+
+# ╔═╡ a088d383-341a-421c-9421-5abc1355eb04
+md"""
+## 4. Competetive Advantages
+"""
+
+# ╔═╡ 3427b6b8-ccb9-42c4-b8e0-b4cac2c163d8
+md"""
+!!! warning "First to Market"
+	- Julia is beloved by academics, researches, and countless companies. Very little infrastructure is available for working with Julia at scale. We will be first to market in many areas (interactive publishing, live collaborative coding, etc.). This will not only give us a first-mover advantage, but we will also be getting in as a technology is just beginning to see real growth and adoption. As the Julia user base grows we will grouw, and vice versa.
+
+!!! info "Julia"
+	- The programming language Julia allows for faster development of our notebook product and gives us a sustainable edge over all other major notebook options that are built-on Python or Javascript.
+
+!!! success "Academia"
+	- After we build out our notebook publishing service, we plan on targeting academia. Julia is beloved by academics (MIT, JuliaLab, etc) and by offering our services to prominent Universities, we will be preparing the next generation of software developers to reach for Glass Notebook first within their respective future companies (c.f. Matlab).
+"""
+
+# ╔═╡ 01036d15-7621-488a-87d0-adbe0ca23ac6
+md"""
+## 5. Current Needs
+"""
+
+# ╔═╡ 94dfa85e-6605-499b-991e-58347fbae250
+
+
+# ╔═╡ f0da7c8c-1375-45b3-b190-4d644e5f9bbd
+
+
+# ╔═╡ 9c98bf32-b519-486e-943f-9a7648377a4b
+
+
+# ╔═╡ eb794169-1634-411e-8ac6-3b33071e7518
+
+
+# ╔═╡ d17110ff-540c-48f7-8f6f-c271367c6b20
+
+
+# ╔═╡ 51cffead-a071-4b81-b0cb-14a869e20324
+
+
+# ╔═╡ ecfa198d-08df-436d-af63-bd178e6f667e
+
+
+# ╔═╡ 42b5b113-21b2-450f-8e48-f4805e2552a9
+
+
+# ╔═╡ e4e73c89-c820-4626-b253-20c8018c0a26
+
+
+# ╔═╡ 69c6feb7-36aa-4553-80a5-e5105ac79fbe
+
+
+# ╔═╡ 35185c76-6218-46c3-bd4d-eb8c1fac48d6
+
+
+# ╔═╡ 48b0518f-0699-423e-be7c-da4ac04a7a15
+
+
+# ╔═╡ 67f04ee8-a4cf-4ee2-a4eb-ec8e61585056
+
+
+# ╔═╡ 7394dc9c-5551-491d-ba5f-c75f6b13f944
+
+
+# ╔═╡ 6e018e35-3dbe-4dda-bf93-ae22250f6878
+
+
+# ╔═╡ 5d8d5fff-f6ff-485d-a32e-dcec0a698b76
+
+
+# ╔═╡ f61b1731-ead7-4b7a-881a-92696c1245f6
+
+
+# ╔═╡ f88b0e68-f94a-4495-9493-4a513bd8fbec
+md"""
+# Appendix
+"""
+
+# ╔═╡ 048da3ab-1793-4901-a796-026f7a9fbd12
+md"""
+#### Imports
+"""
+
+# ╔═╡ e37da613-cc6d-4377-b8d8-ca80444ab82a
+md"""
+#### Target Market
+"""
+
 # ╔═╡ 7cb938fc-9fb7-4f3f-8e14-e3678cae7b5d
 begin
 	# Cumulative Julia Downloads
@@ -236,17 +342,12 @@ function tot(sel)
 	end
 end
 
-# ╔═╡ 69b04d0b-1b7d-43e9-8d34-c37b7f312e53
-md"""
-$(@bind sel PlutoUI.Select(["Julia Downloads", "User Demographics", "Active Julia Users", "TAM+"]))
-"""
-
 # ╔═╡ 596c2f5a-120f-4368-a73f-5e9aa030a691
 tot(sel)
 
-# ╔═╡ 0d8f1706-0a98-4c2b-b781-024f2ed32a65
+# ╔═╡ a42516e1-482e-4745-ad66-df82867c6d42
 md"""
-## 3. Revenue Model
+#### Revenue Model
 """
 
 # ╔═╡ cc9898c9-4a26-4fdc-8073-f6dace9f3f5f
@@ -256,7 +357,7 @@ begin
 	paid_user_range = free_user_range .* 0.25
 	
 	#--- Pricing tiers ---#
-	paid_pricing_tiers = [10, 25, 50, 100, 200]; # $ per month
+	paid_pricing_tiers = [10, 20, 50, 100, 200]; # $ per month
 
 	#--- Maximum estimated static and interactive export times ---#
 	avg_static_export_time_per_notebook = 0.10u"hr"
@@ -285,56 +386,73 @@ begin
 	) # export cost is dependent on number of users because of vertical scaling
 	export_cost_per_hour = export_cost_per_hour_all[num_users_free]
 
-	#--- Alloted static and interactive notebooks (tier dependent) ---#	
-	allotted_static_exports_free = 1000 # notebooks per month
-	allotted_static_exports_paid = [2_500, 5_000, 10_000, 20_000, 50_000, 100_000]
+	#--- Alloted static, precomputed, & interactive notebooks (tier dependent) ---#	
+	allotted_static_exports_free = 100 # notebooks per month
+	allotted_static_exports_paid = [1_000, 3_000, 8_000, 18_000, 30_000, 50_000]
 
+	precomputed_notebook_storage_cost_per_month = 0.02
+	allotted_precomputed_notebooks_free = 10
+	allotted_precomputed_notebooks_paid = [15, 30, 50, 100, 200]
+	
+	basline_allotted_interactive_notebooks = [2, 4, 10, 20, 40]
 	allotted_interactive_notebooks_free = 0 # notebooks per month
-	basline_allotted_interactive_notebooks = collect(range(start = 2, length = 5, step = 2))
 	allotted_interactive_notebooks_all = Dict(
 		10 => basline_allotted_interactive_notebooks,
 		100 => basline_allotted_interactive_notebooks * 2,
 		1000 => basline_allotted_interactive_notebooks * 4,
-		10_000 => basline_allotted_interactive_notebooks * 8,
+		10_000 => basline_allotted_interactive_notebooks * 6,
 	)
 	allotted_interactive_notebooks_paid = allotted_interactive_notebooks_all[num_users_free]
 
-	#--- Maximum estimated static and interactive costs ---#
+	#--- Maximum estimated static, precomputed, & interactive costs ---#
 	max_static_export_cost_per_month_free = export_cost_per_hour * avg_static_export_time_per_notebook * allotted_static_exports_free * free_user_range[n] # $
-
 	max_static_export_cost_per_month_paid = export_cost_per_hour * avg_static_export_time_per_notebook * allotted_static_exports_paid[a] * paid_user_range[n] # $
+
+	max_precomputed_export_cost_per_month_free = (export_cost_per_hour * avg_static_export_time_per_notebook + precomputed_notebook_storage_cost_per_month) * allotted_precomputed_notebooks_free * free_user_range[n]
+	max_precomputed_export_cost_per_month_pad = (export_cost_per_hour * avg_static_export_time_per_notebook + precomputed_notebook_storage_cost_per_month) * allotted_precomputed_notebooks_paid[a] * paid_user_range[n]
 
 	max_interactive_export_cost_per_month_paid = export_cost_per_hour * avg_interactive_export_time_per_notebook * allotted_interactive_notebooks_paid[a] * paid_user_range[n] # $
 end;
-
-# ╔═╡ 344c5ef8-fef3-4d24-955c-53dadd9ebdae
-min_profit = (paid_pricing_tiers[a] * paid_user_range[n]) - (max_static_export_cost_per_month_free + max_static_export_cost_per_month_paid + max_interactive_export_cost_per_month_paid)
 
 # ╔═╡ 444880b2-5a2b-4ba6-9a5e-012732fad139
 md"""
 | Free (\$0 / month) | Paid (\$$(paid_pricing_tiers[a]) / month) | Enterprise (Custom) |
 |:---|:---|:---|
-| Up to $(allotted_static_exports_free) static notebook exports per month| Up to $(allotted_static_exports_paid[a]) static notebook exports per month |  Unlimited static notebook exports per month |
+| Up to $(allotted_static_exports_free) static notebook exports| Up to $(allotted_static_exports_paid[a]) static notebook exports | Unlimited static notebook exports|
+| Up to $(allotted_precomputed_notebooks_free) precomputed interactive notebooks| Up to $(allotted_precomputed_notebooks_paid[a]) precomputed interactive notebooks|  Unlimited  precomputed interactive notebooks|
 | N/A | Up to $(allotted_interactive_notebooks_paid[a]) active interactive notebooks | Unlimited active interactive notebooks |
 """
+
+# ╔═╡ 344c5ef8-fef3-4d24-955c-53dadd9ebdae
+min_profit = (paid_pricing_tiers[a] * paid_user_range[n]) - (max_static_export_cost_per_month_free + max_static_export_cost_per_month_paid + max_precomputed_export_cost_per_month_free + max_precomputed_export_cost_per_month_pad + max_interactive_export_cost_per_month_paid)
 
 # ╔═╡ e486a1e5-8666-4db1-9787-71d42459bbbe
 let
 	f = Figure()
 	colors = cgrad(:tab10)
-	labels = ["Cost \n Static", "Cost \n Interactive", "Profit"]
-	tick_range = 1:3
-	clrs = [colors[5], colors[9], colors[3]]
-
+	labels = ["Cost \n Static", "Cost \n Precomputed", "Cost \n Interactive", "Profit"]
+	tick_range = 1:4
+	
 	ax = Axis(
 		f[0:1, 0:1],
 		ylabel = "Per Month (\$)",
 		xticks = (tick_range, labels),
 		title = "Combined",
-		xticklabelrotation = π/8,
+		xticklabelrotation = π/4,
 		yautolimitmargin = (0.3, 0.3)
 	)
-	ys = [max_static_export_cost_per_month_paid, max_interactive_export_cost_per_month_paid, min_profit]
+	ys = [
+		max_static_export_cost_per_month_free + max_static_export_cost_per_month_paid,
+		max_precomputed_export_cost_per_month_free + max_precomputed_export_cost_per_month_pad,
+		max_interactive_export_cost_per_month_paid, 
+		min_profit
+	]
+	if min_profit > 0
+		clrs = [colors[5], colors[7], colors[10], colors[3]]
+	else
+		clrs = [colors[5], colors[7], colors[10], colors[4]]
+	end
+	
 	barplot!(
 		tick_range, ys;
 		color = clrs,
@@ -348,36 +466,6 @@ let
 	)
 	f
 end
-
-# ╔═╡ 89af0b89-ad5e-4c74-8369-32985b3fc5b7
-md"""
-!!! info "Roadmap"
-	1. Interactive (& Static) Notebook Publishing
-	2. Live Collaborative Coding
-	3. High Performance Computing
-"""
-
-# ╔═╡ a088d383-341a-421c-9421-5abc1355eb04
-md"""
-## 4. Competetive Advantages
-"""
-
-# ╔═╡ 3427b6b8-ccb9-42c4-b8e0-b4cac2c163d8
-md"""
-!!! warning "First to Market"
-	- ...
-
-!!! info "Julia"
-	- ...
-
-!!! success "Academia"
-	- ...
-"""
-
-# ╔═╡ 01036d15-7621-488a-87d0-adbe0ca23ac6
-md"""
-## 5. Current Needs
-"""
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1978,21 +2066,15 @@ version = "3.5.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╠═94e556ff-cb05-4968-8ddb-c283092527e3
 # ╟─94c57806-2d1a-4a75-a5e3-0934632b4464
 # ╟─6562d072-38b7-4218-9708-7f51e44a8b51
 # ╟─f9a075ca-cb0e-4577-8576-993fe36d0414
 # ╟─750bd464-03c8-463e-bbdf-a6894eae81f3
 # ╟─72727660-d3b9-4ed9-b629-c19c79d0a114
 # ╟─cf007e8e-d0aa-4849-8baa-cd8a5a35c21b
-# ╠═7cb938fc-9fb7-4f3f-8e14-e3678cae7b5d
-# ╟─bd38244f-bc23-4f78-8f73-8a88eb5df719
 # ╟─69b04d0b-1b7d-43e9-8d34-c37b7f312e53
 # ╟─596c2f5a-120f-4368-a73f-5e9aa030a691
 # ╟─0d8f1706-0a98-4c2b-b781-024f2ed32a65
-# ╠═cc9898c9-4a26-4fdc-8073-f6dace9f3f5f
-# ╠═d89baa46-5096-42d9-9bff-a3054baf9fa4
-# ╠═344c5ef8-fef3-4d24-955c-53dadd9ebdae
 # ╟─444880b2-5a2b-4ba6-9a5e-012732fad139
 # ╟─85480884-4dd6-4192-b03f-99f417702a2a
 # ╟─e486a1e5-8666-4db1-9787-71d42459bbbe
@@ -2000,5 +2082,32 @@ version = "3.5.0+0"
 # ╟─a088d383-341a-421c-9421-5abc1355eb04
 # ╟─3427b6b8-ccb9-42c4-b8e0-b4cac2c163d8
 # ╟─01036d15-7621-488a-87d0-adbe0ca23ac6
+# ╠═94dfa85e-6605-499b-991e-58347fbae250
+# ╟─f0da7c8c-1375-45b3-b190-4d644e5f9bbd
+# ╟─9c98bf32-b519-486e-943f-9a7648377a4b
+# ╟─eb794169-1634-411e-8ac6-3b33071e7518
+# ╟─d17110ff-540c-48f7-8f6f-c271367c6b20
+# ╟─51cffead-a071-4b81-b0cb-14a869e20324
+# ╟─ecfa198d-08df-436d-af63-bd178e6f667e
+# ╟─42b5b113-21b2-450f-8e48-f4805e2552a9
+# ╟─e4e73c89-c820-4626-b253-20c8018c0a26
+# ╟─69c6feb7-36aa-4553-80a5-e5105ac79fbe
+# ╟─35185c76-6218-46c3-bd4d-eb8c1fac48d6
+# ╟─48b0518f-0699-423e-be7c-da4ac04a7a15
+# ╟─67f04ee8-a4cf-4ee2-a4eb-ec8e61585056
+# ╟─7394dc9c-5551-491d-ba5f-c75f6b13f944
+# ╟─6e018e35-3dbe-4dda-bf93-ae22250f6878
+# ╟─5d8d5fff-f6ff-485d-a32e-dcec0a698b76
+# ╟─f61b1731-ead7-4b7a-881a-92696c1245f6
+# ╟─f88b0e68-f94a-4495-9493-4a513bd8fbec
+# ╟─048da3ab-1793-4901-a796-026f7a9fbd12
+# ╠═94e556ff-cb05-4968-8ddb-c283092527e3
+# ╟─e37da613-cc6d-4377-b8d8-ca80444ab82a
+# ╠═7cb938fc-9fb7-4f3f-8e14-e3678cae7b5d
+# ╟─bd38244f-bc23-4f78-8f73-8a88eb5df719
+# ╟─a42516e1-482e-4745-ad66-df82867c6d42
+# ╠═cc9898c9-4a26-4fdc-8073-f6dace9f3f5f
+# ╠═d89baa46-5096-42d9-9bff-a3054baf9fa4
+# ╠═344c5ef8-fef3-4d24-955c-53dadd9ebdae
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
