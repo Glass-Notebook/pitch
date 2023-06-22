@@ -527,7 +527,7 @@ Unitful = "~1.14.0"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.0"
+julia_version = "1.9.1"
 manifest_format = "2.0"
 project_hash = "078c1301faa8fad4b8cdbd963c33771c7b5cdb6c"
 
@@ -2048,7 +2048,7 @@ version = "0.15.1+0"
 [[deps.libblastrampoline_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
-version = "5.7.0+0"
+version = "5.8.0+0"
 
 [[deps.libfdk_aac_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -2126,7 +2126,7 @@ version = "3.5.0+0"
 # ╠═8da9141f-58df-4b84-96c0-5fe5ab6862b0
 # ╟─0037582a-22c3-446e-97cf-fcd0ecf0d151
 # ╟─9445acc6-8070-4baf-8efb-50c0882fdb8b
-# ╠═abff01f4-c9bb-4443-ae43-8aaa0a3e6d76
+# ╟─abff01f4-c9bb-4443-ae43-8aaa0a3e6d76
 # ╟─06480585-3efe-4b9a-a816-6f44c97bb828
 # ╠═c318b24a-0b15-4912-8891-2690c63deb50
 # ╠═204f24ba-29a1-4814-be20-e708f0784e95
