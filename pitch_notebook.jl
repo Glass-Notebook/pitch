@@ -16,7 +16,7 @@ end
 
 # ╔═╡ 94e556ff-cb05-4968-8ddb-c283092527e3
 begin
-	using PlutoUI, CairoMakie, Printf, FileIO, Images, Unitful
+	using PlutoUI, CairoMakie, Printf, FileIO, Images, Unitful, HypertextLiteral
 	using CairoMakie:Axis
 	TableOfContents()
 end
@@ -108,56 +108,42 @@ md"""
 ## 5. Current Needs
 """
 
+# ╔═╡ b755f00e-f010-46a3-b3f9-0ada6267ac53
+md"""
+### Development Costs
+"""
+
+# ╔═╡ e1592afd-0916-49b4-92a2-e12c64f01cc6
+md"""
+Much of the core infrastructure is already there, but we still need a few features to bring GlassNotebook to market!
+- Scalable static hosting
+- Precomputed sliders
+- Improvements to live editing systems
+"""
+
+# ╔═╡ 35bc4c12-784b-4c6b-8331-a663da3798fa
+html"""
+<p>
+We estimate these features will take 3 months of development time
+<br>
+<span style="color: gray; margin-left: 20px">
+@ 40 hours / week,&nbsp;&nbsp; 4 weeks / month
+</span>
+<br>
+⟹ $20,000
+</p>
+"""
+
+# ╔═╡ 6873a626-b8b7-4f42-9dae-882a4302862d
+md"""
+### Business / Marketing / Outreach - TODO
+"""
+
 # ╔═╡ 94dfa85e-6605-499b-991e-58347fbae250
-
-
-# ╔═╡ f0da7c8c-1375-45b3-b190-4d644e5f9bbd
-
-
-# ╔═╡ 9c98bf32-b519-486e-943f-9a7648377a4b
-
-
-# ╔═╡ eb794169-1634-411e-8ac6-3b33071e7518
-
-
-# ╔═╡ d17110ff-540c-48f7-8f6f-c271367c6b20
-
-
-# ╔═╡ 51cffead-a071-4b81-b0cb-14a869e20324
-
-
-# ╔═╡ ecfa198d-08df-436d-af63-bd178e6f667e
-
-
-# ╔═╡ 42b5b113-21b2-450f-8e48-f4805e2552a9
-
-
-# ╔═╡ e4e73c89-c820-4626-b253-20c8018c0a26
-
-
-# ╔═╡ 69c6feb7-36aa-4553-80a5-e5105ac79fbe
-
-
-# ╔═╡ 35185c76-6218-46c3-bd4d-eb8c1fac48d6
-
-
-# ╔═╡ 48b0518f-0699-423e-be7c-da4ac04a7a15
-
-
-# ╔═╡ 67f04ee8-a4cf-4ee2-a4eb-ec8e61585056
-
-
-# ╔═╡ 7394dc9c-5551-491d-ba5f-c75f6b13f944
-
-
-# ╔═╡ 6e018e35-3dbe-4dda-bf93-ae22250f6878
-
-
-# ╔═╡ 5d8d5fff-f6ff-485d-a32e-dcec0a698b76
-
-
-# ╔═╡ f61b1731-ead7-4b7a-881a-92696c1245f6
-
+html"""
+<!-- I replaced the ~20 cells with this, it's just a spacer! Update the height property to change how much space to include -->
+<div style="height: 600px"/>
+"""
 
 # ╔═╡ f88b0e68-f94a-4495-9493-4a513bd8fbec
 md"""
@@ -364,12 +350,21 @@ begin
 	avg_interactive_export_time_per_notebook = (30 * 24)u"hr" # 30 days * 24 hrs
 end;
 
-# ╔═╡ 85480884-4dd6-4192-b03f-99f417702a2a
-md"""
-Paid Price Tier: $(@bind a PlutoUI.Slider(1:length(paid_pricing_tiers)))
+# ╔═╡ 4c8a810f-4041-49b8-a698-707b18be073f
+@htl("""
+<div style="display: flex">
+<div>
+Paid Price Tier</br>
+$(@bind a PlutoUI.Slider(1:length(paid_pricing_tiers)))</br>
+</div>
+<div style="margin-left: 25px">
+Number of Users</br>
+$(@bind n PlutoUI.Slider(1:length(free_user_range)))
+</div>
+</div>
 
-Number of Users Index: $(@bind n PlutoUI.Slider(1:length(free_user_range)))
-"""
+
+""")
 
 # ╔═╡ d89baa46-5096-42d9-9bff-a3054baf9fa4
 begin
@@ -380,7 +375,7 @@ begin
 	#--- Export cost per hour ---#
 	export_cost_per_hour_all = Dict(
 		10    => 0.006u"hr^-1", # $/hr
-		100   => 0.003u"hr^-1",
+		100   => 0.002u"hr^-1",
 		1000  => 0.001u"hr^-1",
 		10000 => 0.0006u"hr^-1"
 	) # export cost is dependent on number of users because of vertical scaling
@@ -423,21 +418,24 @@ md"""
 | N/A | Up to $(allotted_interactive_notebooks_paid[a]) active interactive notebooks | Unlimited active interactive notebooks |
 """
 
+# ╔═╡ dcde8461-aa6e-43e2-8653-c0fa1c9312a2
+gross_income = paid_pricing_tiers[a] * paid_user_range[n]
+
 # ╔═╡ 344c5ef8-fef3-4d24-955c-53dadd9ebdae
-min_profit = (paid_pricing_tiers[a] * paid_user_range[n]) - (max_static_export_cost_per_month_free + max_static_export_cost_per_month_paid + max_precomputed_export_cost_per_month_free + max_precomputed_export_cost_per_month_pad + max_interactive_export_cost_per_month_paid)
+min_profit = (gross_income) - (max_static_export_cost_per_month_free + max_static_export_cost_per_month_paid + max_precomputed_export_cost_per_month_free + max_precomputed_export_cost_per_month_pad + max_interactive_export_cost_per_month_paid)
 
 # ╔═╡ e486a1e5-8666-4db1-9787-71d42459bbbe
 let
 	f = Figure()
 	colors = cgrad(:tab10)
-	labels = ["Cost \n Static", "Cost \n Precomputed", "Cost \n Interactive", "Profit"]
-	tick_range = 1:4
+	labels = ["Cost \n Static", "Cost \n Precomputed", "Cost \n Interactive", "Gross Income", "Profit"]
+	tick_range = 1:5
 	
 	ax = Axis(
 		f[0:1, 0:1],
 		ylabel = "Per Month (\$)",
 		xticks = (tick_range, labels),
-		title = "Combined",
+		title = "Revenue and Expenses Estimation for \$$(paid_pricing_tiers[a]) / month Pricing Tier",
 		xticklabelrotation = π/4,
 		yautolimitmargin = (0.3, 0.3)
 	)
@@ -445,12 +443,13 @@ let
 		max_static_export_cost_per_month_free + max_static_export_cost_per_month_paid,
 		max_precomputed_export_cost_per_month_free + max_precomputed_export_cost_per_month_pad,
 		max_interactive_export_cost_per_month_paid, 
+		gross_income,
 		min_profit
 	]
 	if min_profit > 0
-		clrs = [colors[5], colors[7], colors[10], colors[3]]
+		clrs = [colors[5], colors[7], colors[10], colors[1], colors[3]]
 	else
-		clrs = [colors[5], colors[7], colors[10], colors[4]]
+		clrs = [colors[5], colors[7], colors[10], colors[1], colors[4]]
 	end
 	
 	barplot!(
@@ -472,6 +471,7 @@ PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
+HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
 Images = "916415d5-f1e6-5110-898d-aaa5f9f070e0"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
@@ -480,6 +480,7 @@ Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 [compat]
 CairoMakie = "~0.10.6"
 FileIO = "~1.16.1"
+HypertextLiteral = "~0.9.4"
 Images = "~0.25.3"
 PlutoUI = "~0.7.51"
 Unitful = "~1.14.0"
@@ -489,9 +490,9 @@ Unitful = "~1.14.0"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.1"
+julia_version = "1.9.0"
 manifest_format = "2.0"
-project_hash = "078c1301faa8fad4b8cdbd963c33771c7b5cdb6c"
+project_hash = "07db4e8c0c56bb9860a7ed7500c15ba853f5d479"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -1495,9 +1496,9 @@ version = "0.12.3"
 
 [[deps.Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
-git-tree-sha1 = "4b2e829ee66d4218e0cef22c0a64ee37cf258c29"
+git-tree-sha1 = "5a6ab2f64388fd1175effdf73fe5933ef1e0bac0"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.7.1"
+version = "2.7.0"
 
 [[deps.Pixman_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "LLVMOpenMP_jll", "Libdl"]
@@ -2016,7 +2017,7 @@ version = "0.15.1+0"
 [[deps.libblastrampoline_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
-version = "5.8.0+0"
+version = "5.7.0+0"
 
 [[deps.libfdk_aac_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -2075,30 +2076,18 @@ version = "3.5.0+0"
 # ╟─69b04d0b-1b7d-43e9-8d34-c37b7f312e53
 # ╟─596c2f5a-120f-4368-a73f-5e9aa030a691
 # ╟─0d8f1706-0a98-4c2b-b781-024f2ed32a65
+# ╟─4c8a810f-4041-49b8-a698-707b18be073f
 # ╟─444880b2-5a2b-4ba6-9a5e-012732fad139
-# ╟─85480884-4dd6-4192-b03f-99f417702a2a
 # ╟─e486a1e5-8666-4db1-9787-71d42459bbbe
 # ╟─89af0b89-ad5e-4c74-8369-32985b3fc5b7
 # ╟─a088d383-341a-421c-9421-5abc1355eb04
 # ╟─3427b6b8-ccb9-42c4-b8e0-b4cac2c163d8
 # ╟─01036d15-7621-488a-87d0-adbe0ca23ac6
-# ╠═94dfa85e-6605-499b-991e-58347fbae250
-# ╟─f0da7c8c-1375-45b3-b190-4d644e5f9bbd
-# ╟─9c98bf32-b519-486e-943f-9a7648377a4b
-# ╟─eb794169-1634-411e-8ac6-3b33071e7518
-# ╟─d17110ff-540c-48f7-8f6f-c271367c6b20
-# ╟─51cffead-a071-4b81-b0cb-14a869e20324
-# ╟─ecfa198d-08df-436d-af63-bd178e6f667e
-# ╟─42b5b113-21b2-450f-8e48-f4805e2552a9
-# ╟─e4e73c89-c820-4626-b253-20c8018c0a26
-# ╟─69c6feb7-36aa-4553-80a5-e5105ac79fbe
-# ╟─35185c76-6218-46c3-bd4d-eb8c1fac48d6
-# ╟─48b0518f-0699-423e-be7c-da4ac04a7a15
-# ╟─67f04ee8-a4cf-4ee2-a4eb-ec8e61585056
-# ╟─7394dc9c-5551-491d-ba5f-c75f6b13f944
-# ╟─6e018e35-3dbe-4dda-bf93-ae22250f6878
-# ╟─5d8d5fff-f6ff-485d-a32e-dcec0a698b76
-# ╟─f61b1731-ead7-4b7a-881a-92696c1245f6
+# ╟─b755f00e-f010-46a3-b3f9-0ada6267ac53
+# ╟─e1592afd-0916-49b4-92a2-e12c64f01cc6
+# ╟─35bc4c12-784b-4c6b-8331-a663da3798fa
+# ╟─6873a626-b8b7-4f42-9dae-882a4302862d
+# ╟─94dfa85e-6605-499b-991e-58347fbae250
 # ╟─f88b0e68-f94a-4495-9493-4a513bd8fbec
 # ╟─048da3ab-1793-4901-a796-026f7a9fbd12
 # ╠═94e556ff-cb05-4968-8ddb-c283092527e3
@@ -2108,6 +2097,7 @@ version = "3.5.0+0"
 # ╟─a42516e1-482e-4745-ad66-df82867c6d42
 # ╠═cc9898c9-4a26-4fdc-8073-f6dace9f3f5f
 # ╠═d89baa46-5096-42d9-9bff-a3054baf9fa4
+# ╠═dcde8461-aa6e-43e2-8653-c0fa1c9312a2
 # ╠═344c5ef8-fef3-4d24-955c-53dadd9ebdae
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
