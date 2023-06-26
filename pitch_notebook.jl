@@ -16,7 +16,7 @@ end
 
 # ╔═╡ 94e556ff-cb05-4968-8ddb-c283092527e3
 begin
-	using PlutoUI, CairoMakie, Printf, FileIO, Images, Unitful, HypertextLiteral
+	using PlutoUI, CairoMakie, Printf, FileIO, Images, Unitful, HypertextLiteral, Formatting
 	using CairoMakie:Axis
 	TableOfContents()
 end
@@ -73,6 +73,17 @@ md"""
 $(@bind sel PlutoUI.Select(["Julia Downloads", "User Demographics", "Active Julia Users", "TAM+"]))
 """
 
+# ╔═╡ a2720c78-464f-4dff-9c4d-971de59a0979
+if sel == "TAM+"
+md"""
+**TAM**: Number of Julia Users ``\times`` \$10/month ``\times`` 12 months
+
+**SAM**: Number of Pluto Users ``\times`` \$10/month ``\times`` 12 months
+
+**SOM**: Number of Pluto Users ``\times`` \$10/month ``\times`` 12 months ``\times`` 10%
+"""
+end
+
 # ╔═╡ 0d8f1706-0a98-4c2b-b781-024f2ed32a65
 md"""
 ## 3. Revenue Model
@@ -108,11 +119,6 @@ md"""
 ## 5. Current Needs
 """
 
-# ╔═╡ b755f00e-f010-46a3-b3f9-0ada6267ac53
-md"""
-### Development Costs
-"""
-
 # ╔═╡ e1592afd-0916-49b4-92a2-e12c64f01cc6
 md"""
 Much of the core infrastructure is already there, but we still need a few features to bring GlassNotebook to market!
@@ -134,15 +140,28 @@ We estimate these features will take 3 months of development time
 </p>
 """
 
-# ╔═╡ 6873a626-b8b7-4f42-9dae-882a4302862d
-md"""
-### Business / Marketing / Outreach - TODO
+# ╔═╡ b516ec26-8f2b-45a7-a102-566a1c8b6c2e
+html"""
+<p>
+We plan on doing a private beta launch and onboarding new users slowly. In this beta, the pricing will be free, as users are expected to encounter bugs. To provide the publishing infrastructure for free, we need to have some reserve funding
+<br>
+⟹ $10,000
+</p>
+"""
+
+# ╔═╡ c4ee126b-e4fc-43e3-8010-22ed28cad786
+html"""
+<p>
+In total:
+<br>
+⟹ <span style="font-weight:bold">$20,000 + $10,000 = $30,000
+</p>
 """
 
 # ╔═╡ 94dfa85e-6605-499b-991e-58347fbae250
 html"""
 <!-- I replaced the ~20 cells with this, it's just a spacer! Update the height property to change how much space to include -->
-<div style="height: 600px"/>
+<div style="height: 1000px"/>
 """
 
 # ╔═╡ f88b0e68-f94a-4495-9493-4a513bd8fbec
@@ -210,16 +229,17 @@ end;
 # ╔═╡ bd38244f-bc23-4f78-8f73-8a88eb5df719
 function tot(sel)
 	f = Figure()
-	colors = Makie.wong_colors()
+	colors = cgrad(:tab10)
 
 	if sel == "Julia Downloads"
 	
 		ax = Axis(
 			f[1, 1],
 			title = "Julia Downloads - Cumulative",
-			ylabel = "Total Downloads (millions)",
+			ylabel = "Total Downloads",
 			xticks = years,
-			xticklabelrotation = 45
+			xticklabelrotation = 45,
+			ytickformat = v -> format.(v, commas=true, precision=0)
 		)
 		scatterlines!(
 			years, downloads;
@@ -239,7 +259,7 @@ function tot(sel)
 		h1 = 10_000
 		h2 = 1_500
 		heights1 = [h1, h2]
-	    barplot!(table, heights1; color = [colors[1], colors[4]], bar_labels = ["10,000+", "1,500+"])
+	    barplot!(table, heights1; color = [colors[5], colors[10]], bar_labels = ["10,000+", "1,500+"])
 		hidedecorations!(ax, label = false, ticklabels = false)
 	
 	    ylims!(ax; low=0, high=12_500)
@@ -251,16 +271,16 @@ function tot(sel)
 			xticks = (1:2, ["Estimate (Lower Bound)", "Estimate (Upper Bound)"]),
 			title = "Estimated Active Julia Users (2022)",
 			ylabel = "Active Users",
-			yticks = [-10]
+			yticks = [-10],
+			ytickformat = v -> format.(v, commas=true, precision=0)
 		)
 	
 	    table = [1, 2]
 		h1 = active_julia_users_lb[:users][end]
 		h2 = active_julia_users_ub[:users][end]
 		heights1 = [h1, h2]
-		l1 = @sprintf "%.1e" h1
-		l2 = @sprintf "%.1e" h2
-	    barplot!(table, heights1; color = [colors[1], colors[4]], bar_labels = [l1, l2])
+		lbls = format.(heights1, commas=true, precision=0)
+	    barplot!(table, heights1; color = [colors[5], colors[10]], bar_labels = lbls)
 		hidedecorations!(ax, label = false, ticklabels = false)
 	
 	    ylims!(ax; low=0, high=1.5e6)
@@ -277,9 +297,8 @@ function tot(sel)
 		h1 = users_pluto_lb
 		h2 = users_pluto_ub
 		heights1 = [h1, h2]
-		l1 = @sprintf "%.1e" h1
-		l2 = @sprintf "%.1e" h2
-	    barplot!(table, heights1; color = [colors[1], colors[4]], bar_labels = [l1, l2])
+		lbls = format.(heights1, commas=true, precision=0)
+	    barplot!(table, heights1; color = [colors[7], colors[1]], bar_labels = lbls)
 		hidedecorations!(ax, label = false, ticklabels = false)
 	
 	    ylims!(ax; low=0, high=1.5e4)
@@ -291,33 +310,25 @@ function tot(sel)
 			title = "Market Size (Not To Scale)"
 			
 		)
-		l1 = @sprintf "%.1e" TAM
-		l2 = @sprintf "%.1e" SAM
-		l3 = @sprintf "%.1e" SOM
-		scatter!(0, 0; markersize = 600, label = "TAM = $(l1) = Julia users × \$10 × 12")
-		scatter!(0, -0.7; markersize = 300, label = "SAM = $(l2) = Pluto users × \$10 × 12")
-		scatter!(0, -1; markersize = 150, label = "SOM = $(l3) = Pluto users × \$10 × 12 × 0.10")
+		scatter!(0, 0; markersize = 600, color = colors[5])
+		scatter!(0, -0.7; markersize = 300, color = colors[10])
+		scatter!(0, -1; markersize = 100, color = colors[7])
 		limits!(ax, -2, 2, -2, 2)
 		
 		hidespines!(ax)
 		hidedecorations!(ax)
 	
-		colors = Makie.wong_colors()
-	
 		group_color = [PolyElement(color = color, strokecolor = :transparent)
-		for color in colors[1:3]]
-	
-		l1 = @sprintf "%.1e" TAM
-		l2 = @sprintf "%.1e" SAM
-		l3 = @sprintf "%.1e" SOM
-		
+		for color in [colors[5], colors[10], colors[7]]]
+
+		lbls = format.([TAM, SAM, SOM], commas=true, precision=0)
 		Legend(
-			f[2, 2],
+			f[2, 0],
 			group_color,
 			[
-				"TAM = $(l1) = Julia users × \$10 × 12", 
-				"SAM = $(l2) = Pluto users × \$10 × 12", 
-				"SOM = $(l3) = Pluto users × \$10 × 12 × 0.10"
+				"TAM = \$$(lbls[1])", 
+				"SAM = \$$(lbls[2])", 
+				"SOM = \$$(lbls[3])"
 			],
 			valign = :bottom,
 			halign = :right,
@@ -353,17 +364,16 @@ end;
 # ╔═╡ 4c8a810f-4041-49b8-a698-707b18be073f
 @htl("""
 <div style="display: flex">
-<div>
-Paid Price Tier</br>
-$(@bind a PlutoUI.Slider(1:length(paid_pricing_tiers)))</br>
-</div>
-<div style="margin-left: 25px">
-Number of Users</br>
-$(@bind n PlutoUI.Slider(1:length(free_user_range)))
-</div>
-</div>
+	<div>
+	Paid Price Tier</br>
+	$(@bind a PlutoUI.Slider(1:length(paid_pricing_tiers)))</br>
+	</div>
 
-
+	<div style="margin-left: 25px">
+	Number of Users</br>
+	$(@bind n PlutoUI.Slider(1:length(free_user_range)))
+	</div>
+</div>
 """)
 
 # ╔═╡ d89baa46-5096-42d9-9bff-a3054baf9fa4
@@ -413,7 +423,7 @@ end;
 md"""
 | Free (\$0 / month) | Paid (\$$(paid_pricing_tiers[a]) / month) | Enterprise (Custom) |
 |:---|:---|:---|
-| Up to $(allotted_static_exports_free) static notebook exports| Up to $(allotted_static_exports_paid[a]) static notebook exports | Unlimited static notebook exports|
+| Up to $(allotted_static_exports_free) static notebook exports| Up to $(format.(allotted_static_exports_paid[a], commas=true, precision=2)) static notebook exports | Unlimited static notebook exports|
 | Up to $(allotted_precomputed_notebooks_free) precomputed interactive notebooks| Up to $(allotted_precomputed_notebooks_paid[a]) precomputed interactive notebooks|  Unlimited  precomputed interactive notebooks|
 | N/A | Up to $(allotted_interactive_notebooks_paid[a]) active interactive notebooks | Unlimited active interactive notebooks |
 """
@@ -437,7 +447,8 @@ let
 		xticks = (tick_range, labels),
 		title = "Revenue and Expenses Estimation for \$$(paid_pricing_tiers[a]) / month Pricing Tier",
 		xticklabelrotation = π/4,
-		yautolimitmargin = (0.3, 0.3)
+		yautolimitmargin = (0.3, 0.3),
+		ytickformat = v -> format.(v, commas=true, precision=2)
 	)
 	ys = [
 		max_static_export_cost_per_month_free + max_static_export_cost_per_month_paid,
@@ -451,17 +462,18 @@ let
 	else
 		clrs = [colors[5], colors[7], colors[10], colors[1], colors[4]]
 	end
-	
+
+	lbls = "\$" .* format.(ys, commas=true, precision=2)
 	barplot!(
 		tick_range, ys;
 		color = clrs,
-		bar_labels = round.(ys, digits = 2),
+		bar_labels = lbls,
 		label_size = 20,
 	)
 
 	Label(
 		f[0, 0], 
-		" \n  Free Users: $(free_user_range[n]) \n  Paid Users: $(paid_user_range[n])"
+		" \n  Free Users: $(format.(free_user_range[n], commas=true, precision=0)) \n  Paid Users: $(format.(paid_user_range[n], commas=true, precision=0))"
 	)
 	f
 end
@@ -471,6 +483,7 @@ PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
+Formatting = "59287772-0a20-5a39-b81b-1366585eb4c0"
 HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
 Images = "916415d5-f1e6-5110-898d-aaa5f9f070e0"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
@@ -480,6 +493,7 @@ Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 [compat]
 CairoMakie = "~0.10.6"
 FileIO = "~1.16.1"
+Formatting = "~0.4.2"
 HypertextLiteral = "~0.9.4"
 Images = "~0.25.3"
 PlutoUI = "~0.7.51"
@@ -490,9 +504,9 @@ Unitful = "~1.14.0"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.0"
+julia_version = "1.9.1"
 manifest_format = "2.0"
-project_hash = "07db4e8c0c56bb9860a7ed7500c15ba853f5d479"
+project_hash = "e3535e5a5a4b891712a084d1760fefd6458b21a0"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -2017,7 +2031,7 @@ version = "0.15.1+0"
 [[deps.libblastrampoline_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
-version = "5.7.0+0"
+version = "5.8.0+0"
 
 [[deps.libfdk_aac_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -2075,6 +2089,7 @@ version = "3.5.0+0"
 # ╟─cf007e8e-d0aa-4849-8baa-cd8a5a35c21b
 # ╟─69b04d0b-1b7d-43e9-8d34-c37b7f312e53
 # ╟─596c2f5a-120f-4368-a73f-5e9aa030a691
+# ╟─a2720c78-464f-4dff-9c4d-971de59a0979
 # ╟─0d8f1706-0a98-4c2b-b781-024f2ed32a65
 # ╟─4c8a810f-4041-49b8-a698-707b18be073f
 # ╟─444880b2-5a2b-4ba6-9a5e-012732fad139
@@ -2083,17 +2098,17 @@ version = "3.5.0+0"
 # ╟─a088d383-341a-421c-9421-5abc1355eb04
 # ╟─3427b6b8-ccb9-42c4-b8e0-b4cac2c163d8
 # ╟─01036d15-7621-488a-87d0-adbe0ca23ac6
-# ╟─b755f00e-f010-46a3-b3f9-0ada6267ac53
 # ╟─e1592afd-0916-49b4-92a2-e12c64f01cc6
 # ╟─35bc4c12-784b-4c6b-8331-a663da3798fa
-# ╟─6873a626-b8b7-4f42-9dae-882a4302862d
+# ╟─b516ec26-8f2b-45a7-a102-566a1c8b6c2e
+# ╟─c4ee126b-e4fc-43e3-8010-22ed28cad786
 # ╟─94dfa85e-6605-499b-991e-58347fbae250
 # ╟─f88b0e68-f94a-4495-9493-4a513bd8fbec
 # ╟─048da3ab-1793-4901-a796-026f7a9fbd12
 # ╠═94e556ff-cb05-4968-8ddb-c283092527e3
 # ╟─e37da613-cc6d-4377-b8d8-ca80444ab82a
 # ╠═7cb938fc-9fb7-4f3f-8e14-e3678cae7b5d
-# ╟─bd38244f-bc23-4f78-8f73-8a88eb5df719
+# ╠═bd38244f-bc23-4f78-8f73-8a88eb5df719
 # ╟─a42516e1-482e-4745-ad66-df82867c6d42
 # ╠═cc9898c9-4a26-4fdc-8073-f6dace9f3f5f
 # ╠═d89baa46-5096-42d9-9bff-a3054baf9fa4
