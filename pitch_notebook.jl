@@ -105,13 +105,13 @@ md"""
 # ╔═╡ 3427b6b8-ccb9-42c4-b8e0-b4cac2c163d8
 md"""
 !!! warning "First to Market"
-	- Julia is beloved by academics, researches, and countless companies. Very little infrastructure is available for working with Julia at scale. We will be first to market in many areas (interactive publishing, live collaborative coding, etc.). This will not only give us a first-mover advantage, but we will also be getting in as a technology is just beginning to see real growth and adoption. As the Julia user base grows we will grouw, and vice versa.
+	- Julia is beloved by academics, researchers, and countless companies. Very little infrastructure is available for working with Julia at scale currently. We will be first to market in many areas (interactive publishing, live collaborative coding, etc.). This will not only give us a first-mover advantage, but we will also be getting involved early, as this technology is just beginning to see real growth and adoption. As the Julia user base grows we will grow with it, and vice versa.
 
 !!! info "Julia"
-	- The programming language Julia allows for faster development of our notebook product and gives us a sustainable edge over all other major notebook options that are built-on Python or Javascript.
+	- The programming language, Julia, allows for faster development of our notebook platform and gives us a sustainable edge over all other major notebook options that are built-on Python or Javascript.
 
 !!! success "Academia"
-	- After we build out our notebook publishing service, we plan on targeting academia. Julia is beloved by academics (MIT, JuliaLab, etc) and by offering our services to prominent Universities, we will be preparing the next generation of software developers to reach for Glass Notebook first within their respective future companies (c.f. Matlab).
+	- After we build out our notebook publishing service, we plan on targeting academia. Julia is beloved by academics (MIT, JuliaLab, etc) and by offering our services to prominent universities, we will be preparing the next generation of software developers to reach for Glass Notebook first within their future companies (c.f. Matlab).
 """
 
 # ╔═╡ 01036d15-7621-488a-87d0-adbe0ca23ac6
@@ -143,7 +143,7 @@ We estimate these features will take 3 months of development time
 # ╔═╡ b516ec26-8f2b-45a7-a102-566a1c8b6c2e
 html"""
 <p>
-We plan on doing a private beta launch and onboarding new users slowly. In this beta, the pricing will be free, as users are expected to encounter bugs. To provide the publishing infrastructure for free, we need to have some reserve funding
+We plan on doing a private beta launch and onboarding new users slowly. In this beta, the pricing will be free, as users are expected to encounter bugs. To provide the publishing infrastructure for free, we need to have reserve funds
 <br>
 ⟹ $10,000
 </p>
