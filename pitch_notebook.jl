@@ -31,6 +31,35 @@ md"""
 We provide a one-click solution for Julia users to publish interactive Pluto notebooks. Simply link the GitHub URL and we take care of the rest.
 """
 
+# ╔═╡ f2ead7fe-3cca-40f6-a440-7ac332d545d5
+html"""
+<details>
+<summary>What is Julia?</summary>
+<br>
+
+Julia is a high-level, high-performance programming language that is used for technical computing. It's designed with the speed of C, but with the usability of Python. This makes it powerful for developers, but also approachable for those who might not have a deep background in programming. It's particularly popular in data analysis, machine learning, and scientific computing, because it can handle large data sets and complex mathematical functions very efficiently.
+
+<br>
+<br>
+
+You can think of Julia as a super-powered version of Python. It's like having a sports car that's as easy to drive as your everyday vehicle but performs at the level of a high-end race car.
+</details>
+
+<br>
+
+<details>
+<summary>What is Pluto?</summary>
+<br>
+
+Pluto is an interactive notebook environment for Julia, similar to Jupyter notebooks for Python. It's a tool where you can write Julia code, run it, and see the results all in one place. But Pluto goes a step further, creating a reactive environment where changes in your code can automatically update the results, making it easier to explore data, test hypotheses, or tweak models.
+
+<br>
+<br>
+
+You can think of Pluto as an interactive, live-updating whiteboard for your Julia code. It's like having a conversation with your data and models, where they can respond and change in real-time as you modify your questions and assumptions.
+</details>
+"""
+
 # ╔═╡ f9a075ca-cb0e-4577-8576-993fe36d0414
 html"""
 <iframe width="700" height="345" src="https://www.youtube.com/embed/oAqCvRjK0-c" title="Glass Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
@@ -38,7 +67,7 @@ html"""
 
 # ╔═╡ 750bd464-03c8-463e-bbdf-a6894eae81f3
 md"""
-!!! warning "Without Glass Notebook"
+!!! danger "Without Glass Notebook"
 	- [Without Glass Notebook](https://github.com/Glass-Notebook/pitch/blob/main/pitch_notebook.jl)
 	
 
@@ -404,8 +433,8 @@ begin
 	allotted_interactive_notebooks_all = Dict(
 		10 => basline_allotted_interactive_notebooks,
 		100 => basline_allotted_interactive_notebooks * 2,
-		1000 => basline_allotted_interactive_notebooks * 4,
-		10_000 => basline_allotted_interactive_notebooks * 6,
+		1000 => basline_allotted_interactive_notebooks * 2,
+		10_000 => basline_allotted_interactive_notebooks * 2,
 	)
 	allotted_interactive_notebooks_paid = allotted_interactive_notebooks_all[num_users_free]
 
@@ -2083,6 +2112,7 @@ version = "3.5.0+0"
 # ╔═╡ Cell order:
 # ╟─94c57806-2d1a-4a75-a5e3-0934632b4464
 # ╟─6562d072-38b7-4218-9708-7f51e44a8b51
+# ╟─f2ead7fe-3cca-40f6-a440-7ac332d545d5
 # ╟─f9a075ca-cb0e-4577-8576-993fe36d0414
 # ╟─750bd464-03c8-463e-bbdf-a6894eae81f3
 # ╟─72727660-d3b9-4ed9-b629-c19c79d0a114
