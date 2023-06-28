@@ -37,7 +37,7 @@ html"""
 <summary>What is Julia?</summary>
 <br>
 
-Julia is a high-level, high-performance programming language that is used for technical computing. It's designed with the speed of C, but with the usability of Python. This makes it powerful for developers, but also approachable for those who might not have a deep background in programming. It's particularly popular in data analysis, machine learning, and scientific computing, because it can handle large data sets and complex mathematical functions very efficiently.
+Julia is a relatively new programming language (2018). It is a high-level, high-performance language that is used for technical computing. It's designed with the speed of C, but with the usability of Python. This makes it powerful for developers, but also approachable for those who might not have a deep background in programming. It's particularly popular in data analysis, machine learning, and scientific computing, because it can handle large data sets and complex mathematical functions very efficiently.
 
 <br>
 <br>
