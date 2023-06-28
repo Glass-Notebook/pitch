@@ -67,12 +67,14 @@ html"""
 
 # ╔═╡ 750bd464-03c8-463e-bbdf-a6894eae81f3
 md"""
+!!! success "Using Glass Notebook"
+	- [With Glass Notebook #1]()
+
 !!! danger "Without Glass Notebook"
 	- [Without Glass Notebook](https://github.com/Glass-Notebook/pitch/blob/main/pitch_notebook.jl)
 	
 
 !!! success "Using Glass Notebook"
-	- [With Glass Notebook #1]()
 	- [With Glass Notebook #2](https://glassnotebook.io/nb/JS9Aq8jDZ_NR3h2VkzWEN)
 """
 
