@@ -294,11 +294,6 @@ md"""
 ## 4. Revenue Model
 """
 
-# ╔═╡ 3651c52e-e2d5-4bef-9af0-5ad3dc83972a
-md"""
-#### Year 1
-"""
-
 # ╔═╡ 76d2f9fb-fcc3-4537-abf6-826640d4d729
 md"""
 ## 5. Roadmap
@@ -434,11 +429,11 @@ Python
         <td>🚫</td>
       </tr>
       <tr>
-        <td>Live collaborative coding:</td>
+        <td>Live Collaborative Coding:</td>
         <td>✅</td>
       </tr>
       <tr>
-        <td>High performance computing:</td>
+        <td>High Performance Computing:</td>
         <td>🚫</td>
       </tr>
       <tr>
@@ -460,11 +455,11 @@ Python
         <td>🚫</td>
       </tr>
       <tr>
-        <td>Live collaborative coding:</td>
+        <td>Live Collaborative Coding:</td>
         <td>🚫</td>
       </tr>
       <tr>
-        <td>High performance computing:</td>
+        <td>High Performance Computing:</td>
         <td>✅</td>
       </tr>
       <tr>
@@ -486,11 +481,11 @@ Python
         <td>🚫</td>
       </tr>
       <tr>
-        <td>Live collaborative coding:</td>
+        <td>Live Collaborative Coding:</td>
         <td>🚫</td>
       </tr>
       <tr>
-        <td>High performance computing:</td>
+        <td>High Performance Computing:</td>
         <td>🚫</td>
       </tr>
       <tr>
@@ -518,11 +513,11 @@ Javascript
         <td>✅</td>
       </tr>
       <tr>
-        <td>Live collaborative coding:</td>
+        <td>Live Collaborative Coding:</td>
         <td>🚫</td>
       </tr>
       <tr>
-        <td>High performance computing:</td>
+        <td>High Performance Computing:</td>
         <td>🚫</td>
       </tr>
       <tr>
@@ -550,11 +545,11 @@ Julia
         <td>🚫</td>
       </tr>
       <tr>
-        <td>Live collaborative coding:</td>
+        <td>Live Collaborative Coding:</td>
         <td>🚫</td>
       </tr>
       <tr>
-        <td>High performance computing:</td>
+        <td>High Performance Computing:</td>
         <td>✅</td>
       </tr>
       <tr>
@@ -577,11 +572,11 @@ Julia
         <td>✅</td>
       </tr>
       <tr>
-        <td>Live collaborative coding:</td>
+        <td>Live Collaborative Coding:</td>
         <td>✅</td>
       </tr>
       <tr>
-        <td>High performance computing:</td>
+        <td>High Performance Computing:</td>
         <td>✅</td>
       </tr>
       <tr>
@@ -595,21 +590,23 @@ Julia
 </html>
 """
 
+
 # ╔═╡ d6dd419e-6cd6-4934-b644-a7cee490dd80
 md"""
 #### Advantages
 """
 
-# ╔═╡ 3427b6b8-ccb9-42c4-b8e0-b4cac2c163d8
+# ╔═╡ d17fefeb-ae0a-4fb3-8794-7314664e8739
 md"""
 !!! warning "First to Market"
-	- Julia is beloved by academics, researchers, and countless companies. Very little infrastructure is available for working with Julia at scale currently. We will be first to market in many areas (interactive publishing, live collaborative coding, etc.). This will not only give us a first-mover advantage, but we will also be getting involved early, as this technology is just beginning to see real growth and adoption. As the Julia user base grows we will grow with it, and vice versa.
+	- As a platform leveraging the Julia programming language, **Glass Notebook** enjoys a significant first-mover advantage. Julia, despite its immense potential, is currently underutilized in the market. This offers an opportunity for **Glass Notebook** to establish its footprint in the market before any potential competitor. Julia's growth has been impressive, with over 40 million downloads and a noticeable increase in recent years. As the user base of Julia expands, so will the customer base of **Glass Notebook** (see [Julia Growth](https://julialang.org/blog/2021/08/julia-user-developer-survey/).
 
 !!! info "Julia"
-	- The programming language, Julia, allows for faster development of our notebook platform and gives us a sustainable edge over all other major notebook options that are built-on Python or Javascript.
+	- Julia is known for its fast execution time and efficient package ecosystem. It stands out when compared to languages like Python and Javascript, offering speed and performance advantages that these languages usually lack. Its fast iteration and building process provide a significant competitive edge to **Glass Notebook** over other platforms built on languages like Python or Javascript. Further, Julia is favored by several large private firms across multiple sectors, including Amazon, IBM, JP Morgan AI Research, and ASML, attesting to its efficiency and versatility (see [Julia in Companies](https://www.datacamp.com/blog/the-rise-of-julia-is-it-worth-learning-in-2022)).
 
 !!! success "Academia"
-	- After we build out our notebook publishing service, we plan on targeting academia. Julia is beloved by academics (MIT, JuliaLab, etc) and by offering our services to prominent universities, we will be preparing the next generation of software developers to reach for Glass Notebook first within their future companies (c.f. Matlab).
+	- Academia serves as a fertile ground for innovative platforms like **Glass Notebook**. By offering its services to prestigious universities that are already favoring Julia, such as MIT, Stanford, and UC Berkeley, **Glass Notebook** positions itself to be front and center as a tool for the next generation of software developers. This partnership will nurture a loyal customer base that will likely continue to use **Glass Notebook** as they join or form their future companies. The platform's alignment with academic research paints a promising future landscape for its impact and growth (see [Julia in Academia](https://www.datacamp.com/blog/the-rise-of-julia-is-it-worth-learning-in-2022)).
+
 """
 
 # ╔═╡ 01036d15-7621-488a-87d0-adbe0ca23ac6
@@ -696,6 +693,7 @@ begin
 	current_pluto_downloads_yearly = 160222 / 2 # from June 2022 to June 2023
 	num_major_pluto_releases_2022 = 1
 	current_pluto_developers = current_pluto_downloads_yearly / num_major_pluto_releases_2022
+	# current_pluto_developers = current_julia_developers / (42.7/4.5) # Julia GitHub stars / Pluto GitHub stars
 
 	# TAM/SAM/SOM
 	user_revenue_per_year = 10 * 12
@@ -762,7 +760,7 @@ function tot(sel)
 		h1 = 10_000
 		h2 = 1_500
 		heights1 = [h1, h2]
-	    barplot!(table, heights1; color = [colors[5], colors[10]], bar_labels = ["10,000+", "1,500+"])
+	    barplot!(table, heights1; color = [(colors[5], 0.6), (colors[10], 0.6)], bar_labels = ["10,000+", "1,500+"])
 		hidedecorations!(ax, label = false, ticklabels = false)
 	
 	    ylims!(ax; low=0, high=12_500)
@@ -782,7 +780,7 @@ function tot(sel)
 		h1, h2 = current_julia_developers[end], current_pluto_developers[end]
 		heights1 = [h1, h2]
 		lbls = format.(heights1, commas=true, precision=0)
-	    barplot!(table, heights1; color = [colors[5], colors[10]], bar_labels = lbls)
+	    barplot!(table, heights1; color = [(colors[5], 0.6), (colors[10], 0.6)], bar_labels = lbls)
 		hidedecorations!(ax, label = false, ticklabels = false)
 		
 		return f
@@ -864,7 +862,7 @@ md"""
 # ╔═╡ cc9898c9-4a26-4fdc-8073-f6dace9f3f5f
 begin
 	#--- User ranges ---#
-	free_user_range = [10, 100, 1000, 10_000]
+	free_user_range = [10, 100, 1000, 10_000, 100_000]
 	paid_user_range = free_user_range .* 0.25
 	
 	#--- Pricing tiers ---#
@@ -890,7 +888,6 @@ end;
 </div>
 """)
 
-
 # ╔═╡ d89baa46-5096-42d9-9bff-a3054baf9fa4
 begin
 	#--- Number of users ---#
@@ -901,8 +898,9 @@ begin
 	export_cost_per_hour_all = Dict(
 		10    => 0.006u"hr^-1", # $/hr
 		100   => 0.002u"hr^-1",
-		1000  => 0.001u"hr^-1",
-		10000 => 0.0006u"hr^-1"
+		1_000  => 0.001u"hr^-1",
+		10_000 => 0.0006u"hr^-1",
+		100_000 => 0.00005u"hr^-1",
 	) # export cost is dependent on number of users because of vertical scaling
 	export_cost_per_hour = export_cost_per_hour_all[num_users_free]
 
@@ -921,6 +919,7 @@ begin
 		100 => basline_allotted_interactive_notebooks * 2,
 		1000 => basline_allotted_interactive_notebooks * 2,
 		10_000 => basline_allotted_interactive_notebooks * 2,
+		100_000 => basline_allotted_interactive_notebooks * 2,
 	)
 	allotted_interactive_notebooks_paid = allotted_interactive_notebooks_all[num_users_free]
 
@@ -941,6 +940,8 @@ md"""
 | Up to $(allotted_static_exports_free) static notebook exports| Up to $(format.(allotted_static_exports_paid[a], commas=true, precision=2)) static notebook exports | Unlimited static notebook exports|
 | Up to $(allotted_precomputed_notebooks_free) precomputed interactive notebooks| Up to $(allotted_precomputed_notebooks_paid[a]) precomputed interactive notebooks|  Unlimited  precomputed interactive notebooks|
 | N/A | Up to $(allotted_interactive_notebooks_paid[a]) active interactive notebooks | Unlimited active interactive notebooks |
+
+*Note: \$50/month @ 125,000 customers is ~ SOM*
 """
 
 # ╔═╡ dcde8461-aa6e-43e2-8653-c0fa1c9312a2
@@ -953,29 +954,35 @@ min_profit = (gross_income) - (max_static_export_cost_per_month_free + max_stati
 let
 	f = Figure()
 	colors = cgrad(:tab10)
-	labels = ["Cost \n Static", "Cost \n Precomputed", "Cost \n Interactive", "Gross Income", "Profit"]
-	tick_range = 1:5
+	labels = ["Expenses", "Revenue", "Profit"]
+	tick_range = 1:3
 	
 	ax = Axis(
 		f[0:1, 0:1],
 		ylabel = "Per Month (\$)",
 		xticks = (tick_range, labels),
-		title = "Revenue and Expenses Estimation for \$$(paid_pricing_tiers[a]) / month Pricing Tier",
+		title = "Expenses and Revenue Estimates Per Month (\$$(paid_pricing_tiers[a]) / month Pricing Tier)",
 		xticklabelrotation = π/4,
 		yautolimitmargin = (0.3, 0.3),
 		ytickformat = v -> format.(v, commas=true, precision=2)
 	)
+	expenses = max_static_export_cost_per_month_free + max_static_export_cost_per_month_paid + max_precomputed_export_cost_per_month_free + max_precomputed_export_cost_per_month_pad + max_interactive_export_cost_per_month_paid
+	# ys = [
+	# 	max_static_export_cost_per_month_free + max_static_export_cost_per_month_paid,
+	# 	max_precomputed_export_cost_per_month_free + max_precomputed_export_cost_per_month_pad,
+	# 	max_interactive_export_cost_per_month_paid, 
+	# 	gross_income,
+	# 	min_profit
+	# ]
 	ys = [
-		max_static_export_cost_per_month_free + max_static_export_cost_per_month_paid,
-		max_precomputed_export_cost_per_month_free + max_precomputed_export_cost_per_month_pad,
-		max_interactive_export_cost_per_month_paid, 
+		expenses, 
 		gross_income,
 		min_profit
 	]
 	if min_profit > 0
-		clrs = [colors[5], colors[7], colors[10], colors[1], colors[3]]
+		clrs = [colors[5], colors[7], colors[3]]
 	else
-		clrs = [colors[5], colors[7], colors[10], colors[1], colors[4]]
+		clrs = [colors[5], colors[7], colors[4]]
 	end
 
 	lbls = "\$" .* format.(ys, commas=true, precision=2)
@@ -2617,13 +2624,12 @@ version = "3.5.0+0"
 # ╟─201b1ff2-e730-4de3-98d1-f373decf3f33
 # ╟─72727660-d3b9-4ed9-b629-c19c79d0a114
 # ╟─369905f8-d972-485b-9401-4d26fa01c9ea
-# ╠═4edab4b6-2245-44dc-983b-a5cfe3983e89
+# ╟─4edab4b6-2245-44dc-983b-a5cfe3983e89
 # ╟─cf007e8e-d0aa-4849-8baa-cd8a5a35c21b
 # ╟─69b04d0b-1b7d-43e9-8d34-c37b7f312e53
 # ╟─596c2f5a-120f-4368-a73f-5e9aa030a691
 # ╟─a2720c78-464f-4dff-9c4d-971de59a0979
 # ╟─0d8f1706-0a98-4c2b-b781-024f2ed32a65
-# ╟─3651c52e-e2d5-4bef-9af0-5ad3dc83972a
 # ╟─4c8a810f-4041-49b8-a698-707b18be073f
 # ╟─444880b2-5a2b-4ba6-9a5e-012732fad139
 # ╟─e486a1e5-8666-4db1-9787-71d42459bbbe
@@ -2632,7 +2638,7 @@ version = "3.5.0+0"
 # ╟─a088d383-341a-421c-9421-5abc1355eb04
 # ╟─8b1ba7dd-d800-4a65-9866-0428ca1754de
 # ╟─d6dd419e-6cd6-4934-b644-a7cee490dd80
-# ╟─3427b6b8-ccb9-42c4-b8e0-b4cac2c163d8
+# ╟─d17fefeb-ae0a-4fb3-8794-7314664e8739
 # ╟─01036d15-7621-488a-87d0-adbe0ca23ac6
 # ╟─e1592afd-0916-49b4-92a2-e12c64f01cc6
 # ╟─35bc4c12-784b-4c6b-8331-a663da3798fa
