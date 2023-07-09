@@ -4,1016 +4,141 @@
 using Markdown
 using InteractiveUtils
 
-# This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
-macro bind(def, element)
-    quote
-        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
-        local el = $(esc(element))
-        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
-        el
-    end
-end
-
-# ╔═╡ 94e556ff-cb05-4968-8ddb-c283092527e3
+# ╔═╡ 1654b0ac-1de4-11ee-38d9-cd8d6a9e99f5
 begin
-	using PlutoUI, CairoMakie, Printf, FileIO, Images, Unitful, HypertextLiteral, Formatting, LinearAlgebra
+	using PlutoUI, CairoMakie, Formatting, LinearAlgebra
 	using CairoMakie:Axis
 	TableOfContents()
 end
 
-# ╔═╡ 94c57806-2d1a-4a75-a5e3-0934632b4464
+# ╔═╡ e70147b4-f6a9-4454-b6f9-bf785be76e3b
 md"""
-## 1. What is Glass Notebook?
+# Current
 """
 
-# ╔═╡ 6562d072-38b7-4218-9708-7f51e44a8b51
+# ╔═╡ 9846d24a-7579-4145-8b3b-580f45e39c4e
 md"""
-We provide a one-click solution for Julia users to publish interactive Pluto notebooks. Simply link the GitHub URL and we take care of the rest.
+## Total Estimates
 """
 
-# ╔═╡ f2ead7fe-3cca-40f6-a440-7ac332d545d5
-html"""
-<details>
-<summary>What is Julia?</summary>
-<br>
+# ╔═╡ 1de5c77b-c47a-4db3-bab5-1e8be3b55243
+current_developers = 2.69e7
 
-Julia is a relatively new programming language (2018). It is a high-level, high-performance language that is used for technical computing. It's designed with the speed of C, but with the usability of Python. This makes it powerful for developers, but also approachable for those who might not have a deep background in programming. It's particularly popular in data analysis, machine learning, and scientific computing, because it can handle large data sets and complex mathematical functions very efficiently.
-
-<br>
-<br>
-
-You can think of Julia as a super-powered version of Python. It's like having a sports car that's as easy to drive as your everyday vehicle but performs at the level of a high-end race car.
-</details>
-
-<br>
-
-<details>
-<summary>What is Pluto?</summary>
-<br>
-
-Pluto is an interactive notebook environment for Julia, similar to Jupyter notebooks for Python. It's a tool where you can write Julia code, run it, and see the results all in one place. But Pluto goes a step further, creating a reactive environment where changes in your code can automatically update the results, making it easier to explore data, test hypotheses, or tweak models.
-
-<br>
-<br>
-
-You can think of Pluto as an interactive, live-updating whiteboard for your Julia code. It's like having a conversation with your data and models, where they can respond and change in real-time as you modify your questions and assumptions.
-</details>
-"""
-
-# ╔═╡ f9a075ca-cb0e-4577-8576-993fe36d0414
-html"""
-<iframe style="border-radius: 15px" width="690" height="440" src="https://www.youtube.com/embed/oAqCvRjK0-c" title="Glass Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-"""
-
-# ╔═╡ 750bd464-03c8-463e-bbdf-a6894eae81f3
-# md"""
-# !!! success "Using Glass Notebook"
-# 	- [With Glass Notebook #1]()
-
-# !!! danger "Without Glass Notebook"
-# 	- [Without Glass Notebook](https://github.com/Glass-Notebook/pitch/blob/main/pitch_notebook.jl)
-	
-
-# !!! success "Using Glass Notebook"
-# 	- [With Glass Notebook #2](https://glassnotebook.io/nb/JS9Aq8jDZ_NR3h2VkzWEN)
-# """
-
-# ╔═╡ 201b1ff2-e730-4de3-98d1-f373decf3f33
-html"""
-<html>
-<style>
-.kanban-board {
-  display: flex;
-  justify-content: space-around;
-  position: relative;
-}
-
-.kanban-column {
-  width: 45%; /* Increase width since we now only have two columns */
-  padding: 1em;
-  border: 1px solid #000;
-  border-radius: 5px;
-  margin: 0.5em;
-}
-
-.kanban-column h3 {
-  text-align: center;
-}
-
-.kanban-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1em;
-  padding: 1em;
-  border: 1px solid #000;
-  border-radius: 5px;
-  background-color: #fff;
-}
-
-/* Changed colors for each column */
-.kanban-column.without-glass {
-  background-color: #ffcccb; /* Pastel red/pink */
-}
-
-.kanban-column.with-glass {
-  background-color: #c4ffda; /* Pastel green */
-}
-</style>
-
-<div class="kanban-board">
-  <div class="kanban-column without-glass">
-    <h3>Without Glass Notebook</h3>
-    <div class="kanban-item"><a href="https://github.com/Glass-Notebook/pitch/blob/main/pitch_notebook.jl" target="_blank">This Pitch Deck (Using GitHub Only)</a></div>
-  </div>
-
-  <div class="kanban-column with-glass">
-    <h3>With Glass Notebook</h3>
-    <div class="kanban-item"><a href="#">This Pitch Deck (Using Glass)</a></div>
-    <div class="kanban-item"><a href="https://glassnotebook.io/nb/JS9Aq8jDZ_NR3h2VkzWEN" target="_blank">Example Interactive Notebook</a></div>
-  </div>
-</div>
-
-</html>
-"""
-
-
-# ╔═╡ 72727660-d3b9-4ed9-b629-c19c79d0a114
-# let
-# 	img1 = load(joinpath(pwd(), "imgs", "carbon-github.png"))
-	
-# 	f = Figure(resolution = (2000, 2000))
-# 	ax = Axis(
-# 		f[1, 1],
-# 		title = "Without Glass Notebook",
-# 		titlesize = 60,
-# 	)
-# 	heatmap!(rotr90(img1))
-# 	hidedecorations!(ax)
-# 	hidespines!(ax)
-# 	f
-# end
-
-# ╔═╡ 369905f8-d972-485b-9401-4d26fa01c9ea
+# ╔═╡ 0593da66-176c-446c-abd4-73d564d2d71a
 md"""
-## 2. Product Description
+## Julia Estimates
 """
 
-# ╔═╡ 4edab4b6-2245-44dc-983b-a5cfe3983e89
-html"""
-<style>
-.kanban-board {
-  display: flex;
-  flex-direction: column; /* Display the kanban columns vertically */
-  align-items: center;
-  justify-content: space-around;
-  position: relative;
-}
+# ╔═╡ cb518637-ddd7-4a3a-abd5-5f0fc31e2740
+current_year_range = collect(2016:2022)
 
-.kanban-column {
-  width: 90%; /* Increase width since we now have one column per row */
-  padding: 1em;
-  border: 1px solid #000;
-  border-radius: 5px;
-  margin: 0.5em;
-}
-
-.kanban-column h4 {
-  text-align: center;
-}
-
-.kanban-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1em;
-  padding: 1em;
-  border: 1px solid #000;
-  border-radius: 5px;
-  background-color: #fff;
-}
-
-/* Changed colors for each column */
-.kanban-column.static {
-  background-color: #d1d1ff; /* Pastel Purple */ 
-}
-
-.kanban-column.precomputed {
-  background-color: #b3d1ff; /* Pastel Blue */
-}
-
-.kanban-column.fully-interactive {
-  background-color: #c4ffda; /* Pastel Green */
-}
-
-/* Style the bullet points */
-table {
-  width: 100%;
-}
-</style>
-
-<div class="kanban-board">
-  <div class="kanban-column static">
-    <h4>Static Publishing</h4>
-    <table>
-      <tr>
-        <td>Interactivity:</td>
-        <td>🚫</td>
-      </tr>
-      <tr>
-        <td>Cost:</td>
-        <td>💰</td>
-      </tr>
-      <tr>
-        <td>Use Case:</td>
-        <td>Displaying static results or information (e.g. package documentation) with the styling associated with a Pluto notebook</td>
-      </tr>
-    </table>
-  </div>
-
-  <div class="kanban-column precomputed">
-    <h4>Precomputed Interactive Publishing</h4>
-    <table>
-      <tr>
-        <td>Interactivity:</td>
-        <td>✅</td>
-      </tr>
-      <tr>
-        <td>Cost:</td>
-        <td>💰</td>
-      </tr>
-      <tr>
-        <td>Use Case:</td>
-        <td>Interactive display with reduced server load. No outside data injections (e.g. unable to upload CSV files)</td>
-      </tr>
-    </table>
-  </div>
-
-  <div class="kanban-column fully-interactive">
-    <h4>Fully Interactive Publishing</h4>
-    <table>
-      <tr>
-        <td>Interactivity:</td>
-        <td>✅✅✅</td>
-      </tr>
-      <tr>
-        <td>Cost:</td>
-        <td>💰💰💰</td>
-      </tr>
-      <tr>
-        <td>Use Case:</td>
-        <td>Fully interactive display with high resource usage. Can upload files to the notebook, etc.</td>
-      </tr>
-    </table>
-  </div>
-</div>
-"""
-
-
-# ╔═╡ cf007e8e-d0aa-4849-8baa-cd8a5a35c21b
-md"""
-## 3. Target Market 
-"""
-
-# ╔═╡ 69b04d0b-1b7d-43e9-8d34-c37b7f312e53
-md"""
-$(@bind sel PlutoUI.Select(["Julia Downloads", "User Demographics", "Julia/Pluto Users", "TAM+"]))
-"""
-
-# ╔═╡ a2720c78-464f-4dff-9c4d-971de59a0979
-if sel == "TAM+"
-md"""
-**TAM**: Number of software developers ``\times`` \$10/month ``\times`` 12 months
-
-**SAM**: Number of Julia developers ``\times`` \$10/month ``\times`` 12 months
-
-**SOM**: Number of Pluto developers ``\times`` \$10/month ``\times`` 12 months ``\times`` 10%
-"""
-end
-
-# ╔═╡ 0d8f1706-0a98-4c2b-b781-024f2ed32a65
-md"""
-## 4. Revenue Model
-"""
-
-# ╔═╡ 3651c52e-e2d5-4bef-9af0-5ad3dc83972a
-md"""
-#### Year 1
-"""
-
-# ╔═╡ 76d2f9fb-fcc3-4537-abf6-826640d4d729
-md"""
-## 5. Roadmap
-"""
-
-# ╔═╡ 8e8d9854-2ddc-44be-a026-341e654863bb
-html"""
-<html>
-  <style>
-    .kanban-board {
-      display: flex;
-      justify-content: space-around; /* change to space-around for even spacing between and around items */
-    }
-
-    .kanban-column {
-      width: 30%;
-      padding: 1em;
-      border: 1px solid #000;
-      border-radius: 5px;
-      margin: 0.5em; /* added margin to have space between columns */
-    }
-
-    .kanban-column h3 {
-      text-align: center;
-    }
-
-    .kanban-item {
-      display: flex; /* To align the emoji and the task text */
-      align-items: center;
-      margin-bottom: 1em;
-      padding: 1em;
-      border: 1px solid #000;
-      border-radius: 5px;
-      background-color: #fff; /* background color is now white */
-    }
-
-    /* Changed colors for each column */
-    .kanban-column.todo {
-      background-color: #d1d1ff; /* Pastel Purple */ 
-    }
-
-    .kanban-column.progress {
-      background-color: #b3d1ff; /* Pastel Blue */
-    }
-
-    .kanban-column.done {
-      background-color: #c4ffda; /* Pastel Green */
-    }
-  </style>
-
-
-<div class="kanban-board">
-  <div class="kanban-column todo">
-    <h3>To Do</h3>
-    <div class="kanban-item">📝 Academia Integration</div>
-    <div class="kanban-item">📝 High Performance Computing Cluster</div>
-  </div>
-
-  <div class="kanban-column progress">
-    <h3>In Progress</h3>
-    <div class="kanban-item">🚧 Collaborative Online Coding</div>
-    <div class="kanban-item">🚧 Pre-computed Interactive Notebook Publishing</div>
-  </div>
-
-  <div class="kanban-column done">
-    <h3>Done</h3>
-    <div class="kanban-item">✅ Static Notebook Publishing</div>
-    <div class="kanban-item">✅ Interactive Notebook Publishing</div>
-  </div>
-</div>
-
-</html>
-"""
-
-# ╔═╡ a088d383-341a-421c-9421-5abc1355eb04
-md"""
-## 6. Competetive Landscape
-"""
-
-# ╔═╡ 8b1ba7dd-d800-4a65-9866-0428ca1754de
-html"""
-<html>
-<style>
-.kanban-board {
-  display: flex;
-  justify-content: space-around;
-  position: relative;
-}
-
-.kanban-column {
-  width: 30%;
-  padding: 1em;
-  border: 1px solid #000;
-  border-radius: 5px;
-  margin: 0.5em;
-}
-
-.kanban-column h4 {
-  text-align: center;
-}
-
-.kanban-column.python {
-  background-color: #d1d1ff; /* Pastel Purple */ 
-}
-.kanban-column.glass {
-  background-color: #c4ffda; /* Pastel Green */
-}
-
-table {
-  width: 100%;
-  background-color: #fff; /* background color is now white */
-  padding: 1em;
-  border: 1px solid #000;
-  border-radius: 5px;
-}
-
-</style>
-
-<h4 style="text-align: center;"> 
-<img src="https://www.vectorlogo.zone/logos/python/python-icon.svg" alt="Python logo" style="height: 24px; width: 24px; vertical-align: middle;"> 
-Python 
-</h4>
-<div class="kanban-board">
-  <div class="kanban-column python">
-    <h4>Deepnote</h4>
-    <table>
-      <tr>
-        <td>Static Notebooks:</td>
-        <td>✅</td>
-      </tr>
-      <tr>
-        <td>Interactive Notebooks:</td>
-        <td>🚫</td>
-      </tr>
-      <tr>
-        <td>Live collaborative coding:</td>
-        <td>✅</td>
-      </tr>
-      <tr>
-        <td>High performance computing:</td>
-        <td>🚫</td>
-      </tr>
-      <tr>
-        <td>Academia:</td>
-        <td>🚫</td>
-      </tr>
-    </table>
-  </div>
-
-  <div class="kanban-column python">
-	<h4>Paperspace</h4>
-    <table>
-      <tr>
-        <td>Static Notebooks:</td>
-        <td>✅</td>
-      </tr>
-      <tr>
-        <td>Interactive Notebooks:</td>
-        <td>🚫</td>
-      </tr>
-      <tr>
-        <td>Live collaborative coding:</td>
-        <td>🚫</td>
-      </tr>
-      <tr>
-        <td>High performance computing:</td>
-        <td>✅</td>
-      </tr>
-      <tr>
-        <td>Academia:</td>
-        <td>🚫</td>
-      </tr>
-    </table>
-  </div>
-
-  <div class="kanban-column python">
-	<h4>Google Colab</h4>
-    <table>
-      <tr>
-        <td>Static Notebooks:</td>
-        <td>✅</td>
-      </tr>
-      <tr>
-        <td>Interactive Notebooks:</td>
-        <td>🚫</td>
-      </tr>
-      <tr>
-        <td>Live collaborative coding:</td>
-        <td>🚫</td>
-      </tr>
-      <tr>
-        <td>High performance computing:</td>
-        <td>🚫</td>
-      </tr>
-      <tr>
-        <td>Academia:</td>
-        <td>✅</td>
-      </tr>
-    </table>
-  </div>
-</div>
-
-<h4 style="text-align: center;"> 
-<img src="https://www.vectorlogo.zone/logos/javascript/javascript-icon.svg" alt="Javascript logo" style="height: 24px; width: 24px; vertical-align: middle;"> 
-Javascript 
-</h4>
-<div class="kanban-board">
-  <div class="kanban-column python">
-    <h4>Observable</h4>
-    <table>
-      <tr>
-        <td>Static Notebooks:</td>
-        <td>✅</td>
-      </tr>
-      <tr>
-        <td>Interactive Notebooks:</td>
-        <td>✅</td>
-      </tr>
-      <tr>
-        <td>Live collaborative coding:</td>
-        <td>🚫</td>
-      </tr>
-      <tr>
-        <td>High performance computing:</td>
-        <td>🚫</td>
-      </tr>
-      <tr>
-        <td>Academia:</td>
-        <td>🚫</td>
-      </tr>
-    </table>
-  </div>
-</div>
-
-<h4 style="text-align: center;"> 
-<img src="https://www.vectorlogo.zone/logos/julialang/julialang-icon.svg" alt="Julia logo" style="height: 24px; width: 24px; vertical-align: middle;"> 
-Julia 
-</h4>
-<div class="kanban-board">
-  <div class="kanban-column python">
-    <h4>JuliaHub</h4>
-    <table>
-      <tr>
-        <td>Static Notebooks:</td>
-        <td>🚫</td>
-      </tr>
-      <tr>
-        <td>Interactive Notebooks:</td>
-        <td>🚫</td>
-      </tr>
-      <tr>
-        <td>Live collaborative coding:</td>
-        <td>🚫</td>
-      </tr>
-      <tr>
-        <td>High performance computing:</td>
-        <td>✅</td>
-      </tr>
-      <tr>
-        <td>Academia:</td>
-        <td>🚫</td>
-      </tr>
-    </table>
-  </div>
-  <div class="kanban-column glass ">
-    <h4>
-		<img src="https://avatars.githubusercontent.com/u/121525345?s=200&v=4" alt="Glass logo" style="height: 24px; width: 24px; vertical-align: middle;">  Glass Notebook
-	</h4>
-    <table>
-      <tr>
-        <td>Static Notebooks:</td>
-        <td>✅</td>
-      </tr>
-      <tr>
-        <td>Interactive Notebooks:</td>
-        <td>✅</td>
-      </tr>
-      <tr>
-        <td>Live collaborative coding:</td>
-        <td>✅</td>
-      </tr>
-      <tr>
-        <td>High performance computing:</td>
-        <td>✅</td>
-      </tr>
-      <tr>
-        <td>Academia:</td>
-        <td>✅</td>
-      </tr>
-    </table>
-  </div>
-</div>
-
-</html>
-"""
-
-# ╔═╡ d6dd419e-6cd6-4934-b644-a7cee490dd80
-md"""
-#### Advantages
-"""
-
-# ╔═╡ 3427b6b8-ccb9-42c4-b8e0-b4cac2c163d8
-md"""
-!!! warning "First to Market"
-	- Julia is beloved by academics, researchers, and countless companies. Very little infrastructure is available for working with Julia at scale currently. We will be first to market in many areas (interactive publishing, live collaborative coding, etc.). This will not only give us a first-mover advantage, but we will also be getting involved early, as this technology is just beginning to see real growth and adoption. As the Julia user base grows we will grow with it, and vice versa.
-
-!!! info "Julia"
-	- The programming language, Julia, allows for faster development of our notebook platform and gives us a sustainable edge over all other major notebook options that are built-on Python or Javascript.
-
-!!! success "Academia"
-	- After we build out our notebook publishing service, we plan on targeting academia. Julia is beloved by academics (MIT, JuliaLab, etc) and by offering our services to prominent universities, we will be preparing the next generation of software developers to reach for Glass Notebook first within their future companies (c.f. Matlab).
-"""
-
-# ╔═╡ 01036d15-7621-488a-87d0-adbe0ca23ac6
-md"""
-## 7. Use of Funds
-"""
-
-# ╔═╡ e1592afd-0916-49b4-92a2-e12c64f01cc6
-md"""
-Much of the core infrastructure is already there, but we still need a few features to bring GlassNotebook to market!
-- Scalable static hosting
-- Precomputed sliders
-- Improvements to live editing systems
-"""
-
-# ╔═╡ 35bc4c12-784b-4c6b-8331-a663da3798fa
-html"""
-<p>
-We estimate these features will take 3 months of development time
-<br>
-<span style="color: gray; margin-left: 20px">
-@ 40 hours / week,&nbsp;&nbsp; 4 weeks / month
-</span>
-<br>
-⟹ $20,000
-</p>
-"""
-
-# ╔═╡ b516ec26-8f2b-45a7-a102-566a1c8b6c2e
-html"""
-<p>
-We plan on doing a private beta launch and onboarding new users slowly. In this beta, the pricing will be free, as users are expected to encounter bugs. To provide the publishing infrastructure for free, we need to have reserve funds
-<br>
-⟹ $10,000
-</p>
-"""
-
-# ╔═╡ c4ee126b-e4fc-43e3-8010-22ed28cad786
-html"""
-<p>
-In total:
-<br>
-⟹ <span style="font-weight:bold">$20,000 + $10,000 = $30,000
-</p>
-"""
-
-# ╔═╡ 94dfa85e-6605-499b-991e-58347fbae250
-html"""
-<!-- I replaced the ~20 cells with this, it's just a spacer! Update the height property to change how much space to include -->
-<div style="height: 1000px"/>
-"""
-
-# ╔═╡ f88b0e68-f94a-4495-9493-4a513bd8fbec
-md"""
-# Appendix
-"""
-
-# ╔═╡ 048da3ab-1793-4901-a796-026f7a9fbd12
-md"""
-#### Imports
-"""
-
-# ╔═╡ e37da613-cc6d-4377-b8d8-ca80444ab82a
-md"""
-#### Target Market
-"""
-
-# ╔═╡ 7209d6ce-06cf-4a43-a991-a49fa084542a
+# ╔═╡ cdfd91ae-8cb7-4085-890f-e6610e20029d
 begin
-	downloads = [3.46e5, 9.04e5, 1.815e6, 7.235e6, 12.85e6, 24.1e6, 34.7e6, 45.13e6]
-	
-	#-- Current --#
-	current_year_range = collect(2016:2022)
-
-	# Total
-	current_developers = 2.69e7
-
-	# Julia
 	current_julia_downloads_yearly = [5.58e5, 9.11e5, 5.42e6, 1.125e7, 1.06e7, 1.043e7]
+
 	num_major_julia_releases_2022 = 2
 	current_julia_developers = current_julia_downloads_yearly ./ num_major_julia_releases_2022
+end
 
-	# Pluto
+# ╔═╡ b1852732-821d-4402-a4bf-d766d560a303
+md"""
+## Pluto Estimates
+"""
+
+# ╔═╡ 84b272c8-c409-4d85-985c-67258d70d39d
+md"""
+[![Pluto Downloads](https://shields.io/endpoint?url=https://pkgs.genieframework.com/api/v1/badge/Pluto)](https://pkgs.genieframework.com?packages=Pluto).
+"""
+
+# ╔═╡ c89afeb1-287d-4301-9a7c-b0bef54e2ae2
+begin
 	current_pluto_downloads_yearly = 160222 / 2 # from June 2022 to June 2023
 	num_major_pluto_releases_2022 = 1
 	current_pluto_developers = current_pluto_downloads_yearly / num_major_pluto_releases_2022
+end
 
-	# TAM/SAM/SOM
-	user_revenue_per_year = 10 * 12
-	
-	current_TAM = current_developers * user_revenue_per_year
-	current_SAM = current_julia_developers[end] * user_revenue_per_year
-	current_SOM = current_pluto_developers[end] * user_revenue_per_year
+# ╔═╡ 223d51da-1f49-4707-966a-f92314f4a3b6
+md"""
+# Future (2028)
+"""
 
-	#-- Projected (2028) --#
+# ╔═╡ f69558c5-b635-4d21-930b-f8e7e7ad61b5
+begin
 	rnge = 1:length(current_julia_developers) + 6
 	total_year_range = collect(current_year_range[1] .+ rnge)
+end
 
-	# Total
-	projected_developers = 3.31e7
+# ╔═╡ 6a318b9b-d2d2-44b5-b030-d0062bbef546
+md"""
+## Total Estimates
+"""
 
-	# Julia
+# ╔═╡ 8e971083-1889-4864-b705-e00b529623f7
+projected_developers = 3.31e7
+
+# ╔═╡ 01103a05-f23c-44ad-af67-6c5df0994d64
+md"""
+## Julia Estimates
+"""
+
+# ╔═╡ 8abc85d9-83f4-43ce-86f7-39ee6dc461ce
+begin
+	# Create equally spaced x values for the years
 	x_values = 1:length(current_julia_developers)
+	
+	# Fit the line to the data to get parameters of the linear model
 	A = hcat(ones(length(x_values)), x_values)
 	param = A \ current_julia_developers
-	lin_func(x) = param[1] + param[2] * x # linear extrapolation to 2028
+	
+	# Define the linear function with the calculated parameters
+	lin_func(x) = param[1] + param[2] * x
+
+	# Extrapolate to 5 years ahead
 	projected_julia_developers = [lin_func(i) for i in rnge]
-
-	# Pluto
-	percent_increase = projected_julia_developers[end] / current_julia_developers[end]
-	projected_pluto_developers = current_pluto_developers * percent_increase
-
-	# TAM/SAM/SOM
-	projected_TAM = projected_developers * user_revenue_per_year
-	projected_SAM = projected_julia_developers[end] * user_revenue_per_year
-	projected_SOM = projected_pluto_developers[end] * user_revenue_per_year
 end
 
-# ╔═╡ bd38244f-bc23-4f78-8f73-8a88eb5df719
-function tot(sel)
-	f = Figure()
-	colors = cgrad(:tab10)
-
-	if sel == "Julia Downloads"
-	
-		ax = Axis(
-			f[1, 1],
-			title = "Julia Downloads - Cumulative",
-			ylabel = "Total Downloads",
-			xticks = current_year_range,
-			xticklabelrotation = 45,
-			ytickformat = v -> format.(v, commas=true, precision=0),
-			yautolimitmargin = (0.0, 0.2)
-		)
-		scatterlines!(
-			current_year_range, downloads[2:end];
-			label = "lower bound"
-		)
-		return f
-	elseif sel == "User Demographics"
-		ax = Axis(
-			f[1, 1]; 
-			xticks = (1:2, ["Companies", "Universities"]),
-			title = "User Demographics",
-			ylabel = "Number of Unique Institutions",
-			yautolimitmargin = (0.0, 0.2)
-		)
-	
-	    table = [1, 2]
-		h1 = 10_000
-		h2 = 1_500
-		heights1 = [h1, h2]
-	    barplot!(table, heights1; color = [colors[5], colors[10]], bar_labels = ["10,000+", "1,500+"])
-		hidedecorations!(ax, label = false, ticklabels = false)
-	
-	    ylims!(ax; low=0, high=12_500)
-		return f
-	elseif sel == "Julia/Pluto Users"
-
-		ax = Axis(
-			f[1, 1]; 
-			xticks = (1:2, ["Estimated Julia Users", "Estimated Pluto Users"]),
-			title = "Estimated Users (2022)",
-			ylabel = "Users",
-			ytickformat = v -> format.(v, commas=true, precision=0),
-			yautolimitmargin = (0.0, 0.2)
-		)
-	
-	    table = [1, 2]
-		h1, h2 = current_julia_developers[end], current_pluto_developers[end]
-		heights1 = [h1, h2]
-		lbls = format.(heights1, commas=true, precision=0)
-	    barplot!(table, heights1; color = [colors[5], colors[10]], bar_labels = lbls)
-		hidedecorations!(ax, label = false, ticklabels = false)
-		
-		return f
-	elseif sel == "TAM+"
-		colors = cgrad(:tab10)
-		
-		ax = Axis(
-			f[1, 1:2],
-			title = "TAM/SAM/SOM (Not to Scale)",
-			aspect = 1
-		)
-		
-		TAM = 180
-		SAM = 100
-		SOM = 40
-		
-		scatter!(-300, 0; color = (colors[5], 0.3), markersize = TAM)
-		scatter!(-300, -70; color = (colors[5], 0.6), markersize = SAM)
-		scatter!(-300, -90; color = (colors[5], 0.9), markersize = SOM)
-	
-		TAM2 = 350
-		SAM2 = 200
-		SOM2 = 80
-	
-		scatter!(400, 0, color = (colors[10], 0.3), markersize = TAM2)
-		scatter!(400, -120, color = (colors[10], 0.5), markersize = SAM2)
-		scatter!(400, -180, color = (colors[10], 1.0), markersize = SOM2)
-	
-		limits!(ax, -500, 800, -800, 800)
-	
-		hidespines!(ax)
-		hidedecorations!(ax)
-	
-		colors1 = [cgrad(:tab10, alpha = 0.3)[5], cgrad(:tab10, alpha = 0.6)[5], cgrad(:tab10, alpha = 0.9)[5]]
-		colors2 = [cgrad(:tab10, alpha = 0.3)[10], cgrad(:tab10, alpha = 0.6)[10], cgrad(:tab10, alpha = 0.9)[10]]
-	
-	
-		group_color = [PolyElement(color = color, strokecolor = :transparent) for color in colors1]
-		lbls = format.([current_TAM, current_SAM, current_SOM], commas=true, precision=0)
-		Legend(
-			f[1, 1:2],
-			group_color,
-			[
-				"TAM = \$$(lbls[1])", 
-				"SAM = \$$(lbls[2])", 
-				"SOM = \$$(lbls[3])"
-			],
-			"Year 1",
-			valign = :bottom,
-			halign = :left
-		)
-	
-		group_color = [PolyElement(color = color, strokecolor = :transparent) for color in colors2]
-		lbls = format.([projected_TAM, projected_SAM, projected_SOM], commas=true, precision=0)
-		Legend(
-			f[1, 1:2],
-			group_color,
-			[
-				"TAM = \$$(lbls[1])", 
-				"SAM = \$$(lbls[2])", 
-				"SOM = \$$(lbls[3])"
-			],
-			"Year 5",
-			valign = :bottom,
-			halign = :right
-		)
-		f
-	end
-end
-
-# ╔═╡ 596c2f5a-120f-4368-a73f-5e9aa030a691
-tot(sel)
-
-# ╔═╡ a42516e1-482e-4745-ad66-df82867c6d42
-md"""
-#### Revenue Model
-"""
-
-# ╔═╡ cc9898c9-4a26-4fdc-8073-f6dace9f3f5f
-begin
-	#--- User ranges ---#
-	free_user_range = [10, 100, 1000, 10_000]
-	paid_user_range = free_user_range .* 0.25
-	
-	#--- Pricing tiers ---#
-	paid_pricing_tiers = [10, 20, 50, 100, 200]; # $ per month
-
-	#--- Maximum estimated static and interactive export times ---#
-	avg_static_export_time_per_notebook = 0.10u"hr"
-	avg_interactive_export_time_per_notebook = (30 * 24)u"hr" # 30 days * 24 hrs
-end;
-
-# ╔═╡ 4c8a810f-4041-49b8-a698-707b18be073f
-@htl("""
-<div style="display: flex; justify-content: center; align-items: center;">
-	<div>
-	Paid Price Tier</br>
-	$(@bind a PlutoUI.Slider(1:length(paid_pricing_tiers)))</br>
-	</div>
-
-	<div style="margin-left: 25px">
-	Number of Users</br>
-	$(@bind n PlutoUI.Slider(1:length(free_user_range)))
-	</div>
-</div>
-""")
-
-
-# ╔═╡ d89baa46-5096-42d9-9bff-a3054baf9fa4
-begin
-	#--- Number of users ---#
-	num_users_free = free_user_range[n]
-	num_users_paid = paid_user_range[n]
-
-	#--- Export cost per hour ---#
-	export_cost_per_hour_all = Dict(
-		10    => 0.006u"hr^-1", # $/hr
-		100   => 0.002u"hr^-1",
-		1000  => 0.001u"hr^-1",
-		10000 => 0.0006u"hr^-1"
-	) # export cost is dependent on number of users because of vertical scaling
-	export_cost_per_hour = export_cost_per_hour_all[num_users_free]
-
-	#--- Alloted static, precomputed, & interactive notebooks (tier dependent) ---#	
-	allotted_static_exports_free = 100 # notebooks per month
-	allotted_static_exports_paid = [1_000, 3_000, 8_000, 18_000, 30_000, 50_000]
-
-	precomputed_notebook_storage_cost_per_month = 0.02
-	allotted_precomputed_notebooks_free = 10
-	allotted_precomputed_notebooks_paid = [15, 30, 50, 100, 200]
-	
-	basline_allotted_interactive_notebooks = [2, 4, 10, 20, 40]
-	allotted_interactive_notebooks_free = 0 # notebooks per month
-	allotted_interactive_notebooks_all = Dict(
-		10 => basline_allotted_interactive_notebooks,
-		100 => basline_allotted_interactive_notebooks * 2,
-		1000 => basline_allotted_interactive_notebooks * 2,
-		10_000 => basline_allotted_interactive_notebooks * 2,
-	)
-	allotted_interactive_notebooks_paid = allotted_interactive_notebooks_all[num_users_free]
-
-	#--- Maximum estimated static, precomputed, & interactive costs ---#
-	max_static_export_cost_per_month_free = export_cost_per_hour * avg_static_export_time_per_notebook * allotted_static_exports_free * free_user_range[n] # $
-	max_static_export_cost_per_month_paid = export_cost_per_hour * avg_static_export_time_per_notebook * allotted_static_exports_paid[a] * paid_user_range[n] # $
-
-	max_precomputed_export_cost_per_month_free = (export_cost_per_hour * avg_static_export_time_per_notebook + precomputed_notebook_storage_cost_per_month) * allotted_precomputed_notebooks_free * free_user_range[n]
-	max_precomputed_export_cost_per_month_pad = (export_cost_per_hour * avg_static_export_time_per_notebook + precomputed_notebook_storage_cost_per_month) * allotted_precomputed_notebooks_paid[a] * paid_user_range[n]
-
-	max_interactive_export_cost_per_month_paid = export_cost_per_hour * avg_interactive_export_time_per_notebook * allotted_interactive_notebooks_paid[a] * paid_user_range[n] # $
-end;
-
-# ╔═╡ 444880b2-5a2b-4ba6-9a5e-012732fad139
-md"""
-| Free (\$0 / month) | Paid (\$$(paid_pricing_tiers[a]) / month) | Enterprise (Custom) |
-|:---|:---|:---|
-| Up to $(allotted_static_exports_free) static notebook exports| Up to $(format.(allotted_static_exports_paid[a], commas=true, precision=2)) static notebook exports | Unlimited static notebook exports|
-| Up to $(allotted_precomputed_notebooks_free) precomputed interactive notebooks| Up to $(allotted_precomputed_notebooks_paid[a]) precomputed interactive notebooks|  Unlimited  precomputed interactive notebooks|
-| N/A | Up to $(allotted_interactive_notebooks_paid[a]) active interactive notebooks | Unlimited active interactive notebooks |
-"""
-
-# ╔═╡ dcde8461-aa6e-43e2-8653-c0fa1c9312a2
-gross_income = paid_pricing_tiers[a] * paid_user_range[n]
-
-# ╔═╡ 344c5ef8-fef3-4d24-955c-53dadd9ebdae
-min_profit = (gross_income) - (max_static_export_cost_per_month_free + max_static_export_cost_per_month_paid + max_precomputed_export_cost_per_month_free + max_precomputed_export_cost_per_month_pad + max_interactive_export_cost_per_month_paid)
-
-# ╔═╡ e486a1e5-8666-4db1-9787-71d42459bbbe
+# ╔═╡ 60a4aa6f-26a1-45a1-a480-bb3cc204199d
 let
 	f = Figure()
-	colors = cgrad(:tab10)
-	labels = ["Cost \n Static", "Cost \n Precomputed", "Cost \n Interactive", "Gross Income", "Profit"]
-	tick_range = 1:5
-	
 	ax = Axis(
-		f[0:1, 0:1],
-		ylabel = "Per Month (\$)",
-		xticks = (tick_range, labels),
-		title = "Revenue and Expenses Estimation for \$$(paid_pricing_tiers[a]) / month Pricing Tier",
-		xticklabelrotation = π/4,
-		yautolimitmargin = (0.3, 0.3),
-		ytickformat = v -> format.(v, commas=true, precision=2)
+		f[1, 1],
+		title = "Estimated Julia Developers",
+		ylabel = "Number of Developers",
+		xticks = total_year_range,
+		xticklabelrotation = 45,
+		ytickformat = v -> format.(v, commas=true, precision=0),
+		xlabel = "Year"
 	)
-	ys = [
-		max_static_export_cost_per_month_free + max_static_export_cost_per_month_paid,
-		max_precomputed_export_cost_per_month_free + max_precomputed_export_cost_per_month_pad,
-		max_interactive_export_cost_per_month_paid, 
-		gross_income,
-		min_profit
-	]
-	if min_profit > 0
-		clrs = [colors[5], colors[7], colors[10], colors[1], colors[3]]
-	else
-		clrs = [colors[5], colors[7], colors[10], colors[1], colors[4]]
-	end
+	scatterlines!(current_year_range[2:end], current_julia_developers, label = "Current Julia Users")
+	scatterlines!(current_year_range[1] .+ rnge, projected_julia_developers, label = "Projected Julia Users")
 
-	lbls = "\$" .* format.(ys, commas=true, precision=2)
-	barplot!(
-		tick_range, ys;
-		color = clrs,
-		bar_labels = lbls,
-		label_size = 20,
-	)
-
-	Label(
-		f[0, 0], 
-		" \n  Free Users: $(format.(free_user_range[n], commas=true, precision=0)) \n  Paid Users: $(format.(paid_user_range[n], commas=true, precision=0))"
-	)
+	axislegend(ax; position = :rb)
 	f
 end
+
+# ╔═╡ 95211f53-1626-4c53-874b-54d80408c4d2
+md"""
+## Pluto Estimates
+"""
+
+# ╔═╡ bb0a485d-f553-4df7-8e13-8102e5480396
+percent_increase = projected_julia_developers[end] / current_julia_developers[end]
+
+# ╔═╡ 336c17a5-0928-4a38-811d-16bc5aea9d18
+projected_pluto_developers = current_pluto_developers * percent_increase
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
-FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
 Formatting = "59287772-0a20-5a39-b81b-1366585eb4c0"
-HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
-Images = "916415d5-f1e6-5110-898d-aaa5f9f070e0"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
-Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
 CairoMakie = "~0.10.6"
-FileIO = "~1.16.1"
 Formatting = "~0.4.2"
-HypertextLiteral = "~0.9.4"
-Images = "~0.25.3"
 PlutoUI = "~0.7.51"
-Unitful = "~1.14.0"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -1022,13 +147,13 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.2"
 manifest_format = "2.0"
-project_hash = "62c55fe97d1cf1c3905a8c4619a67fc0ad54f4c6"
+project_hash = "c584e6207ac1be0788e30c5caf44fd86d0f52c8b"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
-git-tree-sha1 = "16b6dbc4cf7caee4e1e75c49485ec67b667098a0"
+git-tree-sha1 = "cad4c758c0038eea30394b1b671526921ca85b21"
 uuid = "621f4979-c628-5d54-868e-fcf4e3e8185c"
-version = "1.3.1"
+version = "1.4.0"
 weakdeps = ["ChainRulesCore"]
 
     [deps.AbstractFFTs.extensions]
@@ -1065,20 +190,14 @@ version = "0.4.1"
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
 version = "1.1.1"
 
-[[deps.ArnoldiMethod]]
-deps = ["LinearAlgebra", "Random", "StaticArrays"]
-git-tree-sha1 = "62e51b39331de8911e4a7ff6f5aaf38a5f4cc0ae"
-uuid = "ec485272-7323-5ecc-a04f-4719b315124d"
-version = "0.2.0"
-
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 
 [[deps.Automa]]
-deps = ["Printf", "ScanByte", "TranscodingStreams"]
-git-tree-sha1 = "d50976f217489ce799e366d9561d56a98a30d7fe"
+deps = ["ScanByte", "TranscodingStreams"]
+git-tree-sha1 = "48e54446df62fdf9ef76959c32dc33f3cff659ee"
 uuid = "67c07d97-cdcb-5c2c-af73-a7f9c32a568b"
-version = "0.8.2"
+version = "0.8.3"
 
 [[deps.AxisAlgorithms]]
 deps = ["LinearAlgebra", "Random", "SparseArrays", "WoodburyMatrices"]
@@ -1133,23 +252,11 @@ git-tree-sha1 = "f641eb0a4f00c343bbc32346e1217b86f3ce9dad"
 uuid = "49dc2e85-a5d0-5ad3-a950-438e2897f1b9"
 version = "0.5.1"
 
-[[deps.CatIndices]]
-deps = ["CustomUnitRanges", "OffsetArrays"]
-git-tree-sha1 = "a0f80a09780eed9b1d106a1bf62041c2efc995bc"
-uuid = "aafaddc9-749c-510e-ac4f-586e18779b91"
-version = "0.2.2"
-
 [[deps.ChainRulesCore]]
 deps = ["Compat", "LinearAlgebra", "SparseArrays"]
 git-tree-sha1 = "e30f2f4e20f7f186dc36529910beaedc60cfa644"
 uuid = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
 version = "1.16.0"
-
-[[deps.Clustering]]
-deps = ["Distances", "LinearAlgebra", "NearestNeighbors", "Printf", "Random", "SparseArrays", "Statistics", "StatsBase"]
-git-tree-sha1 = "42fe66dbc8f1d09a44aa87f18d26926d06a35f84"
-uuid = "aaaa29a8-35af-508c-8bc3-b662a17a0fe5"
-version = "0.15.3"
 
 [[deps.ColorBrewer]]
 deps = ["Colors", "JSON", "Test"]
@@ -1183,9 +290,9 @@ version = "0.12.10"
 
 [[deps.Compat]]
 deps = ["UUIDs"]
-git-tree-sha1 = "7a60c856b9fa189eb34f5f8a6f6b5529b7942957"
+git-tree-sha1 = "4e88377ae7ebeaf29a047aa1ee40826e0b708a5d"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "4.6.1"
+version = "4.7.0"
 weakdeps = ["Dates", "LinearAlgebra"]
 
     [deps.Compat.extensions]
@@ -1195,11 +302,6 @@ weakdeps = ["Dates", "LinearAlgebra"]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
 version = "1.0.5+0"
-
-[[deps.ComputationalResources]]
-git-tree-sha1 = "52cb3ec90e8a8bea0e62e275ba577ad0f74821f7"
-uuid = "ed09eef8-17a6-5b46-8889-db040fac31e3"
-version = "0.3.2"
 
 [[deps.ConstructionBase]]
 deps = ["LinearAlgebra"]
@@ -1217,17 +319,6 @@ git-tree-sha1 = "d05d9e7b7aedff4e5b51a029dced05cfb6125781"
 uuid = "d38c429a-6771-53c6-b99e-75d170b6e991"
 version = "0.6.2"
 
-[[deps.CoordinateTransformations]]
-deps = ["LinearAlgebra", "StaticArrays"]
-git-tree-sha1 = "f9d7112bfff8a19a3a4ea4e03a8e6a91fe8456bf"
-uuid = "150eb455-5306-5404-9cee-2592286d6298"
-version = "0.6.3"
-
-[[deps.CustomUnitRanges]]
-git-tree-sha1 = "1a3f97f907e6dd8983b744d2642651bb162a3f7a"
-uuid = "dc8bdbbb-1ca9-579f-8c36-e416f6a65cce"
-version = "1.0.2"
-
 [[deps.DataAPI]]
 git-tree-sha1 = "8da84edb865b0b5b0100c0666a9bc9a0b71c553c"
 uuid = "9a962f9c-6df0-11e9-0e5d-c546b8b5ee8a"
@@ -1235,9 +326,9 @@ version = "1.15.0"
 
 [[deps.DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
-git-tree-sha1 = "d1fff3a548102f48987a52a2e0d114fa97d730f0"
+git-tree-sha1 = "cf25ccb972fec4e4817764d01c82386ae94f77b4"
 uuid = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
-version = "0.18.13"
+version = "0.18.14"
 
 [[deps.DataValueInterfaces]]
 git-tree-sha1 = "bfc1187b79289637fa0ef6d4436ebdfe6905cbd6"
@@ -1248,21 +339,15 @@ version = "1.0.0"
 deps = ["Printf"]
 uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
 
-[[deps.Distances]]
-deps = ["LinearAlgebra", "SparseArrays", "Statistics", "StatsAPI"]
-git-tree-sha1 = "49eba9ad9f7ead780bfb7ee319f962c811c6d3b2"
-uuid = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
-version = "0.10.8"
-
 [[deps.Distributed]]
 deps = ["Random", "Serialization", "Sockets"]
 uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 
 [[deps.Distributions]]
 deps = ["FillArrays", "LinearAlgebra", "PDMats", "Printf", "QuadGK", "Random", "SparseArrays", "SpecialFunctions", "Statistics", "StatsAPI", "StatsBase", "StatsFuns", "Test"]
-git-tree-sha1 = "4ed4a6df2548a72f66e03f3a285cd1f3b573035d"
+git-tree-sha1 = "e76a3281de2719d7c81ed62c6ea7057380c87b1d"
 uuid = "31c24e10-a181-5473-b8eb-7969acd0382f"
-version = "0.25.96"
+version = "0.25.98"
 
     [deps.Distributions.extensions]
     DistributionsChainRulesCoreExt = "ChainRulesCore"
@@ -1318,12 +403,6 @@ git-tree-sha1 = "74faea50c1d007c85837327f6775bea60b5492dd"
 uuid = "b22a6f82-2f65-5046-a5b2-351ab43fb4e5"
 version = "4.4.2+2"
 
-[[deps.FFTViews]]
-deps = ["CustomUnitRanges", "FFTW"]
-git-tree-sha1 = "cbdf14d1e8c7c8aacbe8b19862e0179fd08321c2"
-uuid = "4f61f5a4-77b1-5117-aa51-3ab5ef4ef0cd"
-version = "0.3.2"
-
 [[deps.FFTW]]
 deps = ["AbstractFFTs", "FFTW_jll", "LinearAlgebra", "MKL_jll", "Preferences", "Reexport"]
 git-tree-sha1 = "b4fbdd20c889804969571cc589900803edda16b7"
@@ -1347,9 +426,9 @@ uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
 
 [[deps.FillArrays]]
 deps = ["LinearAlgebra", "Random", "SparseArrays", "Statistics"]
-git-tree-sha1 = "e17cc4dc2d0b0b568e80d937de8ed8341822de67"
+git-tree-sha1 = "2250347838b28a108d1967663cba57bfb3c02a58"
 uuid = "1a297f60-69ca-5386-bcde-b61e274b549b"
-version = "1.2.0"
+version = "1.3.0"
 
 [[deps.FixedPointNumbers]]
 deps = ["Statistics"]
@@ -1421,12 +500,6 @@ git-tree-sha1 = "9b02998aba7bf074d14de89f9d37ca24a1a0b046"
 uuid = "78b55507-aeef-58d4-861c-77aaff3498b1"
 version = "0.21.0+0"
 
-[[deps.Ghostscript_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "43ba3d3c82c18d88471cfd2924931658838c9d8f"
-uuid = "61579ee1-b43e-5ca0-a5da-69d92c66a64b"
-version = "9.55.0+4"
-
 [[deps.Glib_jll]]
 deps = ["Artifacts", "Gettext_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Libiconv_jll", "Libmount_jll", "PCRE2_jll", "Pkg", "Zlib_jll"]
 git-tree-sha1 = "d3b3624125c1474292d0d8ed0f65554ac37ddb23"
@@ -1444,12 +517,6 @@ deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "344bf40dcab1073aca04aa0df4fb092f920e4011"
 uuid = "3b182d85-2403-5c21-9c21-1e1f0cc25472"
 version = "1.3.14+0"
-
-[[deps.Graphs]]
-deps = ["ArnoldiMethod", "Compat", "DataStructures", "Distributed", "Inflate", "LinearAlgebra", "Random", "SharedArrays", "SimpleTraits", "SparseArrays", "Statistics"]
-git-tree-sha1 = "1cf1d7dcb4bc32d7b4a5add4232db3750c27ecb4"
-uuid = "86223c79-3864-5bf0-83f7-82e725a168b6"
-version = "1.8.0"
 
 [[deps.GridLayoutBase]]
 deps = ["GeometryBasics", "InteractiveUtils", "Observables"]
@@ -1504,29 +571,11 @@ git-tree-sha1 = "b51bb8cae22c66d0f6357e3bcb6363145ef20835"
 uuid = "c817782e-172a-44cc-b673-b171935fbb9e"
 version = "0.1.5"
 
-[[deps.ImageContrastAdjustment]]
-deps = ["ImageCore", "ImageTransformations", "Parameters"]
-git-tree-sha1 = "0d75cafa80cf22026cea21a8e6cf965295003edc"
-uuid = "f332f351-ec65-5f6a-b3d1-319c6670881a"
-version = "0.3.10"
-
 [[deps.ImageCore]]
 deps = ["AbstractFFTs", "ColorVectorSpace", "Colors", "FixedPointNumbers", "Graphics", "MappedArrays", "MosaicViews", "OffsetArrays", "PaddedViews", "Reexport"]
 git-tree-sha1 = "acf614720ef026d38400b3817614c45882d75500"
 uuid = "a09fc81d-aa75-5fe9-8630-4744c3626534"
 version = "0.9.4"
-
-[[deps.ImageDistances]]
-deps = ["Distances", "ImageCore", "ImageMorphology", "LinearAlgebra", "Statistics"]
-git-tree-sha1 = "b1798a4a6b9aafb530f8f0c4a7b2eb5501e2f2a3"
-uuid = "51556ac3-7006-55f5-8cb3-34580c88182d"
-version = "0.2.16"
-
-[[deps.ImageFiltering]]
-deps = ["CatIndices", "ComputationalResources", "DataStructures", "FFTViews", "FFTW", "ImageBase", "ImageCore", "LinearAlgebra", "OffsetArrays", "Reexport", "SnoopPrecompile", "SparseArrays", "StaticArrays", "Statistics", "TiledIteration"]
-git-tree-sha1 = "d90867cbe037730a73c9a9499b3591eedbe387a0"
-uuid = "6a3955dd-da59-5b1f-98d4-e7296123deb5"
-version = "0.7.5"
 
 [[deps.ImageIO]]
 deps = ["FileIO", "IndirectArrays", "JpegTurbo", "LazyModules", "Netpbm", "OpenEXR", "PNGFiles", "QOI", "Sixel", "TiffImages", "UUIDs"]
@@ -1534,59 +583,11 @@ git-tree-sha1 = "342f789fd041a55166764c351da1710db97ce0e0"
 uuid = "82e4d734-157c-48bb-816b-45c225c6df19"
 version = "0.6.6"
 
-[[deps.ImageMagick]]
-deps = ["FileIO", "ImageCore", "ImageMagick_jll", "InteractiveUtils", "Libdl", "Pkg", "Random"]
-git-tree-sha1 = "5bc1cb62e0c5f1005868358db0692c994c3a13c6"
-uuid = "6218d12a-5da1-5696-b52f-db25d2ecc6d1"
-version = "1.2.1"
-
-[[deps.ImageMagick_jll]]
-deps = ["Artifacts", "Ghostscript_jll", "JLLWrappers", "JpegTurbo_jll", "Libdl", "Libtiff_jll", "OpenJpeg_jll", "Pkg", "Zlib_jll", "libpng_jll"]
-git-tree-sha1 = "124626988534986113cfd876e3093e4a03890f58"
-uuid = "c73af94c-d91f-53ed-93a7-00f77d67a9d7"
-version = "6.9.12+3"
-
 [[deps.ImageMetadata]]
 deps = ["AxisArrays", "ImageAxes", "ImageBase", "ImageCore"]
 git-tree-sha1 = "36cbaebed194b292590cba2593da27b34763804a"
 uuid = "bc367c6b-8a6b-528e-b4bd-a4b897500b49"
 version = "0.9.8"
-
-[[deps.ImageMorphology]]
-deps = ["ImageCore", "LinearAlgebra", "Requires", "TiledIteration"]
-git-tree-sha1 = "e7c68ab3df4a75511ba33fc5d8d9098007b579a8"
-uuid = "787d08f9-d448-5407-9aad-5290dd7ab264"
-version = "0.3.2"
-
-[[deps.ImageQualityIndexes]]
-deps = ["ImageContrastAdjustment", "ImageCore", "ImageDistances", "ImageFiltering", "LazyModules", "OffsetArrays", "PrecompileTools", "Statistics"]
-git-tree-sha1 = "bfb3a198ef5c96582b8095f8a6eece8937c8ceb3"
-uuid = "2996bd0c-7a13-11e9-2da2-2f5ce47296a9"
-version = "0.3.6"
-
-[[deps.ImageSegmentation]]
-deps = ["Clustering", "DataStructures", "Distances", "Graphs", "ImageCore", "ImageFiltering", "ImageMorphology", "LinearAlgebra", "MetaGraphs", "RegionTrees", "SimpleWeightedGraphs", "StaticArrays", "Statistics"]
-git-tree-sha1 = "44664eea5408828c03e5addb84fa4f916132fc26"
-uuid = "80713f31-8817-5129-9cf8-209ff8fb23e1"
-version = "1.8.1"
-
-[[deps.ImageShow]]
-deps = ["Base64", "ColorSchemes", "FileIO", "ImageBase", "ImageCore", "OffsetArrays", "StackViews"]
-git-tree-sha1 = "ce28c68c900eed3cdbfa418be66ed053e54d4f56"
-uuid = "4e3cecfd-b093-5904-9786-8bbb286a6a31"
-version = "0.3.7"
-
-[[deps.ImageTransformations]]
-deps = ["AxisAlgorithms", "ColorVectorSpace", "CoordinateTransformations", "ImageBase", "ImageCore", "Interpolations", "OffsetArrays", "Rotations", "StaticArrays"]
-git-tree-sha1 = "8717482f4a2108c9358e5c3ca903d3a6113badc9"
-uuid = "02fcd773-0e25-5acc-982a-7f6622650795"
-version = "0.9.5"
-
-[[deps.Images]]
-deps = ["Base64", "FileIO", "Graphics", "ImageAxes", "ImageBase", "ImageContrastAdjustment", "ImageCore", "ImageDistances", "ImageFiltering", "ImageIO", "ImageMagick", "ImageMetadata", "ImageMorphology", "ImageQualityIndexes", "ImageSegmentation", "ImageShow", "ImageTransformations", "IndirectArrays", "IntegralArrays", "Random", "Reexport", "SparseArrays", "StaticArrays", "Statistics", "StatsBase", "TiledIteration"]
-git-tree-sha1 = "5fa9f92e1e2918d9d1243b1131abe623cdf98be7"
-uuid = "916415d5-f1e6-5110-898d-aaa5f9f070e0"
-version = "0.25.3"
 
 [[deps.Imath_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -1603,12 +604,6 @@ version = "1.0.0"
 git-tree-sha1 = "5cd07aab533df5170988219191dfad0519391428"
 uuid = "d25df0c9-e2be-5dd7-82c8-3ad0b3e990b9"
 version = "0.1.3"
-
-[[deps.IntegralArrays]]
-deps = ["ColorTypes", "FixedPointNumbers", "IntervalSets"]
-git-tree-sha1 = "be8e690c3973443bec584db3346ddc904d4884eb"
-uuid = "1d092043-8f09-5a30-832f-7509e371ab51"
-version = "0.1.5"
 
 [[deps.IntelOpenMP_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1653,12 +648,6 @@ git-tree-sha1 = "a3f24677c21f5bbe9d2a714f95dcd58337fb2856"
 uuid = "82899510-4779-5014-852e-03e436cf321d"
 version = "1.0.0"
 
-[[deps.JLD2]]
-deps = ["FileIO", "MacroTools", "Mmap", "OrderedCollections", "Pkg", "Printf", "Reexport", "Requires", "TranscodingStreams", "UUIDs"]
-git-tree-sha1 = "42c17b18ced77ff0be65957a591d34f4ed57c631"
-uuid = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
-version = "0.4.31"
-
 [[deps.JLLWrappers]]
 deps = ["Preferences"]
 git-tree-sha1 = "abc9885a7ca2052a736a600f7fa66209f96506e1"
@@ -1694,12 +683,6 @@ deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "f6250b16881adf048549549fba48b1161acdac8c"
 uuid = "c1c5ebd0-6772-5130-a774-d5fcae4a789d"
 version = "3.100.1+0"
-
-[[deps.LERC_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "bf36f528eec6634efc60d7ec062008f171071434"
-uuid = "88015f11-f218-50d7-93a8-a6af411a945d"
-version = "3.0.0+1"
 
 [[deps.LLVMOpenMP_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1779,12 +762,6 @@ git-tree-sha1 = "9c30530bf0effd46e15e0fdcf2b8636e78cbbd73"
 uuid = "4b2f31a3-9ecc-558c-b454-b3730dcb73e9"
 version = "2.35.0+0"
 
-[[deps.Libtiff_jll]]
-deps = ["Artifacts", "JLLWrappers", "JpegTurbo_jll", "LERC_jll", "Libdl", "Pkg", "Zlib_jll", "Zstd_jll"]
-git-tree-sha1 = "3eb79b0ca5764d4799c06699573fd8f533259713"
-uuid = "89763e89-9b03-5906-acba-b20f662cd828"
-version = "4.4.0+0"
-
 [[deps.Libuuid_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "7f3efec06033682db852f8b3bc3c1d2b0a0ab066"
@@ -1794,12 +771,6 @@ version = "2.36.0+0"
 [[deps.LinearAlgebra]]
 deps = ["Libdl", "OpenBLAS_jll", "libblastrampoline_jll"]
 uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
-
-[[deps.LittleCMS_jll]]
-deps = ["Artifacts", "JLLWrappers", "JpegTurbo_jll", "Libdl", "Libtiff_jll", "Pkg"]
-git-tree-sha1 = "110897e7db2d6836be22c18bffd9422218ee6284"
-uuid = "d3a379c0-f9a3-5b72-a4c0-6bf4d2e8af0f"
-version = "2.12.0+0"
 
 [[deps.LogExpFunctions]]
 deps = ["DocStringExtensions", "IrrationalConstants", "LinearAlgebra"]
@@ -1874,12 +845,6 @@ deps = ["Artifacts", "Libdl"]
 uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
 version = "2.28.2+0"
 
-[[deps.MetaGraphs]]
-deps = ["Graphs", "JLD2", "Random"]
-git-tree-sha1 = "1130dbe1d5276cb656f6e1094ce97466ed700e5a"
-uuid = "626554b9-1ddb-594c-aa3c-2596fe9399a5"
-version = "0.7.2"
-
 [[deps.MiniQhull]]
 deps = ["QhullMiniWrapper_jll"]
 git-tree-sha1 = "9dc837d180ee49eeb7c8b77bb1c860452634b0d1"
@@ -1911,12 +876,6 @@ git-tree-sha1 = "0877504529a3e5c3343c6f8b4c0381e57e4387e4"
 uuid = "77ba4419-2d1f-58cd-9bb1-8ffee604a2e3"
 version = "1.0.2"
 
-[[deps.NearestNeighbors]]
-deps = ["Distances", "StaticArrays"]
-git-tree-sha1 = "2c3726ceb3388917602169bed973dbc97f1b51a8"
-uuid = "b8a86587-4115-5ab1-83bc-aa920d37bbce"
-version = "0.4.13"
-
 [[deps.Netpbm]]
 deps = ["FileIO", "ImageCore", "ImageMetadata"]
 git-tree-sha1 = "5ae7ca23e13855b3aba94550f26146c01d259267"
@@ -1934,9 +893,9 @@ version = "0.5.4"
 
 [[deps.OffsetArrays]]
 deps = ["Adapt"]
-git-tree-sha1 = "82d7c9e310fe55aa54996e6f7f94674e2a38fcb4"
+git-tree-sha1 = "2ac17d29c523ce1cd38e27785a7d23024853a4bb"
 uuid = "6fe1bfb0-de20-5000-8ca7-80f57d26f881"
-version = "1.12.9"
+version = "1.12.10"
 
 [[deps.Ogg_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1960,12 +919,6 @@ deps = ["Artifacts", "Imath_jll", "JLLWrappers", "Libdl", "Zlib_jll"]
 git-tree-sha1 = "a4ca623df1ae99d09bc9868b008262d0c0ac1e4f"
 uuid = "18a262bb-aa17-5467-a713-aee519bc75cb"
 version = "3.1.4+0"
-
-[[deps.OpenJpeg_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Libtiff_jll", "LittleCMS_jll", "Pkg", "libpng_jll"]
-git-tree-sha1 = "76374b6e7f632c130e78100b166e5a48464256f8"
-uuid = "643b3616-a352-519d-856d-80112ee9badc"
-version = "2.4.0+0"
 
 [[deps.OpenLibm_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -2030,17 +983,11 @@ git-tree-sha1 = "84a314e3926ba9ec66ac097e3635e270986b0f10"
 uuid = "36c8627f-9965-5494-a995-c6b170f724f3"
 version = "1.50.9+0"
 
-[[deps.Parameters]]
-deps = ["OrderedCollections", "UnPack"]
-git-tree-sha1 = "34c0e9ad262e5f7fc75b10a9952ca7692cfc5fbe"
-uuid = "d96e819e-fc66-5662-9728-84c9c7592b0a"
-version = "0.12.3"
-
 [[deps.Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
-git-tree-sha1 = "5a6ab2f64388fd1175effdf73fe5933ef1e0bac0"
+git-tree-sha1 = "4b2e829ee66d4218e0cef22c0a64ee37cf258c29"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.7.0"
+version = "2.7.1"
 
 [[deps.Pixman_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "LLVMOpenMP_jll", "Libdl"]
@@ -2122,12 +1069,6 @@ git-tree-sha1 = "6ec7ac8412e83d57e313393220879ede1740f9ee"
 uuid = "1fd47b50-473d-5c70-9696-f719f8f3bcdc"
 version = "2.8.2"
 
-[[deps.Quaternions]]
-deps = ["LinearAlgebra", "Random", "RealDot"]
-git-tree-sha1 = "da095158bdc8eaccb7890f9884048555ab771019"
-uuid = "94ee1d12-ae83-5a48-8b1c-48b8ff168ae0"
-version = "0.7.4"
-
 [[deps.REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
 uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
@@ -2151,22 +1092,10 @@ weakdeps = ["FixedPointNumbers"]
     [deps.Ratios.extensions]
     RatiosFixedPointNumbersExt = "FixedPointNumbers"
 
-[[deps.RealDot]]
-deps = ["LinearAlgebra"]
-git-tree-sha1 = "9f0a1b71baaf7650f4fa8a1d168c7fb6ee41f0c9"
-uuid = "c1ae055f-0cd5-4b69-90a6-9a35b1a98df9"
-version = "0.1.0"
-
 [[deps.Reexport]]
 git-tree-sha1 = "45e428421666073eab6f2da5c9d310d99bb12f9b"
 uuid = "189a3867-3050-52da-a836-e630ba90ab69"
 version = "1.2.2"
-
-[[deps.RegionTrees]]
-deps = ["IterTools", "LinearAlgebra", "StaticArrays"]
-git-tree-sha1 = "4618ed0da7a251c7f92e869ae1a19c74a7d2a7f9"
-uuid = "dee08c22-ab7f-5625-9660-a9af2021b33f"
-version = "0.3.2"
 
 [[deps.RelocatableFolders]]
 deps = ["SHA", "Scratch"]
@@ -2192,12 +1121,6 @@ git-tree-sha1 = "6ed52fdd3382cf21947b15e8870ac0ddbff736da"
 uuid = "f50d1b31-88e8-58de-be2c-1cc44531875f"
 version = "0.4.0+0"
 
-[[deps.Rotations]]
-deps = ["LinearAlgebra", "Quaternions", "Random", "StaticArrays"]
-git-tree-sha1 = "54ccb4dbab4b1f69beb255a2c0ca5f65a9c82f08"
-uuid = "6038ab10-8711-5258-84ad-4b1120ba62dc"
-version = "1.5.1"
-
 [[deps.SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 version = "0.7.0"
@@ -2210,9 +1133,9 @@ version = "3.4.5"
 
 [[deps.ScanByte]]
 deps = ["Libdl", "SIMD"]
-git-tree-sha1 = "2436b15f376005e8790e318329560dcc67188e84"
+git-tree-sha1 = "d49e35f413186528f1d7cc675e67d0ed16fd7800"
 uuid = "7b38b023-a4d7-4c5e-8d43-3f3097f304eb"
-version = "0.3.3"
+version = "0.4.0"
 
 [[deps.Scratch]]
 deps = ["Dates"]
@@ -2251,23 +1174,11 @@ git-tree-sha1 = "5d7e3f4e11935503d3ecaf7186eac40602e7d231"
 uuid = "699a6c99-e7fa-54fc-8d76-47d257e15c1d"
 version = "0.9.4"
 
-[[deps.SimpleWeightedGraphs]]
-deps = ["Graphs", "LinearAlgebra", "Markdown", "SparseArrays"]
-git-tree-sha1 = "4b33e0e081a825dbfaf314decf58fa47e53d6acb"
-uuid = "47aef6b3-ad0c-573a-a1e2-d07658019622"
-version = "1.4.0"
-
 [[deps.Sixel]]
 deps = ["Dates", "FileIO", "ImageCore", "IndirectArrays", "OffsetArrays", "REPL", "libsixel_jll"]
 git-tree-sha1 = "8fb59825be681d451c246a795117f317ecbcaa28"
 uuid = "45858cf5-a6b0-47a3-bbea-62219f50df47"
 version = "0.1.2"
-
-[[deps.SnoopPrecompile]]
-deps = ["Preferences"]
-git-tree-sha1 = "e760a70afdcd461cf01a575947738d359234665c"
-uuid = "66db9d55-30c0-4569-8b51-7e840670fc0c"
-version = "1.0.3"
 
 [[deps.Sockets]]
 uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
@@ -2284,9 +1195,9 @@ uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [[deps.SpecialFunctions]]
 deps = ["IrrationalConstants", "LogExpFunctions", "OpenLibm_jll", "OpenSpecFun_jll"]
-git-tree-sha1 = "ef28127915f4229c971eb43f3fc075dd3fe91880"
+git-tree-sha1 = "7beb031cf8145577fbccacd94b8a8f4ce78428d3"
 uuid = "276daf66-3868-5448-9aa4-cd146d93841b"
-version = "2.2.0"
+version = "2.3.0"
 weakdeps = ["ChainRulesCore"]
 
     [deps.SpecialFunctions.extensions]
@@ -2305,10 +1216,14 @@ uuid = "cae243ae-269e-4f55-b966-ac2d0dc13c15"
 version = "0.1.1"
 
 [[deps.StaticArrays]]
-deps = ["LinearAlgebra", "Random", "StaticArraysCore", "Statistics"]
-git-tree-sha1 = "832afbae2a45b4ae7e831f86965469a24d1d8a83"
+deps = ["LinearAlgebra", "Random", "StaticArraysCore"]
+git-tree-sha1 = "0da7e6b70d1bb40b1ace3b576da9ea2992f76318"
 uuid = "90137ffa-7385-5640-81b9-e52037218182"
-version = "1.5.26"
+version = "1.6.0"
+weakdeps = ["Statistics"]
+
+    [deps.StaticArrays.extensions]
+    StaticArraysStatisticsExt = "Statistics"
 
 [[deps.StaticArraysCore]]
 git-tree-sha1 = "6b7ba252635a5eff6a0b0664a41ee140a1c9e72a"
@@ -2399,12 +1314,6 @@ git-tree-sha1 = "8621f5c499a8aa4aa970b1ae381aae0ef1576966"
 uuid = "731e570b-9d59-4bfa-96dc-6df516fadf69"
 version = "0.6.4"
 
-[[deps.TiledIteration]]
-deps = ["OffsetArrays"]
-git-tree-sha1 = "5683455224ba92ef59db72d10690690f4a8dc297"
-uuid = "06e1c1a7-607b-532d-9fad-de7d9aa2abac"
-version = "0.3.1"
-
 [[deps.TranscodingStreams]]
 deps = ["Random", "Test"]
 git-tree-sha1 = "9a6ae7ed916312b41236fcef7e0af564ef934769"
@@ -2435,11 +1344,6 @@ version = "1.4.2"
 deps = ["Random", "SHA"]
 uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
 
-[[deps.UnPack]]
-git-tree-sha1 = "387c1f73762231e86e0c9c5443ce3b4a0a9a0c2b"
-uuid = "3a884ed6-31ef-47d7-9d2a-63182c4928ed"
-version = "1.0.2"
-
 [[deps.Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
 
@@ -2448,18 +1352,6 @@ deps = ["REPL"]
 git-tree-sha1 = "53915e50200959667e78a92a418594b428dffddf"
 uuid = "1cfade01-22cf-5700-b092-accc4b62d6e1"
 version = "0.4.1"
-
-[[deps.Unitful]]
-deps = ["ConstructionBase", "Dates", "LinearAlgebra", "Random"]
-git-tree-sha1 = "ba4aa36b2d5c98d6ed1f149da916b3ba46527b2b"
-uuid = "1986cc42-f94f-5a68-af5c-568840ba703d"
-version = "1.14.0"
-
-    [deps.Unitful.extensions]
-    InverseFunctionsUnitfulExt = "InverseFunctions"
-
-    [deps.Unitful.weakdeps]
-    InverseFunctions = "3587e190-3f89-42d0-90ee-14403ec27112"
 
 [[deps.WoodburyMatrices]]
 deps = ["LinearAlgebra", "SparseArrays"]
@@ -2480,22 +1372,22 @@ uuid = "aed1982a-8fda-507f-9586-7b0439959a61"
 version = "1.1.34+0"
 
 [[deps.Xorg_libX11_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg", "Xorg_libxcb_jll", "Xorg_xtrans_jll"]
-git-tree-sha1 = "5be649d550f3f4b95308bf0183b82e2582876527"
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Xorg_libxcb_jll", "Xorg_xtrans_jll"]
+git-tree-sha1 = "afead5aba5aa507ad5a3bf01f58f82c8d1403495"
 uuid = "4f6342f7-b3d2-589e-9d20-edeb45f2b2bc"
-version = "1.6.9+4"
+version = "1.8.6+0"
 
 [[deps.Xorg_libXau_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "4e490d5c960c314f33885790ed410ff3a94ce67e"
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "6035850dcc70518ca32f012e46015b9beeda49d8"
 uuid = "0c0b7dd1-d40b-584c-a123-a41640f87eec"
-version = "1.0.9+4"
+version = "1.0.11+0"
 
 [[deps.Xorg_libXdmcp_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "4fe47bd2247248125c428978740e18a681372dd4"
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "34d526d318358a859d7de23da945578e8e8727b7"
 uuid = "a3789734-cfe1-5b06-b2d0-1dd0d9d62d05"
-version = "1.1.3+4"
+version = "1.1.4+0"
 
 [[deps.Xorg_libXext_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg", "Xorg_libX11_jll"]
@@ -2510,33 +1402,27 @@ uuid = "ea2f1a96-1ddc-540d-b46f-429655e07cfa"
 version = "0.9.10+4"
 
 [[deps.Xorg_libpthread_stubs_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "6783737e45d3c59a4a4c4091f5f88cdcf0908cbb"
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "8fdda4c692503d44d04a0603d9ac0982054635f9"
 uuid = "14d82f49-176c-5ed1-bb49-ad3f5cbd8c74"
-version = "0.1.0+3"
+version = "0.1.1+0"
 
 [[deps.Xorg_libxcb_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg", "XSLT_jll", "Xorg_libXau_jll", "Xorg_libXdmcp_jll", "Xorg_libpthread_stubs_jll"]
-git-tree-sha1 = "daf17f441228e7a3833846cd048892861cff16d6"
+deps = ["Artifacts", "JLLWrappers", "Libdl", "XSLT_jll", "Xorg_libXau_jll", "Xorg_libXdmcp_jll", "Xorg_libpthread_stubs_jll"]
+git-tree-sha1 = "b4bfde5d5b652e22b9c790ad00af08b6d042b97d"
 uuid = "c7cfdc94-dc32-55de-ac96-5a1b8d977c5b"
-version = "1.13.0+3"
+version = "1.15.0+0"
 
 [[deps.Xorg_xtrans_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "79c31e7844f6ecf779705fbc12146eb190b7d845"
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "e92a1a012a10506618f10b7047e478403a046c77"
 uuid = "c5fb5394-a638-5e4d-96e5-b29de1b5cf10"
-version = "1.4.0+3"
+version = "1.5.0+0"
 
 [[deps.Zlib_jll]]
 deps = ["Libdl"]
 uuid = "83775a58-1f1d-513f-b197-d71354ab007a"
 version = "1.2.13+0"
-
-[[deps.Zstd_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "49ce682769cd5de6c72dcf1b94ed7790cd08974c"
-uuid = "3161d3a3-bdf6-5164-811a-617609db77b4"
-version = "1.5.5+0"
 
 [[deps.isoband_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -2609,46 +1495,25 @@ version = "3.5.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╟─94c57806-2d1a-4a75-a5e3-0934632b4464
-# ╟─6562d072-38b7-4218-9708-7f51e44a8b51
-# ╟─f2ead7fe-3cca-40f6-a440-7ac332d545d5
-# ╟─f9a075ca-cb0e-4577-8576-993fe36d0414
-# ╟─750bd464-03c8-463e-bbdf-a6894eae81f3
-# ╟─201b1ff2-e730-4de3-98d1-f373decf3f33
-# ╟─72727660-d3b9-4ed9-b629-c19c79d0a114
-# ╟─369905f8-d972-485b-9401-4d26fa01c9ea
-# ╠═4edab4b6-2245-44dc-983b-a5cfe3983e89
-# ╟─cf007e8e-d0aa-4849-8baa-cd8a5a35c21b
-# ╟─69b04d0b-1b7d-43e9-8d34-c37b7f312e53
-# ╟─596c2f5a-120f-4368-a73f-5e9aa030a691
-# ╟─a2720c78-464f-4dff-9c4d-971de59a0979
-# ╟─0d8f1706-0a98-4c2b-b781-024f2ed32a65
-# ╟─3651c52e-e2d5-4bef-9af0-5ad3dc83972a
-# ╟─4c8a810f-4041-49b8-a698-707b18be073f
-# ╟─444880b2-5a2b-4ba6-9a5e-012732fad139
-# ╟─e486a1e5-8666-4db1-9787-71d42459bbbe
-# ╟─76d2f9fb-fcc3-4537-abf6-826640d4d729
-# ╟─8e8d9854-2ddc-44be-a026-341e654863bb
-# ╟─a088d383-341a-421c-9421-5abc1355eb04
-# ╟─8b1ba7dd-d800-4a65-9866-0428ca1754de
-# ╟─d6dd419e-6cd6-4934-b644-a7cee490dd80
-# ╟─3427b6b8-ccb9-42c4-b8e0-b4cac2c163d8
-# ╟─01036d15-7621-488a-87d0-adbe0ca23ac6
-# ╟─e1592afd-0916-49b4-92a2-e12c64f01cc6
-# ╟─35bc4c12-784b-4c6b-8331-a663da3798fa
-# ╟─b516ec26-8f2b-45a7-a102-566a1c8b6c2e
-# ╟─c4ee126b-e4fc-43e3-8010-22ed28cad786
-# ╟─94dfa85e-6605-499b-991e-58347fbae250
-# ╟─f88b0e68-f94a-4495-9493-4a513bd8fbec
-# ╟─048da3ab-1793-4901-a796-026f7a9fbd12
-# ╠═94e556ff-cb05-4968-8ddb-c283092527e3
-# ╟─e37da613-cc6d-4377-b8d8-ca80444ab82a
-# ╠═7209d6ce-06cf-4a43-a991-a49fa084542a
-# ╠═bd38244f-bc23-4f78-8f73-8a88eb5df719
-# ╟─a42516e1-482e-4745-ad66-df82867c6d42
-# ╠═cc9898c9-4a26-4fdc-8073-f6dace9f3f5f
-# ╠═d89baa46-5096-42d9-9bff-a3054baf9fa4
-# ╠═dcde8461-aa6e-43e2-8653-c0fa1c9312a2
-# ╠═344c5ef8-fef3-4d24-955c-53dadd9ebdae
+# ╠═1654b0ac-1de4-11ee-38d9-cd8d6a9e99f5
+# ╟─e70147b4-f6a9-4454-b6f9-bf785be76e3b
+# ╟─9846d24a-7579-4145-8b3b-580f45e39c4e
+# ╠═1de5c77b-c47a-4db3-bab5-1e8be3b55243
+# ╟─0593da66-176c-446c-abd4-73d564d2d71a
+# ╠═cb518637-ddd7-4a3a-abd5-5f0fc31e2740
+# ╠═cdfd91ae-8cb7-4085-890f-e6610e20029d
+# ╟─b1852732-821d-4402-a4bf-d766d560a303
+# ╟─84b272c8-c409-4d85-985c-67258d70d39d
+# ╠═c89afeb1-287d-4301-9a7c-b0bef54e2ae2
+# ╟─223d51da-1f49-4707-966a-f92314f4a3b6
+# ╠═f69558c5-b635-4d21-930b-f8e7e7ad61b5
+# ╟─6a318b9b-d2d2-44b5-b030-d0062bbef546
+# ╠═8e971083-1889-4864-b705-e00b529623f7
+# ╟─01103a05-f23c-44ad-af67-6c5df0994d64
+# ╠═8abc85d9-83f4-43ce-86f7-39ee6dc461ce
+# ╟─60a4aa6f-26a1-45a1-a480-bb3cc204199d
+# ╟─95211f53-1626-4c53-874b-54d80408c4d2
+# ╠═bb0a485d-f553-4df7-8e13-8102e5480396
+# ╠═336c17a5-0928-4a38-811d-16bc5aea9d18
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
