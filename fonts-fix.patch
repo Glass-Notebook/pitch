@@ -1,0 +1,114 @@
+diff --git a/pitch_notebook.jl b/pitch_notebook.jl
+index 5e05e95..b9fc03f 100644
+--- a/pitch_notebook.jl
++++ b/pitch_notebook.jl
+@@ -81,11 +81,15 @@ html"""
+ # ╔═╡ 201b1ff2-e730-4de3-98d1-f373decf3f33
+ html"""
+ <html>
++<link rel="preconnect" href="https://fonts.googleapis.com">
++<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
++<link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Vollkorn:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+ <style>
+ .kanban-board {
+   display: flex;
+   justify-content: space-around;
+   position: relative;
++  font-family: 'Alegreya Sans', sans-serif;
+ }
+ 
+ .kanban-column {
+@@ -98,6 +102,7 @@ html"""
+ 
+ .kanban-column h3 {
+   text-align: center;
++  font-family: Vollkorn, sans-serif;
+ }
+ 
+ .kanban-item {
+@@ -302,10 +307,14 @@ md"""
+ # ╔═╡ 8e8d9854-2ddc-44be-a026-341e654863bb
+ html"""
+ <html>
++<link rel="preconnect" href="https://fonts.googleapis.com">
++<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
++<link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Vollkorn:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+   <style>
+     .kanban-board {
+       display: flex;
+       justify-content: space-around; /* change to space-around for even spacing between and around items */
++      font-family: 'Alegreya Sans', sans-serif;
+     }
+ 
+     .kanban-column {
+@@ -318,7 +327,8 @@ html"""
+ 
+     .kanban-column h3 {
+       text-align: center;
+-    }
++      font-family: Vollkorn, sans-serif;
++	}
+ 
+     .kanban-item {
+       display: flex; /* To align the emoji and the task text */
+@@ -376,11 +386,15 @@ md"""
+ # ╔═╡ 8b1ba7dd-d800-4a65-9866-0428ca1754de
+ html"""
+ <html>
++<link rel="preconnect" href="https://fonts.googleapis.com">
++<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
++<link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Vollkorn:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+ <style>
+ .kanban-board {
+   display: flex;
+   justify-content: space-around;
+   position: relative;
++  font-family: 'Alegreya Sans', sans-serif;
+ }
+ 
+ .kanban-column {
+@@ -393,6 +407,8 @@ html"""
+ 
+ .kanban-column h4 {
+   text-align: center;
++  font-family: Vollkorn, sans-serif;
++
+ }
+ 
+ .kanban-column.python {
+@@ -1027,7 +1043,7 @@ Unitful = "~1.14.0"
+ PLUTO_MANIFEST_TOML_CONTENTS = """
+ # This file is machine-generated - editing it directly is not advised
+ 
+-julia_version = "1.9.2"
++julia_version = "1.9.0"
+ manifest_format = "2.0"
+ project_hash = "62c55fe97d1cf1c3905a8c4619a67fc0ad54f4c6"
+ 
+@@ -1201,7 +1217,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
+ [[deps.CompilerSupportLibraries_jll]]
+ deps = ["Artifacts", "Libdl"]
+ uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
+-version = "1.0.5+0"
++version = "1.0.2+0"
+ 
+ [[deps.ComputationalResources]]
+ git-tree-sha1 = "52cb3ec90e8a8bea0e62e275ba577ad0f74821f7"
+@@ -2058,7 +2074,7 @@ version = "0.42.2+0"
+ [[deps.Pkg]]
+ deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
+ uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
+-version = "1.9.2"
++version = "1.9.0"
+ 
+ [[deps.PkgVersion]]
+ deps = ["Pkg"]
+@@ -2566,7 +2582,7 @@ version = "0.15.1+0"
+ [[deps.libblastrampoline_jll]]
+ deps = ["Artifacts", "Libdl"]
+ uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
+-version = "5.8.0+0"
++version = "5.7.0+0"
+ 
+ [[deps.libfdk_aac_jll]]
+ deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]

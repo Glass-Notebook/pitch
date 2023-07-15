@@ -980,9 +980,9 @@ let
 		min_profit
 	]
 	if min_profit > 0
-		clrs = [colors[5], colors[7], colors[3]]
+		clrs = [(colors[5], 0.6), (colors[10], 0.6), (colors[3], 0.4)]
 	else
-		clrs = [colors[5], colors[7], colors[4]]
+		clrs = [(colors[5], 0.6), (colors[10], 0.6), (colors[4], 0.6)]
 	end
 
 	lbls = "\$" .* format.(ys, commas=true, precision=2)
@@ -2638,7 +2638,7 @@ version = "3.5.0+0"
 # ╟─a088d383-341a-421c-9421-5abc1355eb04
 # ╟─8b1ba7dd-d800-4a65-9866-0428ca1754de
 # ╟─d6dd419e-6cd6-4934-b644-a7cee490dd80
-# ╟─d17fefeb-ae0a-4fb3-8794-7314664e8739
+# ╠═d17fefeb-ae0a-4fb3-8794-7314664e8739
 # ╟─01036d15-7621-488a-87d0-adbe0ca23ac6
 # ╟─e1592afd-0916-49b4-92a2-e12c64f01cc6
 # ╟─35bc4c12-784b-4c6b-8331-a663da3798fa
