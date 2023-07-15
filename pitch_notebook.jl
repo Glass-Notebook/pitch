@@ -81,11 +81,20 @@ html"""
 # ╔═╡ 201b1ff2-e730-4de3-98d1-f373decf3f33
 html"""
 <html>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Vollkorn:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
 <style>
+body {
+    background-color: transparent;
+}
+
 .kanban-board {
   display: flex;
   justify-content: space-around;
   position: relative;
+  font-family: 'Alegreya Sans', sans-serif;
 }
 
 .kanban-column {
@@ -98,6 +107,7 @@ html"""
 
 .kanban-column h3 {
   text-align: center;
+  font-family: Vollkorn, sans-serif;
 }
 
 .kanban-item {
@@ -118,6 +128,13 @@ html"""
 .kanban-column.with-glass {
   background-color: #c4ffda; /* Pastel green */
 }
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #1f1f1f; /* Dark background color */
+  }
+}
+
 </style>
 
 <div class="kanban-board">
@@ -208,6 +225,14 @@ html"""
 table {
   width: 100%;
 }
+
+/* Dark mode specific styles */
+@media (prefers-color-scheme: dark) {
+  body, .kanban-column h4, table tr td {
+    color: #000; /* Black text color */
+  }
+}
+
 </style>
 
 <div class="kanban-board">
@@ -281,9 +306,9 @@ $(@bind sel PlutoUI.Select(["Julia Downloads", "User Demographics", "Julia/Pluto
 # ╔═╡ a2720c78-464f-4dff-9c4d-971de59a0979
 if sel == "TAM+"
 md"""
-**TAM**: Number of software developers ``\times`` \$10/month ``\times`` 12 months
+**TAM**: Number of Julia developers ``\times`` \$10/month ``\times`` 12 months
 
-**SAM**: Number of Julia developers ``\times`` \$10/month ``\times`` 12 months
+**SAM**: Number of Pluto developers ``\times`` \$10/month
 
 **SOM**: Number of Pluto developers ``\times`` \$10/month ``\times`` 12 months ``\times`` 10%
 """
@@ -302,47 +327,58 @@ md"""
 # ╔═╡ 8e8d9854-2ddc-44be-a026-341e654863bb
 html"""
 <html>
-  <style>
-    .kanban-board {
-      display: flex;
-      justify-content: space-around; /* change to space-around for even spacing between and around items */
-    }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Vollkorn:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<style>
+.kanban-board {
+  display: flex;
+  justify-content: space-around; /* change to space-around for even spacing between and around items */
+  font-family: 'Alegreya Sans', sans-serif;
+}
 
-    .kanban-column {
-      width: 30%;
-      padding: 1em;
-      border: 1px solid #000;
-      border-radius: 5px;
-      margin: 0.5em; /* added margin to have space between columns */
-    }
+.kanban-column {
+  width: 30%;
+  padding: 1em;
+  border: 1px solid #000;
+  border-radius: 5px;
+  margin: 0.5em; /* added margin to have space between columns */
+}
 
-    .kanban-column h3 {
-      text-align: center;
-    }
+.kanban-column h3 {
+  text-align: center;
+  font-family: Vollkorn, sans-serif;
+}
 
-    .kanban-item {
-      display: flex; /* To align the emoji and the task text */
-      align-items: center;
-      margin-bottom: 1em;
-      padding: 1em;
-      border: 1px solid #000;
-      border-radius: 5px;
-      background-color: #fff; /* background color is now white */
-    }
+.kanban-item {
+  display: flex; /* To align the emoji and the task text */
+  align-items: center;
+  margin-bottom: 1em;
+  padding: 1em;
+  border: 1px solid #000;
+  border-radius: 5px;
+  background-color: #fff; /* background color is now white */
+}
 
-    /* Changed colors for each column */
-    .kanban-column.todo {
-      background-color: #d1d1ff; /* Pastel Purple */ 
-    }
+/* Changed colors for each column */
+.kanban-column.todo {
+  background-color: #d1d1ff; /* Pastel Purple */ 
+}
 
-    .kanban-column.progress {
-      background-color: #b3d1ff; /* Pastel Blue */
-    }
+.kanban-column.progress {
+  background-color: #b3d1ff; /* Pastel Blue */
+}
 
-    .kanban-column.done {
-      background-color: #c4ffda; /* Pastel Green */
-    }
-  </style>
+.kanban-column.done {
+  background-color: #c4ffda; /* Pastel Green */
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #1f1f1f; /* Dark background color */
+  }
+}
+</style>
 
 
 <div class="kanban-board">
@@ -376,11 +412,15 @@ md"""
 # ╔═╡ 8b1ba7dd-d800-4a65-9866-0428ca1754de
 html"""
 <html>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Vollkorn:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 <style>
 .kanban-board {
   display: flex;
   justify-content: space-around;
   position: relative;
+  font-family: 'Alegreya Sans', sans-serif;
 }
 
 .kanban-column {
@@ -391,8 +431,10 @@ html"""
   margin: 0.5em;
 }
 
-.kanban-column h4 {
+.kanban-column h5 {
   text-align: center;
+  font-family: Vollkorn, sans-serif;
+
 }
 
 .kanban-column.python {
@@ -410,15 +452,24 @@ table {
   border-radius: 5px;
 }
 
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #1f1f1f; /* Dark background color */
+  }
+  h4 {
+	color: white
+  }
+}
+
 </style>
 
-<h4 style="text-align: center;"> 
+<h4 style="text-align: center"> 
 <img src="https://www.vectorlogo.zone/logos/python/python-icon.svg" alt="Python logo" style="height: 24px; width: 24px; vertical-align: middle;"> 
 Python 
 </h4>
 <div class="kanban-board">
   <div class="kanban-column python">
-    <h4>Deepnote</h4>
+    <h5>Deepnote</h5>
     <table>
       <tr>
         <td>Static Notebooks:</td>
@@ -444,7 +495,7 @@ Python
   </div>
 
   <div class="kanban-column python">
-	<h4>Paperspace</h4>
+	<h5>Paperspace</h5>
     <table>
       <tr>
         <td>Static Notebooks:</td>
@@ -470,7 +521,7 @@ Python
   </div>
 
   <div class="kanban-column python">
-	<h4>Google Colab</h4>
+	<h5>Google Colab</h5>
     <table>
       <tr>
         <td>Static Notebooks:</td>
@@ -502,7 +553,7 @@ Javascript
 </h4>
 <div class="kanban-board">
   <div class="kanban-column python">
-    <h4>Observable</h4>
+    <h5>Observable</h5>
     <table>
       <tr>
         <td>Static Notebooks:</td>
@@ -534,7 +585,7 @@ Julia
 </h4>
 <div class="kanban-board">
   <div class="kanban-column python">
-    <h4>JuliaHub</h4>
+    <h5>JuliaHub</h5>
     <table>
       <tr>
         <td>Static Notebooks:</td>
@@ -559,9 +610,9 @@ Julia
     </table>
   </div>
   <div class="kanban-column glass ">
-    <h4>
+    <h5>
 		<img src="https://avatars.githubusercontent.com/u/121525345?s=200&v=4" alt="Glass logo" style="height: 24px; width: 24px; vertical-align: middle;">  Glass Notebook
-	</h4>
+	</h5>
     <table>
       <tr>
         <td>Static Notebooks:</td>
@@ -599,7 +650,7 @@ md"""
 # ╔═╡ d17fefeb-ae0a-4fb3-8794-7314664e8739
 md"""
 !!! warning "First to Market"
-	- As a platform leveraging the Julia programming language, **Glass Notebook** enjoys a significant first-mover advantage. Julia, despite its immense potential, is currently underutilized in the market. This offers an opportunity for **Glass Notebook** to establish its footprint in the market before any potential competitor. Julia's growth has been impressive, with over 40 million downloads and a noticeable increase in recent years. As the user base of Julia expands, so will the customer base of **Glass Notebook** (see [Julia Growth](https://julialang.org/blog/2021/08/julia-user-developer-survey/).
+	- As a platform leveraging the Julia programming language, **Glass Notebook** enjoys a significant first-mover advantage. Julia, despite its immense potential, is currently underutilized in the market. This offers an opportunity for **Glass Notebook** to establish its footprint in the market before any potential competitor. Julia's growth has been impressive, with over 40 million downloads and a noticeable increase in recent years. As the user base of Julia expands, so will the customer base of **Glass Notebook** (see [Julia Growth](https://julialang.org/blog/2021/08/julia-user-developer-survey/)).
 
 !!! info "Julia"
 	- Julia is known for its fast execution time and efficient package ecosystem. It stands out when compared to languages like Python and Javascript, offering speed and performance advantages that these languages usually lack. Its fast iteration and building process provide a significant competitive edge to **Glass Notebook** over other platforms built on languages like Python or Javascript. Further, Julia is favored by several large private firms across multiple sectors, including Amazon, IBM, JP Morgan AI Research, and ASML, attesting to its efficiency and versatility (see [Julia in Companies](https://www.datacamp.com/blog/the-rise-of-julia-is-it-worth-learning-in-2022)).
@@ -698,9 +749,13 @@ begin
 	# TAM/SAM/SOM
 	user_revenue_per_year = 10 * 12
 	
-	current_TAM = current_developers * user_revenue_per_year
-	current_SAM = current_julia_developers[end] * user_revenue_per_year
-	current_SOM = current_pluto_developers[end] * user_revenue_per_year
+	# current_TAM = current_developers * user_revenue_per_year
+	# current_SAM = current_julia_developers[end] * user_revenue_per_year
+	# current_SOM = current_pluto_developers[end] * user_revenue_per_year
+
+	current_TAM = current_julia_developers[end] * user_revenue_per_year
+	current_SAM = current_pluto_developers[end] * user_revenue_per_year
+	current_SOM = current_pluto_developers[end] * user_revenue_per_year * 0.10
 
 	#-- Projected (2028) --#
 	rnge = 1:length(current_julia_developers) + 6
@@ -721,9 +776,13 @@ begin
 	projected_pluto_developers = current_pluto_developers * percent_increase
 
 	# TAM/SAM/SOM
-	projected_TAM = projected_developers * user_revenue_per_year
-	projected_SAM = projected_julia_developers[end] * user_revenue_per_year
-	projected_SOM = projected_pluto_developers[end] * user_revenue_per_year
+	# projected_TAM = projected_developers * user_revenue_per_year
+	# projected_SAM = projected_julia_developers[end] * user_revenue_per_year
+	# projected_SOM = projected_pluto_developers[end] * user_revenue_per_year
+
+	projected_TAM = projected_julia_developers[end] * user_revenue_per_year
+	projected_SAM = projected_pluto_developers[end] * user_revenue_per_year
+	projected_SOM = projected_pluto_developers[end] * user_revenue_per_year * 0.50
 end
 
 # ╔═╡ bd38244f-bc23-4f78-8f73-8a88eb5df719
@@ -862,8 +921,10 @@ md"""
 # ╔═╡ cc9898c9-4a26-4fdc-8073-f6dace9f3f5f
 begin
 	#--- User ranges ---#
-	free_user_range = [10, 100, 1000, 10_000, 100_000]
-	paid_user_range = free_user_range .* 0.25
+	tot_user_range = [10, 100, 1000, 8_000, 10_000, 100_000]
+	perc = 0.20
+	free_user_range = Int.(round.((1-perc) .* tot_user_range))
+	paid_user_range = Int.(tot_user_range .- free_user_range)
 	
 	#--- Pricing tiers ---#
 	paid_pricing_tiers = [10, 20, 50, 100, 200]; # $ per month
@@ -899,10 +960,11 @@ begin
 		10    => 0.006u"hr^-1", # $/hr
 		100   => 0.002u"hr^-1",
 		1_000  => 0.001u"hr^-1",
+		8_000 => 0.0006u"hr^-1",
 		10_000 => 0.0006u"hr^-1",
 		100_000 => 0.00005u"hr^-1",
 	) # export cost is dependent on number of users because of vertical scaling
-	export_cost_per_hour = export_cost_per_hour_all[num_users_free]
+	export_cost_per_hour = export_cost_per_hour_all[tot_user_range[n]]
 
 	#--- Alloted static, precomputed, & interactive notebooks (tier dependent) ---#	
 	allotted_static_exports_free = 100 # notebooks per month
@@ -918,10 +980,11 @@ begin
 		10 => basline_allotted_interactive_notebooks,
 		100 => basline_allotted_interactive_notebooks * 2,
 		1000 => basline_allotted_interactive_notebooks * 2,
+		8_000 => basline_allotted_interactive_notebooks * 2,
 		10_000 => basline_allotted_interactive_notebooks * 2,
 		100_000 => basline_allotted_interactive_notebooks * 2,
 	)
-	allotted_interactive_notebooks_paid = allotted_interactive_notebooks_all[num_users_free]
+	allotted_interactive_notebooks_paid = allotted_interactive_notebooks_all[tot_user_range[n]]
 
 	#--- Maximum estimated static, precomputed, & interactive costs ---#
 	max_static_export_cost_per_month_free = export_cost_per_hour * avg_static_export_time_per_notebook * allotted_static_exports_free * free_user_range[n] # $
@@ -933,16 +996,59 @@ begin
 	max_interactive_export_cost_per_month_paid = export_cost_per_hour * avg_interactive_export_time_per_notebook * allotted_interactive_notebooks_paid[a] * paid_user_range[n] # $
 end;
 
-# ╔═╡ 444880b2-5a2b-4ba6-9a5e-012732fad139
-md"""
-| Free (\$0 / month) | Paid (\$$(paid_pricing_tiers[a]) / month) | Enterprise (Custom) |
-|:---|:---|:---|
-| Up to $(allotted_static_exports_free) static notebook exports| Up to $(format.(allotted_static_exports_paid[a], commas=true, precision=2)) static notebook exports | Unlimited static notebook exports|
-| Up to $(allotted_precomputed_notebooks_free) precomputed interactive notebooks| Up to $(allotted_precomputed_notebooks_paid[a]) precomputed interactive notebooks|  Unlimited  precomputed interactive notebooks|
-| N/A | Up to $(allotted_interactive_notebooks_paid[a]) active interactive notebooks | Unlimited active interactive notebooks |
+# ╔═╡ 9a81eb25-274c-4f7a-bd3a-324306cfd856
+@htl("""
+<html>
+<head>
+<style>
+  body {
+	background-color: transparent; /* Transparent background */
+  }
+  table, th, td{
+    padding: 10px; /* Add some space inside table cells */
+  }
+  p {
+    font-style: italic; /* Make p tags italicized */
+  }
+  @media (prefers-color-scheme: dark) {
+    body {
+	  background-color: #1f1f1f
+	}
+    table, th, td, p{
+      color: #fff; /* White text color only in dark mode */
+    }
+  }
+</style>
+</head>
+<body>
+  <table>
+    <tr>
+      <th>Free (\$0 / month)</th>
+      <th>Paid (\$$(paid_pricing_tiers[a]) / month)</th>
+      <th>Enterprise (Custom)</th>
+    </tr>
+    <tr>
+      <td>Up to $(allotted_static_exports_free) static notebook exports</td>
+      <td>Up to $(format(allotted_static_exports_paid[a], commas=true, precision=2)) static notebook exports</td>
+      <td>Unlimited static notebook exports</td>
+    </tr>
+    <tr>
+      <td>Up to $(allotted_precomputed_notebooks_free) precomputed interactive notebooks</td>
+      <td>Up to $(allotted_precomputed_notebooks_paid[a]) precomputed interactive notebooks</td>
+      <td>Unlimited precomputed interactive notebooks</td>
+    </tr>
+    <tr>
+      <td>N/A</td>
+      <td>Up to $(allotted_interactive_notebooks_paid[a]) active interactive notebooks</td>
+      <td>Unlimited active interactive notebooks</td>
+    </tr>
+  </table>
+  <p>\$50 per month per paid user @ 1,600 paid users (8,000 total users) ~ Year 1 SOM</p>
+  <p>\$50 per month per paid user @ 20,000 paid users (100,000 total users) ~ Year 5 SOM</p>
+</body>
+</html>
+""")
 
-*Note: \$50/month @ 125,000 customers is ~ SOM*
-"""
 
 # ╔═╡ dcde8461-aa6e-43e2-8653-c0fa1c9312a2
 gross_income = paid_pricing_tiers[a] * paid_user_range[n]
@@ -950,13 +1056,12 @@ gross_income = paid_pricing_tiers[a] * paid_user_range[n]
 # ╔═╡ 344c5ef8-fef3-4d24-955c-53dadd9ebdae
 min_profit = (gross_income) - (max_static_export_cost_per_month_free + max_static_export_cost_per_month_paid + max_precomputed_export_cost_per_month_free + max_precomputed_export_cost_per_month_pad + max_interactive_export_cost_per_month_paid)
 
-# ╔═╡ e486a1e5-8666-4db1-9787-71d42459bbbe
+# ╔═╡ 418e51b8-6f56-4b4d-8f46-6875676e7965
 let
 	f = Figure()
 	colors = cgrad(:tab10)
 	labels = ["Expenses", "Revenue", "Profit"]
 	tick_range = 1:3
-	
 	ax = Axis(
 		f[0:1, 0:1],
 		ylabel = "Per Month (\$)",
@@ -967,24 +1072,28 @@ let
 		ytickformat = v -> format.(v, commas=true, precision=2)
 	)
 	expenses = max_static_export_cost_per_month_free + max_static_export_cost_per_month_paid + max_precomputed_export_cost_per_month_free + max_precomputed_export_cost_per_month_pad + max_interactive_export_cost_per_month_paid
-	# ys = [
-	# 	max_static_export_cost_per_month_free + max_static_export_cost_per_month_paid,
-	# 	max_precomputed_export_cost_per_month_free + max_precomputed_export_cost_per_month_pad,
-	# 	max_interactive_export_cost_per_month_paid, 
-	# 	gross_income,
-	# 	min_profit
-	# ]
 	ys = [
 		expenses, 
 		gross_income,
 		min_profit
 	]
-	if min_profit > 0
-		clrs = [(colors[5], 0.6), (colors[10], 0.6), (colors[3], 0.4)]
+	
+	if a == 3 && n == 4
+		clrs = [(colors[5]), (colors[10]), (colors[3])] # Change the opacity to indicate SOM
+		ax.title = "Year 1 SOM"
+		ax.titlesize = 30
+	elseif a == 3 && n == 6
+		clrs = [(colors[5]), (colors[10]), (colors[3])] # Change the opacity to indicate SOM
+		ax.title = "Year 5 SOM"
+		ax.titlesize = 30
 	else
-		clrs = [(colors[5], 0.6), (colors[10], 0.6), (colors[4], 0.6)]
+		if min_profit > 0
+			clrs = [(colors[5], 0.6), (colors[10], 0.6), (colors[3], 0.4)]
+		else
+			clrs = [(colors[5], 0.6), (colors[10], 0.6), (colors[4], 0.6)]
+		end
 	end
-
+	
 	lbls = "\$" .* format.(ys, commas=true, precision=2)
 	barplot!(
 		tick_range, ys;
@@ -999,6 +1108,7 @@ let
 	)
 	f
 end
+
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -2631,14 +2741,14 @@ version = "3.5.0+0"
 # ╟─a2720c78-464f-4dff-9c4d-971de59a0979
 # ╟─0d8f1706-0a98-4c2b-b781-024f2ed32a65
 # ╟─4c8a810f-4041-49b8-a698-707b18be073f
-# ╟─444880b2-5a2b-4ba6-9a5e-012732fad139
-# ╟─e486a1e5-8666-4db1-9787-71d42459bbbe
+# ╟─9a81eb25-274c-4f7a-bd3a-324306cfd856
+# ╟─418e51b8-6f56-4b4d-8f46-6875676e7965
 # ╟─76d2f9fb-fcc3-4537-abf6-826640d4d729
 # ╟─8e8d9854-2ddc-44be-a026-341e654863bb
 # ╟─a088d383-341a-421c-9421-5abc1355eb04
 # ╟─8b1ba7dd-d800-4a65-9866-0428ca1754de
 # ╟─d6dd419e-6cd6-4934-b644-a7cee490dd80
-# ╠═d17fefeb-ae0a-4fb3-8794-7314664e8739
+# ╟─d17fefeb-ae0a-4fb3-8794-7314664e8739
 # ╟─01036d15-7621-488a-87d0-adbe0ca23ac6
 # ╟─e1592afd-0916-49b4-92a2-e12c64f01cc6
 # ╟─35bc4c12-784b-4c6b-8331-a663da3798fa
