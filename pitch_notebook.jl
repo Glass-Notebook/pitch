@@ -62,7 +62,7 @@ You can think of Pluto as an interactive, live-updating whiteboard for your Juli
 
 # ╔═╡ f9a075ca-cb0e-4577-8576-993fe36d0414
 html"""
-<iframe style="border-radius: 15px" width="690" height="440" src="https://www.youtube.com/embed/oAqCvRjK0-c" title="Glass Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe style="border: 1px solid; border-radius: 5px" width="690" height="440" src="https://www.youtube.com/embed/oAqCvRjK0-c" title="Glass Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 """
 
 # ╔═╡ 750bd464-03c8-463e-bbdf-a6894eae81f3
@@ -660,9 +660,124 @@ md"""
 
 """
 
+# ╔═╡ 81b3f789-082b-405b-89ad-4f65407497dc
+md"""
+## 7. Our Team
+"""
+
+# ╔═╡ b03ee953-4978-4f78-a230-09c1204626cf
+html"""
+<html>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Vollkorn:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+.team-board {
+  display: flex;
+  justify-content: space-around;
+  font-family: 'Alegreya Sans', sans-serif;
+}
+
+.team-member {
+  width: 30%;
+  padding: 1em;
+  border: 1px solid #000;
+  border-radius: 5px;
+  margin: 0.5em; 
+}
+
+.team-member h3 {
+  text-align: center;
+  font-family: Vollkorn, sans-serif;
+  padding: 0;
+  margin: 0
+}
+
+.team-member h5 {
+  text-align: center;
+  font-family: Vollkorn, sans-serif;
+  padding: 0;
+  margin: 5px
+}
+
+.team-member img {
+  display: block;
+  margin-bottom: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%; /* Adjust as needed */
+  border: 1px solid #000;
+  border-radius: 5%; /* Add this line to make the images round */
+}
+
+
+.team-point {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1em;
+  padding: 1em;
+  border: 1px solid #000;
+  border-radius: 5px;
+  background-color: #fff; 
+}
+
+.team-member.dale {
+  background-color: #FEFCF3;  
+}
+
+.team-member.connor {
+  background-color: #FEFCF3; 
+}
+
+.team-member.mike {
+  background-color: #FEFCF3; 
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #1f1f1f;
+  }
+}
+</style>
+
+<body>
+
+<div class="team-board">
+  <div class="team-member dale">
+    <img src="https://avatars.githubusercontent.com/u/62632960?v=4" alt="Avatar of Dale Black">
+    <h3>Dale</h3>
+    <h5>CEO</h5>
+	<div class="team-point">Software Engineer</div>
+    <div class="team-point">Physics Ph.D. Candidate</div>
+  </div>
+
+  <div class="team-member connor">
+  <img src="https://avatars.githubusercontent.com/u/62632960?v=4" alt="Avatar of Dale Black">
+    <h3>Connor</h3>
+    <h5>CTO</h5>
+    <div class="team-point">Core Pluto.jl Developer</div>
+	<div class="team-point">10+ Years Software Engineer Experience</div>
+  </div>
+
+  <div class="team-member mike">
+  <img src="https://avatars.githubusercontent.com/u/62632960?v=4" alt="Avatar of Dale Black">
+    <h3>Mike</h3>
+    <h5>CFO</h5>
+    <div class="team-point">CPA @ Forbes 500 Company</div>
+    <div class="team-point">30+ Years of Finance Experience</div>
+  </div>
+
+</div>
+
+</body>
+
+</html>
+"""
+
 # ╔═╡ 01036d15-7621-488a-87d0-adbe0ca23ac6
 md"""
-## 7. Use of Funds
+## 8. Use of Funds
 """
 
 # ╔═╡ e1592afd-0916-49b4-92a2-e12c64f01cc6
@@ -2749,6 +2864,8 @@ version = "3.5.0+0"
 # ╟─8b1ba7dd-d800-4a65-9866-0428ca1754de
 # ╟─d6dd419e-6cd6-4934-b644-a7cee490dd80
 # ╟─d17fefeb-ae0a-4fb3-8794-7314664e8739
+# ╟─81b3f789-082b-405b-89ad-4f65407497dc
+# ╟─b03ee953-4978-4f78-a230-09c1204626cf
 # ╟─01036d15-7621-488a-87d0-adbe0ca23ac6
 # ╟─e1592afd-0916-49b4-92a2-e12c64f01cc6
 # ╟─35bc4c12-784b-4c6b-8331-a663da3798fa
