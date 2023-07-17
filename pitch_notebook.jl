@@ -748,24 +748,25 @@ html"""
     <img src="https://avatars.githubusercontent.com/u/62632960?v=4" alt="Avatar of Dale Black">
     <h3>Dale Black</h3>
     <h5>President</h5>
-	<div class="team-point">Software Engineer</div>
-    <div class="team-point">Physics Ph.D. Candidate</div>
+	<div class="team-point">Julia Software Engineer</div>
+    <div class="team-point">BS Physics, Physics Ph.D. Candidate</div>
   </div>
 
   <div class="team-member connor">
-  <img src="imgs/connor.jpg" alt="Avatar of Connor Burns">
+  <img src="https://github.com/Glass-Notebook/pitch/blob/main/imgs/connor.jpg?raw=true" alt="Avatar of Connor Burns">
     <h3>Connor Burns</h3>
-    <h5>Vice President of Product</h5>
-    <div class="team-point">Core Pluto.jl Developer</div>
-	<div class="team-point">10+ Years Software Engineer Experience</div>
+    <h5>V.P. - Product</h5>
+    <div class="team-point">Pluto.jl Developer and Maintainer</div>
+    <div class="team-point">PlutoDesktop Lead Developer</div>
+	<div class="team-point">JuliaCon 2021 Presenter</div>
   </div>
 
   <div class="team-member mike">
-  <img src="imgs/mike.jpg" alt="Avatar of Mike Black">
+  <img src="https://github.com/Glass-Notebook/pitch/blob/main/imgs/mike.jpg?raw=true" alt="Avatar of Mike Black">
     <h3>Mike Black</h3>
-    <h5>Vice President of Finance</h5>
-    <div class="team-point">CPA @ Forbes 500 Company</div>
-    <div class="team-point">30+ Years of Finance Experience</div>
+    <h5>V.P. - Finance</h5>
+    <div class="team-point">BS in accounting, MS in informations systems</div>
+    <div class="team-point">30+ years managing high performance teams in finance and technology</div>
   </div>
 
 </div>
@@ -2865,7 +2866,7 @@ version = "3.5.0+0"
 # ╟─d6dd419e-6cd6-4934-b644-a7cee490dd80
 # ╟─d17fefeb-ae0a-4fb3-8794-7314664e8739
 # ╟─81b3f789-082b-405b-89ad-4f65407497dc
-# ╠═b03ee953-4978-4f78-a230-09c1204626cf
+# ╟─b03ee953-4978-4f78-a230-09c1204626cf
 # ╟─01036d15-7621-488a-87d0-adbe0ca23ac6
 # ╟─e1592afd-0916-49b4-92a2-e12c64f01cc6
 # ╟─35bc4c12-784b-4c6b-8331-a663da3798fa
