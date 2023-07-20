@@ -382,22 +382,22 @@ html"""
 
 
 <div class="kanban-board">
-  <div class="kanban-column todo">
-    <h3>To Do</h3>
-    <div class="kanban-item">📝 Academia Integration</div>
-    <div class="kanban-item">📝 High Performance Computing Cluster</div>
-  </div>
-
-  <div class="kanban-column progress">
-    <h3>In Progress</h3>
-    <div class="kanban-item">🚧 Collaborative Online Coding</div>
-    <div class="kanban-item">🚧 Pre-computed Interactive Notebook Publishing</div>
-  </div>
-
   <div class="kanban-column done">
     <h3>Done</h3>
     <div class="kanban-item">✅ Static Notebook Publishing</div>
     <div class="kanban-item">✅ Interactive Notebook Publishing</div>
+  </div>
+
+  <div class="kanban-column progress">
+    <h3>In Progress</h3>
+    <div class="kanban-item">🚧 Pre-computed Interactive Notebook Publishing (Q3 2023)</div>
+    <div class="kanban-item">🚧 Collaborative Online Coding (Q1 2024)</div>
+  </div>
+
+  <div class="kanban-column todo">
+    <h3>To Do</h3>
+    <div class="kanban-item">📝 Academia Integration (Q2 2024)</div>
+    <div class="kanban-item">📝 High Performance Computing Cluster (Q4 2024)</div>
   </div>
 </div>
 
@@ -1003,7 +1003,7 @@ function tot(sel)
 				"SAM = \$$(lbls[2])", 
 				"SOM = \$$(lbls[3])"
 			],
-			"Year 1",
+			"Year 1 (ARR)",
 			valign = :bottom,
 			halign = :left
 		)
@@ -1018,7 +1018,7 @@ function tot(sel)
 				"SAM = \$$(lbls[2])", 
 				"SOM = \$$(lbls[3])"
 			],
-			"Year 5",
+			"Year 5 (ARR)",
 			valign = :bottom,
 			halign = :right
 		)
@@ -1182,10 +1182,10 @@ let
 		f[0:1, 0:1],
 		ylabel = "Per Month (\$)",
 		xticks = (tick_range, labels),
-		title = "Expenses and Revenue Estimates Per Month (\$$(paid_pricing_tiers[a]) / month Pricing Tier)",
+		title = "Monthly Recurring Revenue (\$$(paid_pricing_tiers[a]) / month Pricing Tier)",
 		xticklabelrotation = π/4,
 		yautolimitmargin = (0.3, 0.3),
-		ytickformat = v -> format.(v, commas=true, precision=2)
+		ytickformat = v -> format.(v, commas=true, precision=0)
 	)
 	expenses = max_static_export_cost_per_month_free + max_static_export_cost_per_month_paid + max_precomputed_export_cost_per_month_free + max_precomputed_export_cost_per_month_pad + max_interactive_export_cost_per_month_paid
 	ys = [
@@ -1196,11 +1196,11 @@ let
 	
 	if a == 3 && n == 4
 		clrs = [(colors[5]), (colors[10]), (colors[3])] # Change the opacity to indicate SOM
-		ax.title = "Year 1 SOM"
+		ax.title = "Monthly Recurring Revenue (Year 1 SOM)"
 		ax.titlesize = 30
 	elseif a == 3 && n == 6
 		clrs = [(colors[5]), (colors[10]), (colors[3])] # Change the opacity to indicate SOM
-		ax.title = "Year 5 SOM"
+		ax.title = "Monthly Recurring Revenue (Year 5 SOM)"
 		ax.titlesize = 30
 	else
 		if min_profit > 0
@@ -1210,7 +1210,7 @@ let
 		end
 	end
 	
-	lbls = "\$" .* format.(ys, commas=true, precision=2)
+	lbls = "\$" .* format.(ys, commas=true, precision=0)
 	barplot!(
 		tick_range, ys;
 		color = clrs,
