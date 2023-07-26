@@ -146,7 +146,7 @@ body {
   <div class="kanban-column with-glass">
     <h3>With Glass Notebook</h3>
     <div class="kanban-item"><a href="#">This Pitch Deck (Using Glass)</a></div>
-    <div class="kanban-item"><a href="https://glassnotebook.io/nb/tWbP_dFicTNEyYxDo1ufe" target="_blank">Example Interactive Notebook</a></div>
+    <div class="kanban-item"><a href="https://glassnotebook.io/r/2QPXCS2VZD_p0wbswvRTd/example.jl" target="_blank">Example Interactive Notebook</a></div>
   </div>
 </div>
 
