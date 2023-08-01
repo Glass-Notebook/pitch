@@ -60,9 +60,9 @@ You can think of Pluto as an interactive, live-updating whiteboard for your Juli
 </details>
 """
 
-# ╔═╡ f9a075ca-cb0e-4577-8576-993fe36d0414
+# ╔═╡ 3de3e633-ff6e-4369-9031-9918970dd003
 html"""
-<iframe style="border: 1px solid; border-radius: 5px" width="690" height="440" src="https://www.youtube.com/embed/oAqCvRjK0-c" title="Glass Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<img style="border: 1px solid; border-radius: 5px" src="https://i.imgur.com/zS5FJI6.gif" alt="Your GIF description">
 """
 
 # ╔═╡ 750bd464-03c8-463e-bbdf-a6894eae81f3
@@ -146,7 +146,7 @@ body {
   <div class="kanban-column with-glass">
     <h3>With Glass Notebook</h3>
     <div class="kanban-item"><a href="#">This Pitch Deck (Using Glass)</a></div>
-    <div class="kanban-item"><a href="https://glassnotebook.io/r/2QPXCS2VZD_p0wbswvRTd/example.jl" target="_blank">Example Interactive Notebook</a></div>
+    <div class="kanban-item"><a href="https://glassnotebook.io/r/XrKocuzgR23umJ6lkqn4s/example.jl" target="_blank">Example Interactive Notebook</a></div>
   </div>
 </div>
 
@@ -2845,7 +2845,7 @@ version = "3.5.0+0"
 # ╟─94c57806-2d1a-4a75-a5e3-0934632b4464
 # ╟─6562d072-38b7-4218-9708-7f51e44a8b51
 # ╟─f2ead7fe-3cca-40f6-a440-7ac332d545d5
-# ╟─f9a075ca-cb0e-4577-8576-993fe36d0414
+# ╟─3de3e633-ff6e-4369-9031-9918970dd003
 # ╟─750bd464-03c8-463e-bbdf-a6894eae81f3
 # ╟─201b1ff2-e730-4de3-98d1-f373decf3f33
 # ╟─72727660-d3b9-4ed9-b629-c19c79d0a114
